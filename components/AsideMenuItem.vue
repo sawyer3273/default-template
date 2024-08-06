@@ -26,7 +26,7 @@ const componentClass = computed(() => [
   props.isDropdownList ? 'py-3 px-6 text-sm' : 'py-3',
   hasColor.value
     ? getButtonColor(props.item.color, false, true)
-    : `aside-menu-item dark:text-slate-300 dark:hover:text-white`
+    : `aside-menu-item text-slate-300 dark:hover:text-white`
 ])
 
 const hasDropdown = computed(() => !!props.item.menu)
@@ -42,6 +42,7 @@ const menuClick = (event) => {
 
 <template>
   <li>
+
     <component
       :is="item.to ? NuxtLink : 'a'"
       v-slot="vSlot"
@@ -50,6 +51,7 @@ const menuClick = (event) => {
       class="flex cursor-pointer"
       :class="componentClass"
       @click="menuClick"
+      :href="item.href"
     >
       <BaseIcon
         v-if="item.icon"
