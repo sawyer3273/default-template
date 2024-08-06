@@ -13,6 +13,12 @@ const router = useRouter()
 const submit = () => {
   router.push('/HomeView')
 }
+
+import axios from 'axios';
+const message = ref('LOADING...');
+onMounted(() => {
+  axios.get('/api/hello').then((res) => {message.value = res.data});
+});
 </script>
 
 <template>
@@ -28,7 +34,7 @@ const submit = () => {
               autocomplete="username"
             />
           </FormField>
-
+{{message}}
           <FormField label="Password" help="Please enter your password">
             <FormControl
               v-model="form.pass"
