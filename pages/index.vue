@@ -1,24 +1,46 @@
 <script setup>
 import { reactive } from 'vue'
 import { mdiAccount, mdiAsterisk } from '@mdi/js'
-
-const form = reactive({
-  login: 'john.doe',
-  pass: 'highly-secure-password-fYjUw-',
-  remember: true
-})
+import axios from 'axios';
+import { useVuelidate } from '@vuelidate/core'
+import { required, minLength, email} from '@vuelidate/validators'
 
 const router = useRouter()
 
-const submit = () => {
-  router.push('/HomeView')
-}
+const form = reactive({
+  login: '',
+  pass: '',
+  remember: true
+})
 
-import axios from 'axios';
-const message = ref('LOADING...');
+const rules = computed(() => (
+  {
+    login: {
+      required, email,
+      minLength: minLength(3),
+    },
+    pass: {
+      required,
+      minLength: minLength(8),
+    },
+  }
+));
+
+const $v = useVuelidate(rules, form);
+
+const submitForm = async () => {
+  const result = $v.value.$validate();
+  result.then(async (res) => {
+    if(res) {
+      let login = await axios.post('/api/user/login', {email: form.login, password: form.pass, remember: form.remember})
+      console.log('login',login)
+    }
+  }).catch((err) => {
+    console.log(err);
+  })
+};
+
 onMounted(() => {
- // axios.post('/api/user/register', {email: 'zernov@oleg-krd.ru', password: 'test', name: 'Oleg'}).then((res) => {message.value = res.data});
-  axios.post('/api/user/login', {email: 'zernov@oleg-krd.ru', password: 'test', username: 'Oleg'}).then((res) => {message.value = res.data});
 });
 </script>
 
@@ -26,8 +48,8 @@ onMounted(() => {
   <div>
     <NuxtLayout>
       <SectionFullScreen v-slot="{ cardClass }" bg="purplePink">
-        <CardBox :class="cardClass" is-form @submit.prevent="submit">
-          <FormField label="Login" help="Please enter your login">
+        <CardBox :class="cardClass" is-form @submit.prevent="submitForm">
+          <FormField :label="$t('Login')" :help="$t('enterLogin')" :error="$v.login.$error ? $t('error_'+$v.login.$errors[0].$validator) : ''">
             <FormControl
               v-model="form.login"
               :icon="mdiAccount"
@@ -35,7 +57,7 @@ onMounted(() => {
               autocomplete="username"
             />
           </FormField>
-          <FormField label="Password" help="Please enter your password">
+          <FormField :label="$t('Pass')" :help="$t('enterPass')" :error="$v.pass.$error ? $t('error_'+$v.pass.$errors[0].$validator, {min: 8}) : ''">
             <FormControl
               v-model="form.pass"
               :icon="mdiAsterisk"
@@ -44,18 +66,17 @@ onMounted(() => {
               autocomplete="current-password"
             />
           </FormField>
-
+          
           <FormCheckRadio
             v-model="form.remember"
             name="remember"
-            label="Remember"
+            :label="$t('Remember')"
             :input-value="true"
           />
 
           <template #footer>
             <BaseButtons>
-              <BaseButton type="submit" color="info" label="Login" />
-              <BaseButton to="/HomeView" color="info" outline label="Back" />
+              <BaseButton :disabled='$v.$error' type="submit" color="info" :label="$t('enter')" />
             </BaseButtons>
           </template>
         </CardBox>

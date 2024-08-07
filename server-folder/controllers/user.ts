@@ -30,7 +30,7 @@ export async function register(req: Request, res: Response, _next: NextFunction)
 export const login = async (req: Request, res: Response, next: Function) => {
   try {
     const { email, password } = req.body;
-
+console.log('req.body',req.body)
     let user;
     if (email) {
       user = await prisma.user.findFirst({

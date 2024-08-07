@@ -13,7 +13,11 @@ defineProps({
   help: {
     type: String,
     default: null
-  }
+  },
+  error: {
+    type: String,
+    default: null
+  },
 })
 
 const slots = useSlots()
@@ -43,5 +47,6 @@ const wrapperClass = computed(() => {
     <div v-if="help" class="text-xs text-gray-500 dark:text-slate-400 mt-1">
       {{ help }}
     </div>
+    <label v-if="error" :for="labelFor" class="block font-bold mb-2 text-red-600">{{ error }}</label>
   </div>
 </template>

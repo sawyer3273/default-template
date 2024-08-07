@@ -10,6 +10,7 @@ export default defineNuxtConfig({
 
   modules: [
     '@pinia/nuxt',
+    '@nuxtjs/i18n',
   ],
 
   postcss: {
@@ -23,6 +24,12 @@ export default defineNuxtConfig({
     '@/assets/css/main.css',
   ],
 
+
+  i18n: {
+    strategy: 'no_prefix',
+    defaultLocale: 'ru',
+    vueI18n: './i18n.config.ts'
+  },
 
   compatibilityDate: '2024-08-06',
 })
