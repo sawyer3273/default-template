@@ -17,7 +17,8 @@ const submit = () => {
 import axios from 'axios';
 const message = ref('LOADING...');
 onMounted(() => {
-  axios.get('/api/hello').then((res) => {message.value = res.data});
+ // axios.post('/api/user/register', {email: 'zernov@oleg-krd.ru', password: 'test', name: 'Oleg'}).then((res) => {message.value = res.data});
+  axios.post('/api/user/login', {email: 'zernov@oleg-krd.ru', password: 'test', username: 'Oleg'}).then((res) => {message.value = res.data});
 });
 </script>
 
@@ -34,7 +35,6 @@ onMounted(() => {
               autocomplete="username"
             />
           </FormField>
-{{message}}
           <FormField label="Password" help="Please enter your password">
             <FormControl
               v-model="form.pass"

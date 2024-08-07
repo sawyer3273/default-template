@@ -1,0 +1,13 @@
+{
+    "port": 8000,
+    "databaseConnectOnInit": true,
+    "database": {
+        "mongodb": [{
+            "active": true,
+            "url": "mongodb://127.0.0.1:27017/mengantar-app",
+            "options": {}
+        }]
+    },
+    "dev": true
+    
+  }

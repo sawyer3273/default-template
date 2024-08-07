@@ -1,12 +1,12 @@
 import express from 'express'
 
-import helloRoutes from '../controllers/hello'
+import userRoutes from '../controllers/user'
 import { errorHandler as defaultErrorHandler, PageNotFoundHandler } from '../middlewares/errorHandler'
 import { createResource } from '../routes/resourceHelper'
 
 export default (app: express.Application) => {
   const router = express.Router({ caseSensitive: true, mergeParams: true })
-  router.use('/hello', createResource(helloRoutes))
+  router.use('/user', createResource(userRoutes))
 
   // Mount with version
   router.use(PageNotFoundHandler)
