@@ -12,6 +12,7 @@ const props = defineProps({
   },
   hasComponentLayout: Boolean,
   hasTable: Boolean,
+  smallPadding: Boolean,
   isForm: Boolean,
   isHoverable: Boolean,
   isModal: Boolean
@@ -51,10 +52,10 @@ const submit = (event) => {
   >
     <slot v-if="hasComponentLayout" />
     <template v-else>
-      <CardBoxComponentBody :no-padding="hasTable">
+      <CardBoxComponentBody :no-padding="hasTable" :smallPadding="smallPadding">
         <slot />
       </CardBoxComponentBody>
-      <CardBoxComponentFooter v-if="hasFooterSlot">
+      <CardBoxComponentFooter v-if="hasFooterSlot"  :smallPadding="smallPadding">
         <slot name="footer" />
       </CardBoxComponentFooter>
     </template>

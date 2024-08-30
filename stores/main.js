@@ -1,9 +1,17 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { NOTIF_SUCCESS } from '~/constants'
 
 export const useMainStore = defineStore('main', () => {
+
+
   const userName = ref('John Doe')
   const userEmail = ref('doe.doe.doe@example.com')
+  
+  const isNotification = ref(false)
+  const notificationType = ref(NOTIF_SUCCESS)
+  const notificationTitle = ref('')
+  const notificationMessage = ref('')
 
   const userAvatar = computed(
     () =>
@@ -101,6 +109,13 @@ export const useMainStore = defineStore('main', () => {
     }
   }
 
+  function setNotification(isNotificationP, notificationMessageP, notificationTitleP = 'Notification', notificationTypeP = NOTIF_SUCCESS ) {
+    isNotification.value = isNotificationP ? isNotificationP : false 
+    notificationType.value = notificationTypeP  
+    notificationTitle.value = notificationTitleP
+    notificationMessage.value = notificationMessageP ? notificationMessageP : '' 
+  }
+
   return {
     userName,
     userEmail,
@@ -108,6 +123,11 @@ export const useMainStore = defineStore('main', () => {
     isFieldFocusRegistered,
     clients,
     history,
+    isNotification,
+    notificationType,
+    notificationTitle,
+    notificationMessage,
+    setNotification,
     setUser
   }
 })

@@ -7,6 +7,11 @@ const props = defineProps({
     type: String,
     required: true
   },
+  classProp: {
+    type: String,
+    default: ''
+  },
+  smallPadding: Boolean,
   button: {
     type: String,
     default: 'info'
@@ -51,7 +56,9 @@ onMounted(() => {
   <OverlayLayer v-show="value" @overlay-click="cancel">
     <CardBox
       v-show="value"
-      class="shadow-lg max-h-modal w-11/12 md:w-3/5 lg:w-2/5 xl:w-4/12 z-50"
+      :class="classProp"
+      :smallPadding="smallPadding"
+      class="shadow-lg max-h-modal w-11/12 md:w-2/5 lg:w-1/5 xl:w-3/12 z-50"
       is-modal
     >
       <CardBoxComponentTitle :title="title">

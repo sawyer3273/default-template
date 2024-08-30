@@ -1,8 +1,27 @@
 import express from 'express'
 import session from 'express-session'
 import passport from 'passport'
+import path from 'path';
+import {fileURLToPath} from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 import routes from './routes'
+import i18next from 'i18next'
+import Backend from 'i18next-node-fs-backend'
+import i18nextMiddleware from 'i18next-http-middleware'
+import Fingerprint from 'express-fingerprint'
+
+i18next
+    .use(Backend)
+    .use(i18nextMiddleware.LanguageDetector)
+    .init({
+        backend: {
+            loadPath: __dirname + '/../../locales/{{lng}}.json'
+        },
+        fallbackLng: 'ru',
+        preload: ['ru']
+    });
 
 const DEFAULT_SECRET = 'secret'
 
@@ -10,12 +29,20 @@ function initializeApplication() {
   const app = express()
 
   app.disable('x-powered-by')
+  app.use(i18nextMiddleware.handle(i18next));
 
+  app.use(Fingerprint({
+    parameters:[
+      Fingerprint.useragent,
+      Fingerprint.acceptHeaders,
+      Fingerprint.geoip,
+    ]
+  }))
   /**
    * Set up middlewares.
    */
-  app.use(express.urlencoded({ extended: true }))
   app.use(express.json())
+  app.use(express.urlencoded({ extended: true }))
   app.use(
     session({
       name: 'app',

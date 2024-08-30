@@ -11,10 +11,17 @@ export default defineI18nConfig(() => ({
         enter: 'Login',
         error_email: 'Value is not a valid email address',
         error_minLength: 'This field should be at least {min} characters long',
-        error_required: 'Value is required'
+        error_required: 'Value is required',
+        ForgotPassword: 'Forgot password?',
+        Remind: 'Remind password',
+        Register: 'Register',
+        RegisterNow: 'Register',
+        UserName: 'User Name',
+        enterUserName: 'Enter User Name',
+        HaveAcc: 'Have an account?'
       },
       ru: {
-        enterLogin: 'Введите логин',
+        enterLogin: 'Введите емайл',
         enterPass: 'Введите пароль',
         Login: 'Email',
         Pass: 'Пароль',
@@ -22,7 +29,14 @@ export default defineI18nConfig(() => ({
         enter: 'Войти',
         error_email: 'Невалидный email адрес',
         error_minLength: 'Минимальное количество символов {min}',
-        error_required: 'Обязательное поле'
+        error_required: 'Обязательное поле',
+        ForgotPassword: 'Потерялся пароль?',
+        Remind: 'Напомнить пароль',
+        Register: 'Регистрация',
+        RegisterNow: 'Зарегистрироваться',
+        UserName: 'Имя',
+        enterUserName: 'Введите имя',
+        HaveAcc: 'У тебя уже есть аккаунт?'
       }
     }
   }))

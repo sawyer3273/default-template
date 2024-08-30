@@ -12,7 +12,10 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@nuxtjs/i18n',
   ],
-
+  build:{
+    // vue-toastification - old commonjs module 
+    transpile: ['vue-toastification'],
+  },
   postcss: {
     plugins: {
       tailwindcss: {},

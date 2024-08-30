@@ -3,6 +3,7 @@
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// npx prisma migrate dev --create-only
 
 generator client {
   provider = "prisma-client-js"
@@ -15,6 +16,8 @@ datasource db {
 
 enum Role {
   USER
+  SUBUSER
+  MASTER
   ADMIN
 }
 
@@ -28,7 +31,20 @@ model User {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   deletedAt       DateTime?
+  forgotToken     String?
+  rate    Int @default(0)
+  userTokens      userAuthTokens[]
+}
+
+model userAuthTokens {
+  id              Int       @id @default(autoincrement())
+  user_id         Int
+  user            User      @relation(fields: [user_id], references: [id])
   refreshToken    String?
   accessToken     String?
-  rate    Int @default(0)
+  ua              String?
+  fingerprint     String?
+  ip              String?
+  expiresIn       BigInt
+  createdAt       DateTime  @default(now())
 }

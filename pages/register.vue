@@ -5,20 +5,26 @@ import { mdiAccount, mdiAsterisk } from '@mdi/js'
 import axios from 'axios';
 import { useVuelidate } from '@vuelidate/core'
 import { required, minLength, email} from '@vuelidate/validators'
+import { useMainStore } from '@/stores/main'
+const mainStore = useMainStore()
+import CONSTANTS from '~/constants.js'
+import { useToast } from "vue-toastification";
 import { userService } from '~/utils/services/user.service'
-
+const toast = useToast();
 const router = useRouter()
 
 const form = reactive({
   login: '',
   pass: '',
-  remember: true
+  userName: '',
 })
-
 const rules = computed(() => (
   {
     login: {
       required, email,
+      minLength: minLength(3),
+    },
+    userName: {
       minLength: minLength(3),
     },
     pass: {
@@ -30,28 +36,13 @@ const rules = computed(() => (
 
 const $v = useVuelidate(rules, form);
 
- const fpPromise = import('https://openfpcdn.io/fingerprintjs/v4')
-  .then(FingerprintJS => FingerprintJS.load())
-
-// Get the visitor identifier when you need it.
-fpPromise
-  .then(fp => fp.get())
-  .then(result => {
-    // This is the visitor identifier:
-    const visitorId = result.visitorId
-    console.log(visitorId)
-  })
-
-
-
 const submitForm = async () => {
   const result = $v.value.$validate();
   result.then(async (res) => {
     if(res) {
-      let user = await userService.login({email: form.login, password: form.pass})
-      console.log('user',user)
+      let user = await userService.register({username: form.userName, email: form.login, password: form.pass})
       if (user && user.success) {
-       // router.push('/dashboard');
+        router.push('/');
       }
     }
   }).catch((err) => {
@@ -59,6 +50,14 @@ const submitForm = async () => {
   })
 };
 
+const test = async () => {
+ //  let user = await userService.getUser()
+  console.log('got an error', user);
+}
+const test2 = async () => {
+   let user = await userService.getPrivate()
+  console.log('got an error', user);
+}
 onMounted(() => {
 });
 </script>
@@ -68,12 +67,21 @@ onMounted(() => {
     <NuxtLayout>
       <SectionFullScreen v-slot="{ cardClass }" bg="purplePink">
         <CardBox :class="cardClass" is-form @submit.prevent="submitForm">
+        <div @click='test2'>tes2t</div>
+          <FormField :label="$t('UserName')" :help="$t('enterUserName')" :error="$v.userName.$error ? $t('error_'+$v.userName.$errors[0].$validator) : ''">
+            <FormControl
+              v-model="form.userName"
+              :icon="mdiAccount"
+              name="userName"
+              autocomplete="username"
+            />
+          </FormField>
           <FormField :label="$t('Login')" :help="$t('enterLogin')" :error="$v.login.$error ? $t('error_'+$v.login.$errors[0].$validator) : ''">
             <FormControl
               v-model="form.login"
               :icon="mdiAccount"
               name="login"
-              autocomplete="username"
+              autocomplete="email"
             />
           </FormField>
           <FormField :label="$t('Pass')" :help="$t('enterPass')" :error="$v.pass.$error ? $t('error_'+$v.pass.$errors[0].$validator, {min: 8}) : ''">
@@ -85,20 +93,13 @@ onMounted(() => {
               autocomplete="current-password"
             />
           </FormField>
-          <div class='justify-between items-center flex'>
-            <FormCheckRadio
-              v-model="form.remember"
-              name="remember"
-              :label="$t('Remember')"
-              :input-value="true"
-            />
-            <NuxtLink to="/forgot"> {{$t('ForgotPassword')}} </NuxtLink>
-          </div>
           <template #footer>
-            <BaseButtons>
-              <BaseButton :disabled='$v.$error' type="submit" color="info" :label="$t('enter')" />
-              <a href='/register'> <BaseButton :label="$t('Register')" color="info" outline > </BaseButton> </a>
-            </BaseButtons>
+            <div class='justify-between items-center flex'>
+              <BaseButtons>
+                <BaseButton :disabled='$v.$error' type="submit" color="info" :label="$t('RegisterNow')" />
+              </BaseButtons>
+              <NuxtLink to="/"> {{$t('HaveAcc')}} </NuxtLink>
+            </div>
           </template>
         </CardBox>
       </SectionFullScreen>
