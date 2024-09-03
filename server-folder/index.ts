@@ -33,9 +33,8 @@ function initializeApplication() {
 
   app.use(Fingerprint({
     parameters:[
-      Fingerprint.useragent,
-      Fingerprint.acceptHeaders,
-      Fingerprint.geoip,
+      //@ts-ignore
+      Fingerprint.useragent, Fingerprint.acceptHeaders, Fingerprint.geoip,
     ]
   }))
   /**

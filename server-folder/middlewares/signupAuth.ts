@@ -89,7 +89,7 @@ const checkRefresh = async (req: any, res: any, token: string) => {
           refreshToken: cookie.refreshToken
       }})
 
-    if (tokenInDb.fingerprint == req.fingerprint.hash) {
+    if (tokenInDb && tokenInDb.fingerprint == req.fingerprint.hash) {
       let user = await prisma.user.findFirst({
         where: {
           id: {equals: tokenInDb.user_id}

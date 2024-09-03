@@ -42,7 +42,7 @@ export const verifyToken = (req: Request, res: Response, next: Function) => {
 };
 
 
-export const generateUserTokens = async (user: User, req: Request, res: Response) => {
+export const generateUserTokens = async (user: User, req: any, res: Response) => {
     const userId = user.id;
     const username = user.username;
     const userEmail = user.email;
@@ -69,11 +69,13 @@ export const generateUserTokens = async (user: User, req: Request, res: Response
       await prisma.userAuthTokens.create({
         data: { 
             user_id:         user.id,
+            //@ts-ignore
             refreshToken:    refreshToken,
+            //@ts-ignore
             accessToken:     accessToken,
             ua:              JSON.stringify(req.fingerprint.components.useragent),
             fingerprint:     req.fingerprint.hash,
-            expiresIn:       parseInt(new Date().getTime() / 1000) + 24 * 60 * 60  * 7, //7 days 
+            expiresIn:       new Date().getTime() / 1000 + 24 * 60 * 60  * 7, //7 days 
          }
       });
       res.cookie("refreshToken", refreshToken, {

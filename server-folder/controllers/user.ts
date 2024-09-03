@@ -92,7 +92,7 @@ export const login = async (req: Request, res: Response, next: Function) => {
   }
 };
 
-export const refreshToken = async (req: Request, res: Response, next: Function) => {
+export const refreshToken = async (req: any, res: Response, next: Function) => {
   try {
     var cookie = req.headers.cookie ? Cookie.parse(req.headers.cookie) : {}
     let tokenInDb;
@@ -154,6 +154,7 @@ export const forgot = async (req: Request, res: Response, next: Function) => {
       if (!user) {
         throw createError(400, "User not Found")
       }
+      //@ts-ignore
       let generate = md5(THIRDTEEN_MINUTES)
       await prisma.user.update({
         where: { id: user.id },
@@ -162,11 +163,11 @@ export const forgot = async (req: Request, res: Response, next: Function) => {
         },
       });
       let pwResetLink = `${process.env.baseURL}/reset-password/${generate}`
-      let result = await sendEmail({
-        to: user.email,
-        text: `Follow this link to reset password ${pwResetLink}`,
-        subject: "Восстановление пароля",
-      })
+      let result = await sendEmail(
+        user.email,
+        `Follow this link to reset password ${pwResetLink}`,
+        "Восстановление пароля",
+      )
       console.log('result',result)
       return res.status(200).json({
           success: true,
@@ -180,7 +181,7 @@ export const forgot = async (req: Request, res: Response, next: Function) => {
   }
 };
 
-export const getUser = async (req: Request, res: Response, next: Function) => {
+export const getUser = async (req: any, res: Response, next: Function) => {
   try {
     console.log(req.fingerprint)
     console.log(req.fingerprint.components.useragent)
