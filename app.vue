@@ -11,7 +11,6 @@ useHead({
 
 <template>
   <div>
-      <ModulesErrorModal />
       <NuxtPage />
   </div>
 </template>

@@ -83,10 +83,32 @@ export const login = async (req: Request, res: Response, next: Function) => {
         let token = await generateUserTokens(user, req, res)
         res.json({
           success: true,
-          user: {...user, token}
+          user: {
+            email: user.email, 
+            isEmailVerified: user.isEmailVerified, 
+            rate: user.rate, 
+            role: user.role, 
+            username: user.username, 
+            token
+          }
         })
       }
     }
+  } catch (error) {
+    return errorHandler(error, req, res)
+  }
+};
+
+
+export const logout = async (req: any, res: Response, next: Function) => {
+  try {
+      let data = await prisma.userAuthTokens.deleteMany({
+        where: { fingerprint: req.fingerprint.hash, user_id: res.locals.auth.id }
+      });
+      res.json({
+        success: true,
+        data
+      })
   } catch (error) {
     return errorHandler(error, req, res)
   }
@@ -216,10 +238,11 @@ export const routes: RouteConfig = {
   routes: [
     { method: 'post', path: '/register', handler: [emailValid, passwordlValid, usernamelValid, register] },
     { method: 'post', path: '/login', handler: login },
+    { method: 'post', path: '/logout', handler: [afterSignupAuth, logout] },
     { method: 'post', path: '/refreshToken', handler: refreshToken },
     { method: 'post', path: '/forgot', handler: forgot },
     { method: 'get', path: '/', handler: getUser },
-    { method: 'get', path: '/private', handler: [afterSignupAuth ,privatF] },
+    { method: 'get', path: '/private', handler: [afterSignupAuth, privatF] },
 
 
 

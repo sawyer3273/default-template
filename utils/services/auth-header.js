@@ -1,5 +1,5 @@
 import {getLocalStorageWithExpiry} from '../common'
-import {updateCookies} from './user.service'
+import {parseUserObject} from './user.service'
 
 export async function authHeader(needToken = true) {
     // return authorization header with jwt token
@@ -14,7 +14,7 @@ export async function authHeader(needToken = true) {
             };
             let newDataFetch = await fetch(`/api/user/refreshToken`, requestOptions)
             const newData = await newDataFetch.json();
-            updateCookies(newData.user)
+            parseUserObject(newData.user)
             user = newData.user
         }
     }

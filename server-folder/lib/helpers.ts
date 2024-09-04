@@ -75,7 +75,8 @@ export const generateUserTokens = async (user: User, req: any, res: Response) =>
             accessToken:     accessToken,
             ua:              JSON.stringify(req.fingerprint.components.useragent),
             fingerprint:     req.fingerprint.hash,
-            expiresIn:       new Date().getTime() / 1000 + 24 * 60 * 60  * 7, //7 days 
+            //@ts-ignore
+            expiresIn:       parseInt(new Date().getTime() / 1000 + 24 * 60 * 60  * 7), //7 days 
          }
       });
       res.cookie("refreshToken", refreshToken, {

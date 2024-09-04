@@ -13,7 +13,6 @@ const form = reactive({
   pass: '',
   remember: true
 })
-
 const rules = computed(() => (
   {
     login: {

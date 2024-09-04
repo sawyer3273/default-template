@@ -1,17 +1,20 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { NOTIF_SUCCESS } from '~/constants'
+import Cookies from 'js-cookie'
 
 export const useMainStore = defineStore('main', () => {
 
-
+  const user = ref({
+    email: '', 
+    isEmailVerified: false,
+    rate: 0, 
+    role: 'USER', 
+    username: '', 
+    token: ''
+  })
   const userName = ref('John Doe')
   const userEmail = ref('doe.doe.doe@example.com')
   
-  const isNotification = ref(false)
-  const notificationType = ref(NOTIF_SUCCESS)
-  const notificationTitle = ref('')
-  const notificationMessage = ref('')
 
   const userAvatar = computed(
     () =>
@@ -101,33 +104,27 @@ export const useMainStore = defineStore('main', () => {
   ])
 
   function setUser(payload) {
-    if (payload.name) {
-      userName.value = payload.name
-    }
-    if (payload.email) {
-      userEmail.value = payload.email
+    user.value = payload ? payload : {
+      email: '', 
+      isEmailVerified: false,
+      rate: 0, 
+      role: 'USER', 
+      username: '', 
+      token: ''
     }
   }
 
-  function setNotification(isNotificationP, notificationMessageP, notificationTitleP = 'Notification', notificationTypeP = NOTIF_SUCCESS ) {
-    isNotification.value = isNotificationP ? isNotificationP : false 
-    notificationType.value = notificationTypeP  
-    notificationTitle.value = notificationTitleP
-    notificationMessage.value = notificationMessageP ? notificationMessageP : '' 
-  }
+
+
 
   return {
+    user,
     userName,
     userEmail,
     userAvatar,
     isFieldFocusRegistered,
     clients,
     history,
-    isNotification,
-    notificationType,
-    notificationTitle,
-    notificationMessage,
-    setNotification,
     setUser
   }
 })

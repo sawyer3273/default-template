@@ -1,107 +1,130 @@
 <script setup>
-import { reactive } from 'vue'
-import { NuxtLink } from '#components'
-import { mdiAccount, mdiAsterisk } from '@mdi/js'
-import axios from 'axios';
-import { useVuelidate } from '@vuelidate/core'
-import { required, minLength, email} from '@vuelidate/validators'
-import { userService } from '~/utils/services/user.service'
+import { computed, ref, onMounted } from 'vue'
+import { useMainStore } from '@/stores/main'
+import {
+  mdiAccountMultiple,
+  mdiCartOutline,
+  mdiChartTimelineVariant,
+  mdiMonitorCellphone,
+  mdiReload,
+  mdiGithub,
+  mdiChartPie
+} from '@mdi/js'
+import * as chartConfig from '@/components/Charts/chart.config.js'
+import LineChart from '@/components/Charts/LineChart.vue'
 
-const router = useRouter()
+const chartData = ref(null)
 
-const form = reactive({
-  login: '',
-  pass: '',
-  remember: true
-})
-
-const rules = computed(() => (
-  {
-    login: {
-      required, email,
-      minLength: minLength(3),
-    },
-    pass: {
-      required,
-      minLength: minLength(8),
-    },
-  }
-));
-
-const $v = useVuelidate(rules, form);
-
- const fpPromise = import('https://openfpcdn.io/fingerprintjs/v4')
-  .then(FingerprintJS => FingerprintJS.load())
-
-// Get the visitor identifier when you need it.
-fpPromise
-  .then(fp => fp.get())
-  .then(result => {
-    // This is the visitor identifier:
-    const visitorId = result.visitorId
-    console.log(visitorId)
-  })
-
-
-
-const submitForm = async () => {
-  const result = $v.value.$validate();
-  result.then(async (res) => {
-    if(res) {
-      let user = await userService.login({email: form.login, password: form.pass})
-      console.log('user',user)
-      if (user && user.success) {
-       // router.push('/dashboard');
-      }
-    }
-  }).catch((err) => {
-    console.log(err);
-  })
-};
+const fillChartData = () => {
+  chartData.value = chartConfig.sampleChartData()
+}
 
 onMounted(() => {
-});
+  fillChartData()
+})
+
+const mainStore = useMainStore()
+
+definePageMeta({
+  middleware: 'auth' 
+})
+
+const clientBarItems = computed(() => mainStore.clients.slice(0, 4))
+const transactionBarItems = computed(() => mainStore.history)
 </script>
 
 <template>
   <div>
-    <NuxtLayout>
-      <SectionFullScreen v-slot="{ cardClass }" bg="purplePink">
-        <CardBox :class="cardClass" is-form @submit.prevent="submitForm">
-          <FormField :label="$t('Login')" :help="$t('enterLogin')" :error="$v.login.$error ? $t('error_'+$v.login.$errors[0].$validator) : ''">
-            <FormControl
-              v-model="form.login"
-              :icon="mdiAccount"
-              name="login"
-              autocomplete="username"
+    <NuxtLayout name="authenticated">
+      <SectionMain>
+        <SectionTitleLineWithButton :icon="mdiChartTimelineVariant" title="Overview" main>
+          <BaseButton
+            href="https://github.com/justboil/admin-one-vue-tailwind"
+            target="_blank"
+            :icon="mdiGithub"
+            label="Star on GitHub"
+            color="contrast"
+            rounded-full
+            small
+          />
+        </SectionTitleLineWithButton>
+
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-6">
+          <CardBoxWidget
+            trend="12%"
+            trend-type="up"
+            color="text-emerald-500"
+            :icon="mdiAccountMultiple"
+            :number="512"
+            label="Clients"
+          />
+          <CardBoxWidget
+            trend="12%"
+            trend-type="down"
+            color="text-blue-500"
+            :icon="mdiCartOutline"
+            :number="7770"
+            prefix="$"
+            label="Sales"
+          />
+          <CardBoxWidget
+            trend="Overflow"
+            trend-type="alert"
+            color="text-red-500"
+            :icon="mdiChartTimelineVariant"
+            :number="256"
+            suffix="%"
+            label="Performance"
+          />
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div class="flex flex-col justify-between">
+            <CardBoxTransaction
+              v-for="(transaction, index) in transactionBarItems"
+              :key="index"
+              :amount="transaction.amount"
+              :date="transaction.date"
+              :business="transaction.business"
+              :type="transaction.type"
+              :name="transaction.name"
+              :account="transaction.account"
             />
-          </FormField>
-          <FormField :label="$t('Pass')" :help="$t('enterPass')" :error="$v.pass.$error ? $t('error_'+$v.pass.$errors[0].$validator, {min: 8}) : ''">
-            <FormControl
-              v-model="form.pass"
-              :icon="mdiAsterisk"
-              type="password"
-              name="password"
-              autocomplete="current-password"
-            />
-          </FormField>
-          <div class='justify-between items-center flex'>
-            <FormCheckRadio
-              v-model="form.remember"
-              name="remember"
-              :label="$t('Remember')"
-              :input-value="true"
-            />
-            <NuxtLink to="/forgot"> {{$t('ForgotPassword')}} </NuxtLink>
           </div>
-          <template #footer>
-            <BaseButtons>
-              <BaseButton :disabled='$v.$error' type="submit" color="info" :label="$t('enter')" />
-              <a href='/register'> <BaseButton :label="$t('Register')" color="info" outline > </BaseButton> </a>
-            </BaseButtons>
-          </template>
+          <div class="flex flex-col justify-between">
+            <CardBoxClient
+              v-for="client in clientBarItems"
+              :key="client.id"
+              :name="client.name"
+              :login="client.login"
+              :date="client.created"
+              :progress="client.progress"
+            />
+          </div>
+        </div>
+
+        <SectionBannerStarOnGitHub class="mt-6 mb-6" />
+
+        <SectionTitleLineWithButton :icon="mdiChartPie" title="Trends overview">
+          <BaseButton :icon="mdiReload" color="whiteDark" @click="fillChartData" />
+        </SectionTitleLineWithButton>
+
+        <CardBox class="mb-6">
+          <div v-if="chartData">
+            <line-chart :data="chartData" class="h-96" />
+          </div>
         </CardBox>
-      </SectionFullScreen>
+
+        <SectionTitleLineWithButton :icon="mdiAccountMultiple" title="Clients" />
+
+        <NotificationBar color="info" :icon="mdiMonitorCellphone">
+          <b>Responsive table.</b> Collapses on mobile
+        </NotificationBar>
+
+        <CardBox has-table>
+          <TableSampleClients />
+        </CardBox>
+      </SectionMain>
     </NuxtLayout>
   </div>
 </template>

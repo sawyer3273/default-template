@@ -4,6 +4,9 @@ import { ref } from 'vue'
 import menuAside from '@/configs/menuAside'
 import menuNavBar from '@/configs/menuNavBar'
 import { useDarkModeStore } from '@/stores/darkMode.js'
+import { useMainStore } from '@/stores/main'
+const mainStore = useMainStore()
+import { userService } from '~/utils/services/user.service'
 
 const layoutAsidePadding = 'xl:pl-60'
 
@@ -19,13 +22,17 @@ router.beforeEach(() => {
   isAsideLgActive.value = false
 })
 
-const menuClick = (event, item) => {
+const menuClick = async (event, item) => {
   if (item.isToggleLightDark) {
     darkModeStore.set()
   }
 
   if (item.isLogout) {
-    //
+    let data = await userService.logout()
+    if (data && data.success) {
+      mainStore.setUser()
+      router.push('/login');
+    }
   }
 }
 </script>

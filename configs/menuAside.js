@@ -15,7 +15,7 @@ import {
 
 export default [
   {
-    to: '/HomeView',
+    to: '/',
     icon: mdiMonitor,
     label: 'Dashboard'
   },
@@ -45,7 +45,7 @@ export default [
     icon: mdiAccountCircle
   },
   {
-    to: '/',
+    to: '/login',
     label: 'Login',
     icon: mdiLock
   },
