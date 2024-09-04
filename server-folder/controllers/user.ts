@@ -7,7 +7,7 @@ import { errorHandler } from '../middlewares/errorHandler';
 import prisma from "../../tools/prisma";
 import { encryptPassword, isPasswordMatch } from "../../utils/encryption";
 import { sendEmail } from '~/utils/email';
-import { body, validationResult } from 'express-validator';
+import { body, validationResult, query } from 'express-validator';
 import { getMessages } from "../lib/validation";
 import { afterSignupAuth } from '../middlewares/signupAuth';
 import { generateUserTokens } from '../lib/helpers';
@@ -16,6 +16,10 @@ import type { User } from '@prisma/client';
 const emailValid =  body('email').isEmail().withMessage('Not a valid e-mail address');
 const usernamelValid =  body('username').notEmpty().withMessage('Not a valid username');
 const passwordlValid = body('password').notEmpty().withMessage('Not a valid password');
+const tokenValidBody = body('token').notEmpty()
+const tokenValid = query('token').notEmpty()
+
+
 
 export async function register(req: Request, res: Response, _next: NextFunction) {
   try {
@@ -45,7 +49,7 @@ export async function register(req: Request, res: Response, _next: NextFunction)
       });
 
       
-      res.json({
+      return res.json({
         success: true,
         frontMessage: true,
         message: req.t("userCreated")
@@ -178,7 +182,7 @@ export const forgot = async (req: Request, res: Response, next: Function) => {
       }
       //@ts-ignore
       let generate = md5(THIRDTEEN_MINUTES)
-      await prisma.user.update({
+      let data = await prisma.user.update({
         where: { id: user.id },
         data: {
           forgotToken: generate,
@@ -187,17 +191,68 @@ export const forgot = async (req: Request, res: Response, next: Function) => {
       let pwResetLink = `${process.env.baseURL}/reset-password/${generate}`
       let result = await sendEmail(
         user.email,
-        `Follow this link to reset password ${pwResetLink}`,
-        "Восстановление пароля",
+        req.t("resetPass"),
+        `${req.t("followToReset")}${pwResetLink}`,
       )
-      console.log('result',result)
+      
       return res.status(200).json({
           success: true,
-          message: 'Recovery email sent'
+          frontMessage: true,
+          message: req.t("recoverySent")
       })
     } else {
       return res.json(createError.BadRequest("Email is Required"));
     }
+  } catch (error) {
+    return errorHandler(error, req, res)
+  }
+};
+
+export const checkForgotToken = async (req: any, res: Response, next: Function) => {
+  try {
+    let user = await prisma.user.findFirst({
+      where: {
+        forgotToken: {equals: req.query.token}
+      },
+    });
+    if (user) {
+      return res.status(200).json({
+        success: true,
+      })
+    } else {
+      throw createError.BadRequest("Wrong token");
+    }
+  } catch (error: any) {
+    //error.hideFrontMessage = true
+    return errorHandler(error, req, res)
+  }
+};
+
+export const updatePassword = async (req: any, res: Response, next: Function) => {
+  try {
+    const validationErrors = await getMessages(validationResult(req));
+    if (validationErrors) {
+      throw createError.BadRequest(validationErrors)
+    } 
+    const { token, password } = req.body;
+    let user = await prisma.user.findFirst({
+      where: {
+        forgotToken: token
+      },
+    });
+    if (!user) {
+      throw createError.BadRequest("User not Found")
+    }
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: await encryptPassword(password),
+        forgotToken: ''
+      },
+    });
+    return res.status(200).json({
+      success: true,
+    })
   } catch (error) {
     return errorHandler(error, req, res)
   }
@@ -241,6 +296,8 @@ export const routes: RouteConfig = {
     { method: 'post', path: '/logout', handler: [afterSignupAuth, logout] },
     { method: 'post', path: '/refreshToken', handler: refreshToken },
     { method: 'post', path: '/forgot', handler: forgot },
+    { method: 'get', path: '/checkForgotToken', handler: [tokenValid, checkForgotToken] },
+    { method: 'post', path: '/updatePassword', handler: [passwordlValid, tokenValidBody, updatePassword] },
     { method: 'get', path: '/', handler: getUser },
     { method: 'get', path: '/private', handler: [afterSignupAuth, privatF] },
 

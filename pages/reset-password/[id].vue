@@ -7,17 +7,18 @@ import { required, minLength, email} from '@vuelidate/validators'
 import { userService } from '~/utils/services/user.service'
 
 const router = useRouter()
+const route = useRoute()
+
+
 
 const form = reactive({
-  login: '',
   pass: '',
-  remember: true
 })
 const rules = computed(() => (
   {
-    login: {
-      required, email,
-      minLength: minLength(3),
+    pass: {
+      required,
+      minLength: minLength(8),
     },
   }
 ));
@@ -28,14 +29,23 @@ const submitForm = async () => {
   const result = $v.value.$validate();
   result.then(async (res) => {
     if(res) {
-      let user = await userService.forgot({email: form.login})
+      let resp = await userService.updatePassword({token: route.params.id, password: form.pass})
+      if (resp.success) {
+        router.push('/login');
+      }
     }
   }).catch((err) => {
     console.log(err);
   })
 };
 
-onMounted(() => {
+onMounted(async () => {
+  try {
+    let findToken = await userService.checkForgotToken(route.params.id)
+  } catch (err) {
+    router.push('/login');
+  }
+
 });
 </script>
 
@@ -44,12 +54,12 @@ onMounted(() => {
     <NuxtLayout>
       <SectionFullScreen v-slot="{ cardClass }" bg="purplePink">
         <CardBox :class="cardClass" is-form @submit.prevent="submitForm">
-          <FormField :label="$t('Login')" :help="$t('enterLogin')" :error="$v.login.$error ? $t('error_'+$v.login.$errors[0].$validator) : ''">
+          <FormField :label="$t('Pass')" :help="$t('enterPass')" :error="$v.pass.$error ? $t('error_'+$v.pass.$errors[0].$validator) : ''">
             <FormControl
-              v-model="form.login"
-              :icon="mdiAccount"
-              name="login"
-              autocomplete="username"
+              v-model="form.pass"
+              name="pass"
+              type="password"
+              :icon="mdiAsterisk"
             />
           </FormField>
           <template #footer>

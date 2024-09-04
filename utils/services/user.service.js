@@ -2,13 +2,17 @@ import { authHeader } from './auth-header';
 import { _ } from 'lodash'
 import { handleResponse } from './response';
 import {setLocalStorageWithExpiry} from '../common'
+import { useMainStore } from '@/stores/main'
 
 export const userService = {
     login,
     logout,
     register,
     getUser,
-    getPrivate
+    getPrivate,
+    forgot,
+    checkForgotToken,
+    updatePassword
 };
 
 async function login(user) {
@@ -37,8 +41,40 @@ async function logout() {
     };
     let response = await fetch(`/api/user/logout`, requestOptions)
     const parsedValue = await response.json()
-    console.log('datadatadata',parsedValue)
     return parsedValue
+}
+
+async function forgot(data) {
+    const requestOptions = {
+        method: 'POST',
+        headers: await authHeader(false),
+        body: JSON.stringify(data)
+    };
+    const mainStore = useMainStore()
+    mainStore.setLoader(true)
+    return fetch(`/api/user/forgot`, requestOptions).then(handleResponse);
+}
+
+async function updatePassword(data) {
+    const requestOptions = {
+        method: 'POST',
+        headers: await authHeader(false),
+        body: JSON.stringify(data)
+    };
+    const mainStore = useMainStore()
+    mainStore.setLoader(true)
+    return fetch(`/api/user/updatePassword`, requestOptions).then(handleResponse);
+}
+
+async function checkForgotToken(token) {
+    const requestOptions = {
+        method: 'GET',
+        headers: await authHeader(false),
+    };
+    let data = {
+        token
+    }
+    return fetch(`/api/user/checkForgotToken?` + new URLSearchParams(data), requestOptions).then(handleResponse)
 }
 
 
@@ -99,4 +135,3 @@ export function parseUserObject(user) {
     setLocalStorageWithExpiry('user', JSON.stringify(userData), 1000 * 60 * 5)
     return userData 
 }
-

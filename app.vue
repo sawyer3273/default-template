@@ -1,5 +1,8 @@
 <script setup>
 import  {PROJECT_NAME} from '~/constants.js'
+import { useMainStore } from '@/stores/main'
+const mainStore = useMainStore()
+
 useHead({
   titleTemplate: (titleChunk) => {
     const titleBase = PROJECT_NAME
@@ -11,6 +14,7 @@ useHead({
 
 <template>
   <div>
-      <NuxtPage />
+    <LoaderGlobal :show='mainStore.loader' />
+    <NuxtPage />
   </div>
 </template>

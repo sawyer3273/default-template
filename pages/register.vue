@@ -2,7 +2,6 @@
 import { reactive } from 'vue'
 import { NuxtLink } from '#components'
 import { mdiAccount, mdiAsterisk } from '@mdi/js'
-import axios from 'axios';
 import { useVuelidate } from '@vuelidate/core'
 import { required, minLength, email} from '@vuelidate/validators'
 import { useMainStore } from '@/stores/main'

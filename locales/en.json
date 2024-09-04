@@ -1,7 +1,11 @@
 {
     "userNotFound": "Incorrect login or password",
     "userAlreadyEixists": "User Already exists",
-    "userCreated" :"User Created"
+    "userCreated" :"User Created",
+    "resetPass": "Reset password",
+    "followToReset": "Follow this link to reset password ",
+    "recoverySent": "Recovery email sent",
+    "recoverySuccess": "Password changed"
 
 
 }

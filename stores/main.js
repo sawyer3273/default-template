@@ -12,6 +12,7 @@ export const useMainStore = defineStore('main', () => {
     username: '', 
     token: ''
   })
+  const loader = ref(false)
   const userName = ref('John Doe')
   const userEmail = ref('doe.doe.doe@example.com')
   
@@ -115,6 +116,11 @@ export const useMainStore = defineStore('main', () => {
   }
 
 
+  function setLoader(payload) {
+    loader.value = payload
+  }
+
+
 
 
   return {
@@ -125,6 +131,8 @@ export const useMainStore = defineStore('main', () => {
     isFieldFocusRegistered,
     clients,
     history,
-    setUser
+    loader,
+    setUser,
+    setLoader
   }
 })
