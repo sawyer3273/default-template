@@ -1,7 +1,7 @@
 import {getLocalStorageWithExpiry} from '../common'
 import {parseUserObject} from './user.service'
 
-export async function authHeader(needToken = true) {
+export async function authHeader(needToken = true, headers = {'Content-Type': 'application/json'}) {
     // return authorization header with jwt token
     let user
     user = JSON.parse(getLocalStorageWithExpiry('user'));
@@ -10,7 +10,7 @@ export async function authHeader(needToken = true) {
         if (!user || !user.token) {
             const requestOptions = {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: headers,
             };
             let newDataFetch = await fetch(`/api/user/refreshToken`, requestOptions)
             const newData = await newDataFetch.json();
@@ -19,8 +19,12 @@ export async function authHeader(needToken = true) {
         }
     }
     if (user && user.token) {
-        return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + user.token };
-    } else {
-        return {'Content-Type': 'application/json'};
-    }
+        headers['Authorization'] = 'Bearer ' + user.token
+    } 
+    return headers;
+}
+
+export async function authHeaderYandex(headers = {'Content-Type': 'application/json'}) {
+    headers['Authorization'] = 'OAuth ' + process.env.yandexToken
+    return headers;
 }

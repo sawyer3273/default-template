@@ -12,6 +12,7 @@ import {
 } from '@mdi/js'
 import * as chartConfig from '@/components/Charts/chart.config.js'
 import LineChart from '@/components/Charts/LineChart.vue'
+import { userService } from '~/utils/services/user.service'
 
 const chartData = ref(null)
 

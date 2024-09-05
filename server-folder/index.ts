@@ -5,6 +5,7 @@ import path from 'path';
 import {fileURLToPath} from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+import bodyParser from 'body-parser'
 
 import routes from './routes'
 import i18next from 'i18next'
@@ -41,7 +42,8 @@ function initializeApplication() {
    * Set up middlewares.
    */
   app.use(express.json())
-  app.use(express.urlencoded({ extended: true }))
+  app.use(bodyParser.json({limit: "50mb"}));
+  app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
   app.use(
     session({
       name: 'app',

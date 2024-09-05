@@ -9,7 +9,7 @@ export const userService = {
     logout,
     register,
     getUser,
-    getPrivate,
+    customRoute,
     forgot,
     checkForgotToken,
     updatePassword
@@ -105,20 +105,20 @@ async function getUser() {
     });
 }
 
-async function getPrivate() {
+async function customRoute(payload) {
+    var data = new FormData()
+    data.append('file', payload)
     const requestOptions = {
-        method: 'GET',
-        headers: await authHeader(),
+        method: 'POST',
+        headers: await authHeader(true, {}),
+        body: data
     };
-    let data = {
-    }
-    return fetch(`/api/user/private?` + new URLSearchParams(data), requestOptions).then(handleResponse).then(user => {
+    return fetch(`/api/user/customRoute`, requestOptions).then(handleResponse).then(user => {
         try {
             
         } catch (error) {
             console.log('error', error)
         }
-        
     });
 }
 

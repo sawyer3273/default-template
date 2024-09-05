@@ -11,7 +11,10 @@ import { body, validationResult, query } from 'express-validator';
 import { getMessages } from "../lib/validation";
 import { afterSignupAuth } from '../middlewares/signupAuth';
 import { generateUserTokens } from '../lib/helpers';
-import type { User } from '@prisma/client';
+import multer from 'multer'
+const storage = multer.memoryStorage()
+const upload = multer({ storage: storage })
+import { yandexService } from '~/utils/services/yandex.service'
 
 const emailValid =  body('email').isEmail().withMessage('Not a valid e-mail address');
 const usernamelValid =  body('username').notEmpty().withMessage('Not a valid username');
@@ -260,8 +263,6 @@ export const updatePassword = async (req: any, res: Response, next: Function) =>
 
 export const getUser = async (req: any, res: Response, next: Function) => {
   try {
-    console.log(req.fingerprint)
-    console.log(req.fingerprint.components.useragent)
       return res.status(200).json({
           success: true,
           message: 'Recovery email sent'
@@ -271,13 +272,23 @@ export const getUser = async (req: any, res: Response, next: Function) => {
   }
 };
 
-export const privatF = async (req: Request, res: Response, next: Function) => {
+//test route
+export const customRoute = async (req: Request, res: Response, next: Function) => {
   try {
-      return res.json({
-          success: true,
-          message: 'privatet'
-      })
+    const file = req.file
+    let folderName = 'test'
+    if (file) {
+      let link = await yandexService.getUploadLink(encodeURIComponent(`/${folderName}/${file.originalname}`))
+      if (link.href) {
+        let send = await yandexService.uploadFile(link.href, file)
+      }
+    }
+    return res.json({
+        success: true,
+        message: 'test'
+    })
   } catch (error) {
+    console.log('error',error)
     return errorHandler(error, req, res)
   }
 };
@@ -299,7 +310,7 @@ export const routes: RouteConfig = {
     { method: 'get', path: '/checkForgotToken', handler: [tokenValid, checkForgotToken] },
     { method: 'post', path: '/updatePassword', handler: [passwordlValid, tokenValidBody, updatePassword] },
     { method: 'get', path: '/', handler: getUser },
-    { method: 'get', path: '/private', handler: [afterSignupAuth, privatF] },
+    { method: 'post', path: '/customRoute', handler: [afterSignupAuth, upload.single('file'), customRoute] },
 
 
 
