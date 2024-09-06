@@ -29,6 +29,12 @@ export default defineNuxtConfig({
     '@/assets/css/main.css',
   ],
 
+  runtimeConfig: {
+    public: {
+      yandexClientId: process.env.yandexClientId,
+      yandexClientSecret: process.env.yandexClientSecret
+    }
+  },
 
   i18n: {
     strategy: 'no_prefix',

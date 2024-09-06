@@ -106,6 +106,59 @@ export const login = async (req: Request, res: Response, next: Function) => {
   }
 };
 
+export const loginYandex = async (req: Request, res: Response, next: Function) => {
+  try {
+    const Yatoken = req.body.token;
+    let yandexUser = await yandexService.getYandexUser(Yatoken)
+    let user;
+    if (yandexUser && yandexUser.login && yandexUser.default_email) {
+      user = await prisma.user.findFirst({
+        where: {
+          email: {equals: yandexUser.default_email}
+        },
+      });
+    } else {
+      throw createError(400, "Failed to get Yandex ID")
+    }
+    if (!user) {
+      let result = await prisma.user.create({
+        data: {
+          username: yandexUser.login,
+          email: yandexUser.default_email,
+          password: yandexUser.psuid,
+        },
+      });
+      console.log('result',result)
+      user = await prisma.user.findFirst({
+        where: {
+          email: {equals: yandexUser.default_email}
+        },
+      });
+    } 
+    //@ts-ignore
+    let token = await generateUserTokens(user, req, res)
+    res.json({
+      success: true,
+      user: {
+        //@ts-ignore
+        email: user.email, 
+        //@ts-ignore
+        isEmailVerified: user.isEmailVerified, 
+        //@ts-ignore
+        rate: user.rate, 
+        //@ts-ignore
+        role: user.role, 
+        //@ts-ignore
+        username: user.username, 
+        token
+      }
+    })
+    
+  } catch (error) {
+    return errorHandler(error, req, res)
+  }
+};
+
 
 export const logout = async (req: any, res: Response, next: Function) => {
   try {
@@ -304,6 +357,7 @@ export const routes: RouteConfig = {
   routes: [
     { method: 'post', path: '/register', handler: [emailValid, passwordlValid, usernamelValid, register] },
     { method: 'post', path: '/login', handler: login },
+    { method: 'post', path: '/loginYandex', handler: loginYandex },
     { method: 'post', path: '/logout', handler: [afterSignupAuth, logout] },
     { method: 'post', path: '/refreshToken', handler: refreshToken },
     { method: 'post', path: '/forgot', handler: forgot },

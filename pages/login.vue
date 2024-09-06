@@ -10,6 +10,17 @@ import { useMainStore } from '@/stores/main'
 
 const router = useRouter()
 
+useHead({
+  script: [{ src: "https://yastatic.net/s3/passport-sdk/autofill/v1/sdk-suggest-with-polyfills-latest.js" }],
+});
+
+const config = useRuntimeConfig()
+
+
+
+
+
+
 const form = reactive({
   login: '',
   pass: '',
@@ -57,7 +68,6 @@ const submitForm = async () => {
     if(res) {
       let data = await userService.login({email: form.login, password: form.pass})
       if (data && data.success) {
-        mainStore.setUser(data.user)
         router.push('/');
       }
     }
@@ -67,6 +77,37 @@ const submitForm = async () => {
 };
 
 onMounted(() => {
+
+YaAuthSuggest.init(
+      {
+         client_id: config.public.yandexClientId,
+         response_type: 'token',
+         redirect_uri: 'https://rx90d8n0-8000.euw.devtunnels.ms/yandex'
+      },
+      'https://rx90d8n0-8000.euw.devtunnels.ms',
+      {
+      view: "button",
+      parentId: "buttonContainerId",
+      buttonSize: 'm',
+      buttonView: 'main',
+      buttonTheme: 'light',
+      buttonBorderRadius: "0",
+      buttonIcon: 'ya',
+    }
+   )
+   .then(({
+      handler
+   }) => handler())
+   .then(async payload => {
+      mainStore.setLoader(true)
+      let data = await userService.loginYandex({token: payload.access_token})
+      if (data && data.success) {
+        router.push('/');
+      }
+   })
+   .catch(error => console.log('Обработка ошибки', error));
+
+
 });
 </script>
 
@@ -106,6 +147,7 @@ onMounted(() => {
               <BaseButton :disabled='$v.$error' type="submit" color="info" :label="$t('enter')" />
               <a href='/register'> <BaseButton :label="$t('Register')" color="info" outline > </BaseButton> </a>
             </BaseButtons>
+            <div class='mt-2' id='buttonContainerId'></div>
           </template>
         </CardBox>
       </SectionFullScreen>

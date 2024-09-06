@@ -39,9 +39,10 @@ const componentClass = computed(() => {
 
   return base
 })
-
+let mainStore = useMainStore()
+let userLabel = mainStore ? `${mainStore.user.username} (${mainStore.user.email})` : 'Guest'
 const itemLabel = computed(() =>
-  props.item.isCurrentUser ? useMainStore().userName : props.item.label
+  props.item.isCurrentUser ? userLabel : props.item.label
 )
 
 const isDropdownActive = ref(false)

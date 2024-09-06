@@ -6,6 +6,7 @@ import { useMainStore } from '@/stores/main'
 
 export const userService = {
     login,
+    loginYandex,
     logout,
     register,
     getUser,
@@ -33,7 +34,25 @@ async function login(user) {
         });
 }
 
+async function loginYandex(payload) {
+    const requestOptions = {
+        method: 'POST',
+        headers: await authHeader(false),
+        body: JSON.stringify(payload)
+    };
+    return fetch(`/api/user/loginYandex`, requestOptions)
+        .then(handleResponse)
+        .then(data => {
+            let user = data.user
+            if (data.success && data.user.token) {
+                user = parseUserObject(data.user);
+            }
+            return data;
+        });
+}
 
+
+loginYandex
 async function logout() {
     const requestOptions = {
         method: 'POST',
@@ -132,6 +151,8 @@ export function parseUserObject(user) {
         role: user.role,
         token: user.token,
     }
+    const mainStore = useMainStore()
+    mainStore.setUser(userData)
     setLocalStorageWithExpiry('user', JSON.stringify(userData), 1000 * 60 * 5)
     return userData 
 }

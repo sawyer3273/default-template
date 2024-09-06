@@ -6,8 +6,8 @@ import { mdiAccount, mdiMail, mdiAsterisk, mdiFormTextboxPassword, mdiGithub } f
 const mainStore = useMainStore()
 
 const profileForm = reactive({
-  name: mainStore.userName,
-  email: mainStore.userEmail
+  name: mainStore.user.username,
+  email: mainStore.user.email
 })
 
 const passwordForm = reactive({
