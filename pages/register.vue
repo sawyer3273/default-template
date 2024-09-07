@@ -41,7 +41,7 @@ const submitForm = async () => {
     if(res) {
       let user = await userService.register({username: form.userName, email: form.login, password: form.pass})
       if (user && user.success) {
-        router.push('/');
+        router.push('/login');
       }
     }
   }).catch((err) => {

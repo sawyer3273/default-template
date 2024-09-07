@@ -52,7 +52,6 @@ async function loginYandex(payload) {
 }
 
 
-loginYandex
 async function logout() {
     const requestOptions = {
         method: 'POST',
@@ -60,6 +59,8 @@ async function logout() {
     };
     let response = await fetch(`/api/user/logout`, requestOptions)
     const parsedValue = await response.json()
+    const mainStore = useMainStore()
+    mainStore.setUser()
     return parsedValue
 }
 
@@ -143,14 +144,14 @@ async function customRoute(payload) {
 
 
 export function parseUserObject(user) {
-    let userData = {
+    let userData = user ? {
         id: user.id,
         email: user.email,
         username: user.username,
         rate: user.rate,
         role: user.role,
         token: user.token,
-    }
+    } : {}
     const mainStore = useMainStore()
     mainStore.setUser(userData)
     setLocalStorageWithExpiry('user', JSON.stringify(userData), 1000 * 60 * 5)

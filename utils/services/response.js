@@ -18,8 +18,9 @@ export function handleResponse(response) {
             }
             if (response.status === 401) {
                 // auto logout if 401 response returned from api
-               // logout(); TODO
-               // location.reload(true);
+                const mainStore = useMainStore()
+                mainStore.setUser()
+                location.reload(true);
             }
             
             let error = (data && data.message) || response.statusText;

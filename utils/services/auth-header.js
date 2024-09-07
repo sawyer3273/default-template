@@ -1,5 +1,6 @@
 import {getLocalStorageWithExpiry} from '../common'
 import {parseUserObject} from './user.service'
+import { handleResponse } from './response';
 
 export async function authHeader(needToken = true, headers = {'Content-Type': 'application/json'}) {
     // return authorization header with jwt token
@@ -12,7 +13,7 @@ export async function authHeader(needToken = true, headers = {'Content-Type': 'a
                 method: 'POST',
                 headers: headers,
             };
-            let newDataFetch = await fetch(`/api/user/refreshToken`, requestOptions)
+            let newDataFetch = await fetch(`/api/user/refreshToken`, requestOptions).then(handleResponse)
             const newData = await newDataFetch.json();
             parseUserObject(newData.user)
             user = newData.user
