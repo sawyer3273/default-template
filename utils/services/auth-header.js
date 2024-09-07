@@ -13,8 +13,7 @@ export async function authHeader(needToken = true, headers = {'Content-Type': 'a
                 method: 'POST',
                 headers: headers,
             };
-            let newDataFetch = await fetch(`/api/user/refreshToken`, requestOptions).then(handleResponse)
-            const newData = await newDataFetch.json();
+            let newData = await fetch(`/api/user/refreshToken`, requestOptions).then(handleResponse)
             parseUserObject(newData.user)
             user = newData.user
         }

@@ -157,7 +157,12 @@ export const saveLinks2 = async (req: Request, res: Response, next: Function) =>
                             person_id: newData.id,
                         }
                     });
-                  }  
+                  }  else {
+                    let newDataCast = await prisma.cast.create({data:{
+                      person_id: actorObj.id,
+                      movie_id: movie_id,
+                    }});
+                  }
                 }
           
           
@@ -166,7 +171,6 @@ export const saveLinks2 = async (req: Request, res: Response, next: Function) =>
                   let directorObj = await prisma.person.findFirst({
                     where: {
                           name: direc,
-                          role: 'director',
                       }
                   });
                   if (!directorObj) {
@@ -187,7 +191,12 @@ export const saveLinks2 = async (req: Request, res: Response, next: Function) =>
                             person_id: newDataDirec.id,
                         }
                     });
-                  }  
+                  }   else {
+                    let newDataCast = await prisma.cast.create({data:{
+                      person_id: directorObj.id,
+                      movie_id: movie_id,
+                    }});
+                  }
                 }
           
           
