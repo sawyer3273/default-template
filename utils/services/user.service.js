@@ -52,7 +52,6 @@ async function loginYandex(payload) {
 }
 
 
-loginYandex
 async function logout() {
     const requestOptions = {
         method: 'POST',
@@ -125,14 +124,11 @@ async function getUser() {
 }
 
 async function customRoute(payload) {
-    var data = new FormData()
-    data.append('file', payload)
     const requestOptions = {
         method: 'POST',
         headers: await authHeader(true, {}),
-        body: data
     };
-    return fetch(`/api/user/customRoute`, requestOptions).then(handleResponse).then(user => {
+    return fetch(`/api/scrapper/saveLinks2`, requestOptions).then(handleResponse).then(user => {
         try {
             
         } catch (error) {

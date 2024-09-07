@@ -48,3 +48,62 @@ model userAuthTokens {
   expiresIn       BigInt
   createdAt       DateTime  @default(now())
 }
+
+
+
+
+
+
+
+model Movie {
+  id              Int       @id @default(autoincrement())
+  title           String    
+  origin          String
+  director        String
+  year            Int
+  country         String?
+
+  cast            Cast[]
+  library         Library[]
+}
+
+model Person {
+  id              Int       @id @default(autoincrement())
+  name            String   
+  role            String
+
+  cast            Cast[]
+  library         Library[]
+}
+
+model Cast {
+  id              Int       @id @default(autoincrement())
+  person_id       Int   
+  movie_id        Int
+
+  person          Person     @relation(fields: [person_id], references: [id])
+  movie           Movie      @relation(fields: [movie_id], references: [id])
+}
+
+model Library {
+  id              Int       @id @default(autoincrement())
+  word            String   
+  type            String 
+  translation     String?
+  additionalData  String?
+  person_id       Int?
+  movie_id        Int?
+
+  movie           Movie?       @relation(fields: [movie_id], references: [id])
+  person          Person?      @relation(fields: [person_id], references: [id])
+}
+
+
+model Link {
+  id              Int       @id @default(autoincrement())
+  url             String   
+}
+
+
+
+

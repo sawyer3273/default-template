@@ -28,9 +28,11 @@ onMounted(() => {
 
 const mainStore = useMainStore()
 
+const scrap = async () => {
+  let data = await userService.customRoute()
+  console.log('data',data)
+}
 
-
-    console.log('index')
 const clientBarItems = computed(() => mainStore.clients.slice(0, 4))
 const transactionBarItems = computed(() => mainStore.history)
 </script>
@@ -39,6 +41,7 @@ const transactionBarItems = computed(() => mainStore.history)
   <div>
     <NuxtLayout name="authenticated">
       <SectionMain>
+        <div @click='scrap'>Scrap</div>
         <SectionTitleLineWithButton :icon="mdiChartTimelineVariant" title="Overview" main>
           <BaseButton
             href="https://github.com/justboil/admin-one-vue-tailwind"
