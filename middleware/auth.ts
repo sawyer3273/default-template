@@ -1,8 +1,13 @@
-import { useMainStore } from '@/stores/main'
-const router = useRouter()
+import Cookie from 'cookie'
+
 export default defineNuxtRouteMiddleware((to, from) => {
-    const mainStore = useMainStore()
-    if (!mainStore.user.token && !import.meta.server) {
-        return navigateTo('/login');
+    if (import.meta.server) {
+        let headers = useRequestHeaders(['cookie'])
+        var cookieAll = headers.cookie ? Cookie.parse(headers.cookie) : {}
+        var cookies = cookieAll.main ? JSON.parse(cookieAll.main) : {}
+    
+        if (!cookies.user.token) {
+            return navigateTo('/login');
+        }
     }
 })

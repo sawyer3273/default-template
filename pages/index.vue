@@ -13,7 +13,9 @@ import {
 import * as chartConfig from '@/components/Charts/chart.config.js'
 import LineChart from '@/components/Charts/LineChart.vue'
 import { userService } from '~/utils/services/user.service'
-
+definePageMeta({
+  middleware: 'auth' 
+})
 const chartData = ref(null)
 
 const fillChartData = () => {
@@ -26,10 +28,9 @@ onMounted(() => {
 
 const mainStore = useMainStore()
 
-definePageMeta({
-  middleware: 'auth' 
-})
 
+
+    console.log('index')
 const clientBarItems = computed(() => mainStore.clients.slice(0, 4))
 const transactionBarItems = computed(() => mainStore.history)
 </script>
