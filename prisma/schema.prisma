@@ -32,6 +32,7 @@ model User {
   updatedAt       DateTime  @updatedAt
   deletedAt       DateTime?
   forgotToken     String?
+  avatar          String?
   rate    Int @default(0)
   userTokens      userAuthTokens[]
 }
@@ -72,6 +73,7 @@ model Person {
   id              Int       @id @default(autoincrement())
   name            String   
   role            String
+  avatar          String?
 
   cast            Cast[]
   library         Library[]

@@ -9,8 +9,6 @@ export const SECRET_KEY: Secret = `${process.env.ACCESS_TOKEN_SECRET}`;
 
 
 export const afterSignupAuth = async (req: any, res: Response, next: NextFunction) => {
-  console.log('req.headers',req.headers.authorization)
-  console.log('req.headers.cookie',req.headers.cookie)
   if (req.headers.authorization) {
     const authHeader = req.headers.authorization; //req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
@@ -23,7 +21,6 @@ export const afterSignupAuth = async (req: any, res: Response, next: NextFunctio
             type: ERROR_EXPIRED,
         })
       } else {
-        console.log('decode',decode)
         let now = new Date().getTime() / 1000
         let left = decode.exp - now 
         if (left < 5) {
@@ -66,7 +63,6 @@ export const checkAuthorization = async (user: UserDataType, req: any) => {
           accessToken: user.token
       }
   })
-  console.log('ttokentokentokenoken', token)
    if (!token) {
       return false
    } else {
@@ -74,51 +70,30 @@ export const checkAuthorization = async (user: UserDataType, req: any) => {
    }
 }
 
-const checkRefresh = async (req: any, res: any, token: string) => {
-    var cookie = req.headers.cookie ? Cookie.parse(req.headers.cookie) : {}
-    let success = true
-    if (!cookie.refreshToken) {
-      
-      success = false
+export const isAdmin = async (req: any, res: Response, next: NextFunction) => {
+  if (!res.locals.auth.userEmail) {
+    return res.status(400).json({
+      success: false,
+      message: 'Admin check, email sent',
+    })
+  }
+  let user = await prisma.user.findFirst({
+    where: {
+        id: res.locals.auth.id,
+        email: res.locals.auth.userEmail
     }
-    console.log('cookie',cookie.refreshToken)
-    console.log('req.fingerprint.hash,req.fingerprint.hash',req.fingerprint.hash)
-    let tokenInDb = await prisma.userAuthTokens.findFirst({
-      where: {
-          fingerprint: req.fingerprint.hash,
-          refreshToken: cookie.refreshToken
-      }})
-
-    if (tokenInDb && tokenInDb.fingerprint == req.fingerprint.hash) {
-      let user = await prisma.user.findFirst({
-        where: {
-          id: {equals: tokenInDb.user_id}
-        },
-      });
-      if (!user) {
-        success = false
-      } else {
-        let token = await generateUserTokens(user, req, res)
-        return token
-      }
-      
-    } else {
-      success = false
-    }
-    /*
-
-    await prisma.userAuthTokens.deleteMany({
-          where: { accessToken: token }
-        });
-
-        */
-
-    if (!success) {
-      await prisma.userAuthTokens.deleteMany({
-        where: { accessToken: token }
-      });
-      return false
-    } else {
-      return true
-    }
+  })
+  if (!user) {
+    return res.status(400).json({
+      success: false,
+      message: 'Admin check, user not found',
+    })
+  }
+  if (user.role !== 'ADMIN') {
+    return res.status(400).json({
+      success: false,
+      message: 'Forbidden',
+    })
+  }
+  next()
 }

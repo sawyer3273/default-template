@@ -9,13 +9,23 @@ import {
   mdiViewList,
   mdiTelevisionGuide,
   mdiResponsive,
-  mdiPalette,
+  mdiAccountStar,
   mdiReact
 } from '@mdi/js'
 
 export default [
   {
     to: '/',
+    icon: mdiMonitor,
+    label: 'Админка'
+  },
+  {
+    to: '/actors',
+    icon: mdiAccountStar,
+    label: 'Актеры'
+  },
+  {
+    to: '/Dashboard',
     icon: mdiMonitor,
     label: 'Dashboard'
   },

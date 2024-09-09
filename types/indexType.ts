@@ -8,9 +8,10 @@ type UserDataType = {
 };
 
 type RoleType = "ADMIN" | "USER" | "SUBUSER" | "MASTER"
-
+type DataModels = "user" | "person" | "movie"
 
 export type {
   UserDataType,
   RoleType, 
+  DataModels
 };

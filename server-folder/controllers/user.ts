@@ -350,8 +350,6 @@ export const customRoute = async (req: Request, res: Response, next: Function) =
 
 
 
-
-
 // Mounted in routes.ts
 export const routes: RouteConfig = {
   routes: [

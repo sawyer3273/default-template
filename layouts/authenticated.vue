@@ -9,7 +9,7 @@ const mainStore = useMainStore()
 import { userService } from '~/utils/services/user.service'
 
 const layoutAsidePadding = 'xl:pl-60'
-
+const config = useRuntimeConfig()
 const darkModeStore = useDarkModeStore()
 
 const router = useRouter()
@@ -60,9 +60,9 @@ const menuClick = async (event, item) => {
         <NavBarItemPlain display="hidden lg:flex xl:hidden" @click.prevent="isAsideLgActive = true">
           <BaseIcon :path="mdiMenu" size="24" />
         </NavBarItemPlain>
-        <NavBarItemPlain use-margin>
+       <!-- <NavBarItemPlain use-margin>
           <FormControl placeholder="Search (ctrl+k)" ctrl-k-focus transparent borderless />
-        </NavBarItemPlain>
+        </NavBarItemPlain>-->
       </NavBar>
       <AsideMenu
         :is-aside-mobile-expanded="isAsideMobileExpanded"
@@ -73,10 +73,7 @@ const menuClick = async (event, item) => {
       />
       <slot />
       <FooterBar>
-        Get more with
-        <a href="https://tailwind-vue.justboil.me/" target="_blank" class="text-blue-600"
-          >Premium version</a
-        >
+        {{ config.public.projectName }}
       </FooterBar>
     </div>
   </div>
