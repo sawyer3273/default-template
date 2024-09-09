@@ -20,51 +20,58 @@ export const saveLinks2 = async (req: Request, res: Response, next: Function) =>
     ]
 
     let total = 0
-          
-    for (let i = 0; i < origins.length; i++) {
-        let origin = origins[i]
+    let i = 753
+    while (i < 11111) {
+        i++
+        console.log('iiiii', i)
+        await sleep(2000);
+        let origin =  `https://hdrezka0ddqyq.org/films/best/page/${i}/`
+    //for (let i = 0; i < origins.length; i++) {
+        //let origin = origins[i]
         const config = {
           baseSiteUrl: origin,
           startUrl: origin,
           concurrency: 10,//Maximum concurrent jobs. More than 10 is not recommended.Default is 3.
           maxRetries: 3,//The scraper will try to repeat a failed request few times(excluding 404). Default is 5.       
-          logPath: './logs/'//Highly recommended: Creates a friendly JSON for each operation object, with all the relevant data. 
+          logPath: './logs/',//Highly recommended: Creates a friendly JSON for each operation object, with all the relevant data. 
+          // proxy: 'http://fr5VrVwg:QjhN819A@45.147.12.122:62500'
         }
         const scraper = new Scraper(config);
         const root = new Root();
         const data = new CollectContent('.b-content__inline_item-link', { name: 'data', contentType:'html' });
 
         root.addOperation(data);
+
         await scraper.scrape(root);
         const links = data.getData();
   
       //  console.log('links', links)
         
         for (let j = 0; j < links.length; j++) {
-          console.log('jjjjjj', j)
             let name = links[j].split('">')[1].split('</a> <di')[0]
             let link = links[j].split('href="')[1].split('">')[0]
             let label = links[j].split('</a> <div>')[1].split('</div>')[0]
             let year = label.split(',')[0]
 
             let country = label.split(', ')[1].split(',')[0]
+            let type = label.split(',')[2]
             
-            console.log('one', name, link, label, year)
-            
-            if (!label.includes('Документальные') && !label.includes('Театр') && !label.includes('Концерт')) {
+           // console.log('one', name, link, label, year)
+            if (!label.includes('Документальные') && !label.includes('Театр') && !label.includes('Концерт') && country == 'США') {
               let movieObj2 = await prisma.movie.findFirst({
                 where: {
                       title: name,
                       year: parseInt(year),
                   }
               });
-  console.log('try find movie', {
-    title: name,
-    year: parseInt(year),
-})
+
+
+
+
               if (!movieObj2) {
 
-
+                console.log('sleep')
+                await sleep(2000);
                 const config = {
                   baseSiteUrl: link,
                   startUrl: link,
@@ -86,10 +93,10 @@ export const saveLinks2 = async (req: Request, res: Response, next: Function) =>
                 const origins = origin.getData();
                 const actors = actor.getData();
           
-                console.log('movies', name)
-                console.log('origins', origins)
-                console.log('actors', actors)
-                console.log('year', year)
+              //  console.log('movies', name)
+             //   console.log('origins', origins)
+             //   console.log('actors', actors)
+             //   console.log('year', year)
 
 
 
@@ -103,12 +110,14 @@ export const saveLinks2 = async (req: Request, res: Response, next: Function) =>
                     }
                 });
                 
-                if (!movieObj) {
+
+                if (!movieObj && actors[0]) {
                   let newData = await prisma.movie.create({ data:{
                     title: name,
                     origin: origins[0] ? origins[0]: name,
                     director: actors[0],
                     year: parseInt(year),
+                    type: type,
                     country
                   }});
                   console.log('newMovie', newData)
@@ -128,7 +137,7 @@ export const saveLinks2 = async (req: Request, res: Response, next: Function) =>
           
           
           
-                for (let i = 1; i < actors.length; i++) {
+                for (let i = 1; i < (actors.length > 7 ? 7 : actors.length); i++) {
                   let one = actors[i]
                   if (one.includes(',')) {
                     one = actors[i].split(',')[0]
@@ -204,15 +213,24 @@ export const saveLinks2 = async (req: Request, res: Response, next: Function) =>
 
 
 
+              } else {
+                console.log('movieObj2.id',name, type)
+                await prisma.movie.update({
+                  where: {
+                    id: movieObj2.id,
+                }, 
+                data: {
+                  type: type
+                }
+                });
+                
               }
             } else {
-              console.log('this is doc', name)
             }
             
+        
         }
         
-        console.log('sleep')
-        await sleep(2000);
   }
 
   console.log('finish', total)

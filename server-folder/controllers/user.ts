@@ -81,7 +81,7 @@ export const login = async (req: Request, res: Response, next: Function) => {
       throw createError(400, "Email is Required")
     }
     if (!user) {
-      throw createError(401, req.t("userNotFound"))
+      throw createError(400, req.t("userNotFound"))
     } else {
       const match = await isPasswordMatch(password, user.password);
       if (!match) {

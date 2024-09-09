@@ -62,6 +62,7 @@ model Movie {
   director        String
   year            Int
   country         String?
+  type            String?
 
   cast            Cast[]
   library         Library[]
