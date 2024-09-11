@@ -9,9 +9,12 @@ type UserDataType = {
 
 type RoleType = "ADMIN" | "USER" | "SUBUSER" | "MASTER"
 type DataModels = "user" | "person" | "movie"
+type DataFunctions = "getActors" 
+
 
 export type {
   UserDataType,
   RoleType, 
-  DataModels
+  DataModels,
+  DataFunctions
 };

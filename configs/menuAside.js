@@ -10,7 +10,7 @@ import {
   mdiTelevisionGuide,
   mdiResponsive,
   mdiAccountStar,
-  mdiReact
+  mdiLightbulbOn
 } from '@mdi/js'
 
 export default [
@@ -23,6 +23,11 @@ export default [
     to: '/actors',
     icon: mdiAccountStar,
     label: 'Актеры'
+  },
+  {
+    to: '/intuition',
+    icon: mdiLightbulbOn,
+    label: 'КиноИнтуиция'
   },
   {
     to: '/Dashboard',

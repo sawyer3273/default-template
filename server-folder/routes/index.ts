@@ -3,6 +3,7 @@ import express from 'express'
 import userRoutes from '../controllers/user'
 import scrapperRoutes from '../controllers/scrapper'
 import adminRoutes from '../controllers/admin'
+import dataRoutes from '../controllers/data'
 import { errorHandler as defaultErrorHandler, PageNotFoundHandler } from '../middlewares/errorHandler'
 import { createResource } from '../routes/resourceHelper'
 
@@ -11,6 +12,7 @@ export default (app: express.Application) => {
   router.use('/user', createResource(userRoutes))
   router.use('/scrapper', createResource(scrapperRoutes))
   router.use('/admin', createResource(adminRoutes))
+  router.use('/data', createResource(dataRoutes))
 
   // Mount with version
   router.use(PageNotFoundHandler)

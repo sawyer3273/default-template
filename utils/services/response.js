@@ -5,7 +5,7 @@ const toast = useToast();
 
 
 export function handleResponse(response) {
-    return response.text().then(text => {console.log('tex', text)
+    return response.text().then(text => {
         const mainStore = useMainStore()
         mainStore.setLoader(false)
         const data = text && JSON.parse(text);

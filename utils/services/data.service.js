@@ -2,18 +2,17 @@ import { authHeader } from './auth-header';
 import { handleResponse } from './response';
 import { useMainStore } from '@/stores/main'
 
-export const adminService = {
-    deleteActor
+export const dataService = {
+    getActors,
 };
 
-async function deleteActor(payload) {
+async function getActors(payload) {
     const requestOptions = {
-        method: 'DELETE',
-        headers: await authHeader(false),
-        body: JSON.stringify(payload)
+        method: 'Get',
+        headers: await authHeader(),
     };
     const mainStore = useMainStore()
-    return fetch(`/api/admin/actors`, requestOptions)
+    return fetch(`/api/data/actors?` + new URLSearchParams(payload), requestOptions)
         .then(handleResponse)
         .then(resp => {
             mainStore.setActors(resp)

@@ -22,91 +22,103 @@ enum Role {
 }
 
 model User {
-  id              Int       @id @default(autoincrement())
-  email           String    @unique
-  username        String?   @unique
+  id              Int              @id @default(autoincrement())
+  email           String           @unique
+  username        String?          @unique
   password        String
-  role            Role      @default(USER)
-  isEmailVerified Boolean   @default(false)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  role            Role             @default(USER)
+  isEmailVerified Boolean          @default(false)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
   deletedAt       DateTime?
   forgotToken     String?
   avatar          String?
-  rate    Int @default(0)
+  rate            Int              @default(0)
   userTokens      userAuthTokens[]
+  IntuitionPack   IntuitionPack[]
 }
 
 model userAuthTokens {
-  id              Int       @id @default(autoincrement())
-  user_id         Int
-  user            User      @relation(fields: [user_id], references: [id])
-  refreshToken    String?
-  accessToken     String?
-  ua              String?
-  fingerprint     String?
-  ip              String?
-  expiresIn       BigInt
-  createdAt       DateTime  @default(now())
+  id           Int      @id @default(autoincrement())
+  user_id      Int
+  user         User     @relation(fields: [user_id], references: [id])
+  refreshToken String?
+  accessToken  String?
+  ua           String?
+  fingerprint  String?
+  ip           String?
+  expiresIn    BigInt
+  createdAt    DateTime @default(now())
 }
 
-
-
-
-
-
-
 model Movie {
-  id              Int       @id @default(autoincrement())
-  title           String    
-  origin          String
-  director        String
-  year            Int
-  country         String?
-  type            String?
+  id       Int     @id @default(autoincrement())
+  title    String
+  origin   String
+  director String
+  year     Int
+  country  String?
+  type     String?
 
-  cast            Cast[]
-  library         Library[]
+  cast    Cast[]
+  library Library[]
 }
 
 model Person {
-  id              Int       @id @default(autoincrement())
-  name            String   
-  role            String
-  avatar          String?
+  id     Int     @id @default(autoincrement())
+  name   String
+  role   String
+  avatar String?
 
-  cast            Cast[]
-  library         Library[]
+  cast                 Cast[]
+  library              Library[]
+  IntuitionPackContent IntuitionPackContent[]
 }
 
 model Cast {
-  id              Int       @id @default(autoincrement())
-  person_id       Int   
-  movie_id        Int
+  id        Int @id @default(autoincrement())
+  person_id Int
+  movie_id  Int
 
-  person          Person     @relation(fields: [person_id], references: [id])
-  movie           Movie      @relation(fields: [movie_id], references: [id])
+  person Person @relation(fields: [person_id], references: [id])
+  movie  Movie  @relation(fields: [movie_id], references: [id])
 }
 
 model Library {
-  id              Int       @id @default(autoincrement())
-  word            String   
-  type            String 
-  translation     String?
-  additionalData  String?
-  person_id       Int?
-  movie_id        Int?
+  id             Int     @id @default(autoincrement())
+  word           String
+  type           String
+  translation    String?
+  additionalData String?
+  person_id      Int?
+  movie_id       Int?
 
-  movie           Movie?       @relation(fields: [movie_id], references: [id])
-  person          Person?      @relation(fields: [person_id], references: [id])
+  movie  Movie?  @relation(fields: [movie_id], references: [id])
+  person Person? @relation(fields: [person_id], references: [id])
 }
-
 
 model Link {
-  id              Int       @id @default(autoincrement())
-  url             String   
+  id  Int    @id @default(autoincrement())
+  url String
 }
 
+model IntuitionPack {
+  id   Int     @id @default(autoincrement())
+  name String
+  logo String?
 
+  user_id              Int
+  user                 User                   @relation(fields: [user_id], references: [id])
+  createdAt            DateTime               @default(now())
+  IntuitionPackContent IntuitionPackContent[]
+}
 
+model IntuitionPackContent {
+  id     Int     @id @default(autoincrement())
+  avatar String?
 
+  actror_id Int
+  actror    Person        @relation(fields: [actror_id], references: [id])
+  pack_id   Int
+  pack      IntuitionPack @relation(fields: [pack_id], references: [id])
+}

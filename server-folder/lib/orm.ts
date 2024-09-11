@@ -1,6 +1,20 @@
 import prisma from "~/tools/prisma";
 import type { DataModels } from "~/types/indexType";
 
+export const where = (cond: Object) => {
+    let result = {}
+/*
+    Object.keys(cond).map((key) => {
+        let one = cond[key]
+        if ()
+        result[key] = 
+    }) 
+    email: {
+        contains: 'prisma.io',
+      },
+      */
+}
+
 export const findMany = (req: any, model: DataModels, where: any = {}) => {
     const size: string | null = <string>req.query.size || req.body.size || null
     const page: string | null = <string>req.query.page || req.body.page || null

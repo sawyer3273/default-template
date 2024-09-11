@@ -19,31 +19,21 @@ import { findMany, getCount } from '../lib/orm';
 
 
 
-export async function deleteActor(req: Request, res: Response, _next: NextFunction) {
-  try {
-    
-    let dataCast = await prisma.cast.deleteMany({
-      where: { person_id: req.body.id }
-    });
-    let data = await prisma.person.delete({
-      where: { id: req.body.id }
-    });
 
-    if (req.body.page) {
-      console.log('req.body,',req.body)
-      let cond = {}
-      let actors = await findMany(req, 'person', cond)
-      let count = await getCount('person', cond)
-      return res.json({
-        success: true,
-        data: actors,
-        total: count
-      });
-    } else {
-      return res.json({
-        success: true,
-      });
+export async function getActors(req: Request, res: Response, _next: NextFunction) {
+  try {
+    let cond: any = {}
+    if (req.query.key) {
+      cond.name = { contains: req.query.key, mode: 'insensitive',}
     }
+    let actors = await findMany(req, 'person', cond)
+    let count = await getCount('person', cond)
+    
+    return res.json({
+      success: true,
+      data: actors,
+      total: count
+    });
     
   } catch (err) {
     console.log('err',err)
@@ -54,18 +44,10 @@ export async function deleteActor(req: Request, res: Response, _next: NextFuncti
 
 
 
-
-
-
-
-
-
-
-
 // Mounted in routes.ts
 export const routes: RouteConfig = {
   routes: [
-    { method: 'delete', path: '/actors', handler: [afterSignupAuth, isAdmin, deleteActor] },
+    { method: 'get', path: '/actors', handler: [afterSignupAuth, isAdmin, getActors] },
 
 
 
