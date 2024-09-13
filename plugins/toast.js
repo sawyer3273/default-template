@@ -1,6 +1,6 @@
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
-import bootstrap from 'bootstrap/dist/js/bootstrap.bundle'
+
 export default defineNuxtPlugin(nuxtApp => {
     nuxtApp.vueApp.use(Toast, {
         transition: "Vue-Toastification__bounce",
@@ -19,5 +19,4 @@ export default defineNuxtPlugin(nuxtApp => {
         icon: true,
         rtl: false,
     });
-    nuxtApp.provide('bootstrap', bootstrap)
   })
