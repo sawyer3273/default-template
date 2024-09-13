@@ -6,7 +6,6 @@ import {
   mdiUploadCircle, mdiContentSave
 } from '@mdi/js'
 import { adminService } from '~/utils/services/admin.service'
-import { yandexService } from '~/utils/services/yandex.service'
 
 const mainStore = useMainStore()
 const componentStore = useComponentStore()
@@ -18,13 +17,17 @@ const props = defineProps({
   width: {
     type: String,
     default: '166'
+  },
+  showbtn: {
+    type: Boolean,
+    default: true
   }
 })
 useHead({
   script: [{ src: "https://unpkg.com/vue-advanced-cropper@^2.0.0/dist/index.umd.js" }],
 });
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'onUpload'])
 
 onMounted(async () => {
   
@@ -41,6 +44,7 @@ watch(isModalActive, async val => {
 
 let img = ref('/img/logo.png')
 let imageData = ref( { name: "", type: "image/png", src: "" } )
+let errorText = ref('')
 const cropperRef = ref(null)
 
 function chooseFiles() {
@@ -73,15 +77,22 @@ async function cropSave() {
     await new Promise((resolve) => {
       canvas.toBlob((blob) => {
         form.append("file", blob, imageData.value.name)
-        form.append("type", 'img')
+        form.append("type", 'actors')
         resolve()
       }, imageData.value.type)
     })
   }
   mainStore.setLoader(true)
-  let image = await adminService.uploadImage(form)
+  let image = await adminService.uploadImage(form, 'actors')
   mainStore.setLoader(false)
-  emit('update:modelValue', image.data)
+  if (image.success) {
+    emit('update:modelValue', image.data.file)
+    console.log('image.data.file',image.data.file)
+    emit('onUpload', image.data.file)
+  } else {
+    errorText.value = 'Failed to upload'
+  }
+  
   isModalActive.value = false
 }
 </script>
@@ -89,6 +100,7 @@ async function cropSave() {
 <template>
   <img class='mb-1' :src="modelValue ? modelValue : '/img/card_placeholder.png'" :width='width'/>
   <BaseButton
+    v-if='showbtn'
     @click='isModalActive = true'
     :icon="mdiUploadCircle"
     label="Загрузить фото"
@@ -123,6 +135,7 @@ async function cropSave() {
             small
           />  
         </div>
+    <div class='text-red' v-if='errorText'>{{errorText}}</div>
   </CardBoxModal>
 </template>
 <style>

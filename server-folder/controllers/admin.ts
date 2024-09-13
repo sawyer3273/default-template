@@ -7,16 +7,19 @@ import { errorHandler } from '../middlewares/errorHandler';
 import prisma from "../../tools/prisma";
 import { encryptPassword, isPasswordMatch } from "../../utils/encryption";
 import { sendEmail } from '~/utils/email';
-import { body, validationResult, query } from 'express-validator';
 import { getMessages } from "../lib/validation";
+//@ts-ignore
+import { body, validationResult } from 'express-validator';
 import { afterSignupAuth, isAdmin } from '../middlewares/signupAuth';
-import { generateUserTokens } from '../lib/helpers';
+import { generateUniqueString, generateUserTokens } from '../lib/helpers';
 import multer from 'multer'
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
-import { yandexService } from '~/utils/services/yandex.service'
+import { timewebService } from '~/utils/services/timeweb.service'
 import { findMany, getCount } from '../lib/orm';
 
+const avatarBody = body('avatar').notEmpty()
+const idBody = body('id').notEmpty()
 
 
 export async function deleteActor(req: Request, res: Response, _next: NextFunction) {
@@ -51,6 +54,25 @@ export async function deleteActor(req: Request, res: Response, _next: NextFuncti
   }
 }
 
+export async function updateActor(req: Request, res: Response, _next: NextFunction) {
+  try {
+    const validationErrors = await getMessages(validationResult(req));
+    if (!validationErrors) {
+      await prisma.person.update({
+        where: { id: req.body.id },
+        data: {avatar: req.body.avatar}
+      });
+      return res.json({
+        success: true,
+      });
+    }
+    return errorHandler(createError.BadRequest(validationErrors), req, res)
+  } catch (err) {
+    console.log('err',err)
+    return errorHandler(createError.InternalServerError(), req, res)
+  }
+}
+
 export async function createIntuitionPack(req: Request, res: Response, _next: NextFunction) {
   try {
    
@@ -66,29 +88,27 @@ export async function createIntuitionPack(req: Request, res: Response, _next: Ne
   }
 }
 
-export async function uploadImage(req: Request, res: Response, _next: NextFunction) {
+export async function uploadImage(req: Request, ress: Response, _next: NextFunction) {
   try {
-    const file = req.file
-    let type = req.body.type ? req.body.type : 'img'
-    let folderName = 'MovieQuiz/' + type
-    if (file) {
-      let link = await yandexService.getUploadLink(`/${folderName}/${file.originalname}`)
-      if (link.href) {
-        await yandexService.uploadFile(link.href, file)
-        let data = await yandexService.getFile(`/${folderName}/${file.originalname}`)
-        console.log('data',data.sizes)
-        return res.json({
-          success: true,
-          data: data.sizes[0].url
-        });
-      }
+    if (req.file) {
+      let name = generateUniqueString() + '.' + req.file.originalname.split('.')[1]
+      let upload = await timewebService.uploadFile(req.file, req.body.type, name)
+      console.log('upload',upload)
+      return ress.json({
+        success: true,
+        data: upload
+      });
+    } else {
+      return ress.json({
+        success: false,
+      });
     }
-    return res.json({
-      success: false,
-    });
+    
+
+   
   } catch (err) {
     console.log('err',err)
-    return errorHandler(createError.InternalServerError(), req, res)
+    return errorHandler(createError.InternalServerError(), req, ress)
   }
 }
 
@@ -106,6 +126,7 @@ export async function uploadImage(req: Request, res: Response, _next: NextFuncti
 export const routes: RouteConfig = {
   routes: [
     { method: 'delete', path: '/actors', handler: [afterSignupAuth, isAdmin, deleteActor] },
+    { method: 'post', path: '/actors', handler: [avatarBody, idBody, afterSignupAuth, isAdmin, updateActor] },
     { method: 'post', path: '/intuition', handler: [afterSignupAuth, isAdmin, createIntuitionPack] },
     { method: 'post', path: '/upload', handler: [afterSignupAuth, isAdmin, upload.single('file'), uploadImage] },
 

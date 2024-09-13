@@ -7,6 +7,7 @@ import { errorHandler } from '../middlewares/errorHandler';
 import prisma from "../../tools/prisma";
 import { encryptPassword, isPasswordMatch } from "../../utils/encryption";
 import { sendEmail } from '~/utils/email';
+//@ts-ignore
 import { body, validationResult, query } from 'express-validator';
 import { getMessages } from "../lib/validation";
 import { afterSignupAuth } from '../middlewares/signupAuth';
@@ -109,8 +110,8 @@ export const login = async (req: Request, res: Response, next: Function) => {
 export const loginYandex = async (req: Request, res: Response, next: Function) => {
   try {
     const Yatoken = req.body.token;
-    let yandexUser = await yandexService.getYandexUser(Yatoken)
-    let user;
+    let yandexUser: any = await yandexService.getYandexUser(Yatoken)
+    let user: any;
     if (yandexUser && yandexUser.login && yandexUser.default_email) {
       user = await prisma.user.findFirst({
         where: {
@@ -135,20 +136,14 @@ export const loginYandex = async (req: Request, res: Response, next: Function) =
         },
       });
     } 
-    //@ts-ignore
     let token = await generateUserTokens(user, req, res)
     res.json({
       success: true,
       user: {
-        //@ts-ignore
         email: user.email, 
-        //@ts-ignore
         isEmailVerified: user.isEmailVerified, 
-        //@ts-ignore
         rate: user.rate, 
-        //@ts-ignore
         role: user.role, 
-        //@ts-ignore
         username: user.username, 
         token
       }
@@ -330,12 +325,7 @@ export const customRoute = async (req: Request, res: Response, next: Function) =
   try {
     const file = req.file
     let folderName = 'test'
-    if (file) {
-      let link = await yandexService.getUploadLink(encodeURIComponent(`/${folderName}/${file.originalname}`))
-      if (link.href) {
-        let send = await yandexService.uploadFile(link.href, file)
-      }
-    }
+    
     return res.json({
         success: true,
         message: 'test'

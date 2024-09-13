@@ -5,7 +5,7 @@ import { computed, onMounted } from 'vue';
 const props = defineProps({
   title: {
     type: String,
-    required: true
+    default: ''
   },
   classProp: {
     type: String,

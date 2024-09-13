@@ -4,6 +4,7 @@ import type { Request, Response } from "express";
 import type { UserDataType } from "~/types/indexType";
 import jwt, { type Secret, type JwtPayload } from "jsonwebtoken";
 import createError from "http-errors";
+import moment from 'moment'
 
 export type CustomRequest = Request & {
   email: string | JwtPayload;
@@ -40,6 +41,17 @@ export const verifyToken = (req: Request, res: Response, next: Function) => {
     next();
   });
 };
+
+export const generateUniqueString = (length = 10) => {
+  var result           = '';
+  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  var charactersLength = characters.length;
+  for ( var i = 0; i < length; i++ ) {
+     result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  let date = moment().format('DDMMYYHHmmssSSSS');
+  return date + result
+}
 
 
 export const generateUserTokens = async (user: User, req: any, res: Response) => {

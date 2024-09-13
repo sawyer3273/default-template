@@ -7,14 +7,12 @@ import { errorHandler } from '../middlewares/errorHandler';
 import prisma from "../../tools/prisma";
 import { encryptPassword, isPasswordMatch } from "../../utils/encryption";
 import { sendEmail } from '~/utils/email';
-import { body, validationResult, query } from 'express-validator';
 import { getMessages } from "../lib/validation";
 import { afterSignupAuth, isAdmin } from '../middlewares/signupAuth';
 import { generateUserTokens } from '../lib/helpers';
 import multer from 'multer'
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
-import { yandexService } from '~/utils/services/yandex.service'
 import { findMany, getCount } from '../lib/orm';
 
 
