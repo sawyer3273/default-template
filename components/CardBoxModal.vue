@@ -11,6 +11,14 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  size: {
+    type: String,
+    default: 'sm'
+  },
+  isFooter: {
+    type: Boolean,
+    default: false
+  },
   smallPadding: Boolean,
   button: {
     type: String,
@@ -50,15 +58,29 @@ onMounted(() => {
     }
   })
 })
+
+const getSizeClasses = () => {
+  if (props.size == 'sm') {
+    return 'w-11/12 md:w-3/5 lg:w-2/5 xl:w-4/12 '
+  }
+  if (props.size == 'xs') {
+    return 'w-11/12 md:w-2/5 lg:w-1/5 xl:w-3/12 '
+  }
+
+  if (props.size == 'lg') {
+    return 'w-11/12 md:w-4/5 lg:w-4/5 xl:w-6/12 '
+  }
+}
+
 </script>
 
 <template>
   <OverlayLayer v-show="value" @overlay-click="cancel">
     <CardBox
       v-show="value"
-      :class="classProp"
+      :class="getSizeClasses() + classProp"
       :smallPadding="smallPadding"
-      class="shadow-lg max-h-modal w-11/12 md:w-2/5 lg:w-1/5 xl:w-3/12 z-50"
+      class="shadow-lg max-h-modal z-50 overflow-auto" 
       is-modal
     >
       <CardBoxComponentTitle :title="title">
@@ -76,7 +98,7 @@ onMounted(() => {
         <slot />
       </div>
 
-      <template #footer>
+      <template #footer v-if='isFooter'>
         <BaseButtons>
           <BaseButton :label="buttonLabel" :color="button" @click="confirm" />
           <BaseButton v-if="hasCancel" label="Cancel" :color="button" outline @click="cancel" />

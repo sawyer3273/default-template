@@ -51,6 +51,46 @@ export async function deleteActor(req: Request, res: Response, _next: NextFuncti
   }
 }
 
+export async function createIntuitionPack(req: Request, res: Response, _next: NextFunction) {
+  try {
+   
+
+    console.log('asdasdas', req.query.body)
+      return res.json({
+        success: true,
+      });
+    
+  } catch (err) {
+    console.log('err',err)
+    return errorHandler(createError.InternalServerError(), req, res)
+  }
+}
+
+export async function uploadImage(req: Request, res: Response, _next: NextFunction) {
+  try {
+    const file = req.file
+    let type = req.body.type ? req.body.type : 'img'
+    let folderName = 'MovieQuiz/' + type
+    if (file) {
+      let link = await yandexService.getUploadLink(`/${folderName}/${file.originalname}`)
+      if (link.href) {
+        await yandexService.uploadFile(link.href, file)
+        let data = await yandexService.getFile(`/${folderName}/${file.originalname}`)
+        console.log('data',data.sizes)
+        return res.json({
+          success: true,
+          data: data.sizes[0].url
+        });
+      }
+    }
+    return res.json({
+      success: false,
+    });
+  } catch (err) {
+    console.log('err',err)
+    return errorHandler(createError.InternalServerError(), req, res)
+  }
+}
 
 
 
@@ -66,6 +106,8 @@ export async function deleteActor(req: Request, res: Response, _next: NextFuncti
 export const routes: RouteConfig = {
   routes: [
     { method: 'delete', path: '/actors', handler: [afterSignupAuth, isAdmin, deleteActor] },
+    { method: 'post', path: '/intuition', handler: [afterSignupAuth, isAdmin, createIntuitionPack] },
+    { method: 'post', path: '/upload', handler: [afterSignupAuth, isAdmin, upload.single('file'), uploadImage] },
 
 
 

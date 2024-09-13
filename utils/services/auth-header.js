@@ -25,6 +25,8 @@ export async function authHeader(needToken = true, headers = {'Content-Type': 'a
 }
 
 export async function authHeaderYandex(headers = {'Content-Type': 'application/json'}) {
-    headers['Authorization'] = 'OAuth ' + process.env.yandexToken
+    
+const config = useRuntimeConfig();
+    headers['Authorization'] = 'OAuth ' + (process.env.yandexToken ? process.env.yandexToken: config.public.yandexToken) 
     return headers;
 }

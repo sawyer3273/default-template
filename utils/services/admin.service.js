@@ -3,13 +3,14 @@ import { handleResponse } from './response';
 import { useMainStore } from '@/stores/main'
 
 export const adminService = {
-    deleteActor
+    deleteActor,
+    uploadImage
 };
 
 async function deleteActor(payload) {
     const requestOptions = {
         method: 'DELETE',
-        headers: await authHeader(false),
+        headers: await authHeader(),
         body: JSON.stringify(payload)
     };
     const mainStore = useMainStore()
@@ -20,3 +21,18 @@ async function deleteActor(payload) {
             return resp;
         });
 }
+
+async function uploadImage(form) {
+    const requestOptions = {
+        method: 'POST',
+        headers: await authHeader(true, {}),
+        body: form
+    };
+    const mainStore = useMainStore()
+    return fetch(`/api/admin/upload`, requestOptions)
+        .then(handleResponse)
+        .then(resp => {
+            return resp;
+        });
+}
+

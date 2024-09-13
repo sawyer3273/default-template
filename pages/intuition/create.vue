@@ -10,6 +10,7 @@ import LineChart from '@/components/Charts/LineChart.vue'
 import { userService } from '~/utils/services/user.service'
 import { adminService } from '~/utils/services/admin.service'
 import { cloneDeep } from 'lodash'
+import { yandexService } from '~/utils/services/yandex.service'
 
 
 const mainStore = useMainStore()
@@ -37,6 +38,10 @@ async function getActors(payload) {
 async function deleteActor(payload) {
   await adminService.deleteActor(payload)
 }
+async function getFile() {
+  await yandexService.getFile('/MovieQuiz/img/c2afc1bd-43ea-41f5-b473-3de1f4abdb54.jpeg')
+}
+
 
 </script>
 
@@ -56,7 +61,7 @@ async function deleteActor(payload) {
         </SectionTitleLineWithButton>
           <div class='row' v-for='(data, i) in computedValue' :key='"auto"+i'>
               <div class='col-md-4'> <AutoSelect  v-model="computedValue[i].actor" label='Актер' searchF='getActors'  /> </div>
-              <div class='col-md-4'> zxczxcz </div>
+              <div class='col-md-4'> <CropperCust v-model='computedValue[i].avatar'/> </div>
               <div class='col-md-4'> zxczxcz </div>
           </div>
       

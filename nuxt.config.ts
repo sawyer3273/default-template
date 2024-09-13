@@ -32,6 +32,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       projectName: process.env.projectName,
+      yandexToken: process.env.yandexToken,
       yandexClientId: process.env.yandexClientId,
       yandexClientSecret: process.env.yandexClientSecret
     }
