@@ -47,11 +47,19 @@ onMounted(async () => {
   
 })
 
+onUpdated(() => {
+  if (!isInit.value ) {
+    inputValue.value = props.modelValue.name
+    isInit.value = true
+  }
+})
+
 let id = 'autoselect' + uniqueId()
 
 let inputValue = ref(props.modelValue.name)
 let chooseDelay = ref(false)
 let isFocused = ref(false)
+let isInit = ref(false)
 
 watch(inputValue, async val => {
     handleDebounce(val)

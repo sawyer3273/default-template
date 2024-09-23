@@ -40,12 +40,34 @@ export async function getActors(req: Request, res: Response, _next: NextFunction
 }
 
 
+export async function getPacksIntuition(req: any, res: Response, _next: NextFunction) {
+  try {
+    let cond: any = {}
+    if (req.query.id) {
+      cond.id = parseInt(req.query.id)
+    }
+    let data = await findMany(req, 'intuitionPack', cond, {IntuitionPackContent: true})
+    let count = await getCount('intuitionPack', cond)
+    
+    return res.json({
+      success: true,
+      data: data,
+      total: count
+    });
+    
+  } catch (err) {
+    console.log('err',err)
+    return errorHandler(createError.InternalServerError(), req, res)
+  }
+}
+
 
 
 // Mounted in routes.ts
 export const routes: RouteConfig = {
   routes: [
     { method: 'get', path: '/actors', handler: [afterSignupAuth, isAdmin, getActors] },
+    { method: 'get', path: '/packsIntuition', handler: [ getPacksIntuition ] },
 
 
 

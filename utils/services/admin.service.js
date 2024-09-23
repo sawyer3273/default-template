@@ -6,7 +6,9 @@ export const adminService = {
     deleteActor,
     uploadImage,
     updateActor,
-    addIntuitionPack
+    addIntuitionPack,
+    deleteIntuitionPack,
+    deleteIntuitionItemPack
 };
 
 async function deleteActor(payload) {
@@ -61,4 +63,32 @@ async function addIntuitionPack(payload) {
         });
 }
 
+async function deleteIntuitionPack(payload) {
+    const requestOptions = {
+        method: 'DELETE',
+        headers: await authHeader(),
+        body: JSON.stringify(payload)
+    };
+    const mainStore = useMainStore()
+    return fetch(`/api/admin/intuition`, requestOptions)
+        .then(handleResponse)
+        .then(resp => {
+            mainStore.setPacksIntuition(resp)
+            return resp;
+        });
+}
 
+async function deleteIntuitionItemPack(payload) {
+    const requestOptions = {
+        method: 'DELETE',
+        headers: await authHeader(),
+        body: JSON.stringify(payload)
+    };
+    const mainStore = useMainStore()
+    return fetch(`/api/admin/intuitionItem`, requestOptions)
+        .then(handleResponse)
+        .then(resp => {
+            mainStore.setPacksIntuition(resp)
+            return resp;
+        });
+}

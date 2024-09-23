@@ -118,9 +118,11 @@ model IntuitionPackContent {
   avatar String?
   year String?
   character String?
+  actorName String?
+  text String?
 
-  actror_id Int
-  actror    Person        @relation(fields: [actror_id], references: [id])
+  actor_id Int
+  actror    Person        @relation(fields: [actor_id], references: [id])
   pack_id   Int
   pack      IntuitionPack @relation(fields: [pack_id], references: [id])
 }

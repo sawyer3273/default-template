@@ -18,7 +18,8 @@ export default defineI18nConfig(() => ({
         RegisterNow: 'Register',
         UserName: 'User Name',
         enterUserName: 'Enter User Name',
-        HaveAcc: 'Have an account?'
+        HaveAcc: 'Have an account?',
+        deleteSure: "Are you sure you want to delete?"
       },
       ru: {
         enterLogin: 'Введите емайл',
@@ -36,7 +37,8 @@ export default defineI18nConfig(() => ({
         RegisterNow: 'Зарегистрироваться',
         UserName: 'Имя',
         enterUserName: 'Введите имя',
-        HaveAcc: 'У тебя уже есть аккаунт?'
+        HaveAcc: 'У тебя уже есть аккаунт?',
+        deleteSure: "Удалить эту запись?"
       }
     }
   }))

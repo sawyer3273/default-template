@@ -75,13 +75,101 @@ export async function updateActor(req: Request, res: Response, _next: NextFuncti
 
 export async function createIntuitionPack(req: Request, res: Response, _next: NextFunction) {
   try {
-   
-
-    console.log('asdasdas', req.body)
+    let {data, pack} = req.body
+    let result
+    if (data.id) {
+      result = await prisma.intuitionPack.update({
+        where: { id: data.id },
+        data: {
+          logo: data.logo,
+          name: data.text,
+          user_id: res.locals.auth.id
+        },
+      });
+    } else {
+      result = await prisma.intuitionPack.create({
+        data: {
+          logo: data.logo,
+          name: data.text,
+          user_id: res.locals.auth.id
+        },
+      });
+    }
+    for (let i = 0; i < pack.length; i++) {
+      if (pack[i].id) {
+        await prisma.intuitionPackContent.update({
+          where: {id: pack[i].id},
+          data: {
+            avatar: pack[i].actor.avatar,
+            year: pack[i].year,
+            character: pack[i].character,
+            actor_id: pack[i].actor.id,
+            actorName: pack[i].actor.name,
+            text: pack[i].text,
+            pack_id: result.id
+          },
+        });
+      } else {
+        await prisma.intuitionPackContent.create({
+          data: {
+            avatar: pack[i].actor.avatar,
+            year: pack[i].year,
+            character: pack[i].character,
+            actor_id: pack[i].actor.id,
+            actorName: pack[i].actor.name,
+            text: pack[i].text,
+            pack_id: result.id
+          },
+        });
+      }
+    }
       return res.json({
         success: true,
       });
     
+  } catch (err) {
+    console.log('err',err)
+    return errorHandler(createError.InternalServerError(), req, res)
+  }
+}
+
+export async function deleteIntuitionPack(req: Request, res: Response, _next: NextFunction) {
+  try {
+    await prisma.intuitionPackContent.deleteMany({
+      where: { pack_id: req.body.id }
+    });
+    await prisma.intuitionPack.delete({
+      where: { id: req.body.id }
+    });
+
+    if (req.body.page) {
+      let cond = {}
+      let actors = await findMany(req, 'intuitionPack', cond)
+      let count = await getCount('intuitionPack', cond)
+      return res.json({
+        success: true,
+        data: actors,
+        total: count
+      });
+    } else {
+      return res.json({
+        success: true,
+      });
+    }
+  } catch (err) {
+    console.log('err',err)
+    return errorHandler(createError.InternalServerError(), req, res)
+  }
+}
+
+export async function deleteIntuitionItemPack(req: Request, res: Response, _next: NextFunction) {
+  try {
+    await prisma.intuitionPackContent.deleteMany({
+      where: { id: req.body.id }
+    });
+    return res.json({
+      success: true,
+    });
   } catch (err) {
     console.log('err',err)
     return errorHandler(createError.InternalServerError(), req, res)
@@ -103,9 +191,6 @@ export async function uploadImage(req: Request, ress: Response, _next: NextFunct
         success: false,
       });
     }
-    
-
-   
   } catch (err) {
     console.log('err',err)
     return errorHandler(createError.InternalServerError(), req, ress)
@@ -128,8 +213,9 @@ export const routes: RouteConfig = {
     { method: 'delete', path: '/actors', handler: [afterSignupAuth, isAdmin, deleteActor] },
     { method: 'post', path: '/actors', handler: [avatarBody, idBody, afterSignupAuth, isAdmin, updateActor] },
     { method: 'post', path: '/intuition', handler: [afterSignupAuth, isAdmin, createIntuitionPack] },
+    { method: 'delete', path: '/intuition', handler: [afterSignupAuth, isAdmin, deleteIntuitionPack] },
+    { method: 'delete', path: '/intuitionItem', handler: [afterSignupAuth, isAdmin, deleteIntuitionItemPack] },
     { method: 'post', path: '/upload', handler: [afterSignupAuth, isAdmin, upload.single('file'), uploadImage] },
-
 
 
   ],

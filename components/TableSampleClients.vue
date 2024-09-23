@@ -3,12 +3,15 @@ import { computed, ref } from 'vue'
 import { useMainStore } from '@/stores/main'
 import { mdiEye, mdiTrashCan } from '@mdi/js'
 
+const router = useRouter()
+
 interface Props {
   checkable?: Boolean
   size?: Number
   storeModel?: String
   fields?: Array
   showTitle?: String
+  showLink?: String
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -44,7 +47,7 @@ const checkedRows = ref([])
 
 const pagesList = computed(() => {
   const pagesList = []
-  if (numPages.value.length < 10) {
+  if (numPages.value < 10) {
     for (let i = 0; i < numPages.value; i++) {
       pagesList.push(i)
     }
@@ -93,19 +96,24 @@ function openPage(page) {
 
 let itemToShow = ref({})
 function showItem(id) {
-  itemToShow = items.value.find((one) => {
-    if (one.id == id) {
-      return one
+  if (props.showLink) {
+    router.push(props.showLink.replace('{id}', id));
+  } else {
+    itemToShow = items.value.find((one) => {
+      if (one.id == id) {
+        return one
+      }
+    })
+    if (itemToShow) {
+      isModalActive.value = true
     }
-  })
-  if (itemToShow) {
-    isModalActive.value = true
   }
 }
 
 const toDeleteId = ref(0)
 function deleteAction() {
   emit('delete-data', {id: toDeleteId.value, size: perPage.value, page: currentPage.value})
+  isModalActive.value = false
 }
 </script>
 
@@ -114,9 +122,8 @@ function deleteAction() {
     {{itemToShow}}
   </CardBoxModal>
 
-  <CardBoxModal v-model="isModalDangerActive" title="Please confirm" button="danger" has-cancel @confirm='deleteAction'>
-    <p>Lorem ipsum dolor sit amet <b>adipiscing elit</b></p>
-    <p>This is sample modal</p>
+  <CardBoxModal v-model="isModalDangerActive" :title="$t('deleteSure')" button="danger" has-cancel>
+    <BaseButton label="Ok" color="contrast" @click="deleteAction" />
   </CardBoxModal>
   
 
@@ -133,7 +140,12 @@ function deleteAction() {
       <tr v-for="client in items" :key="client.id">
         <TableCheckboxCell v-if="checkable" @checked="checked($event, client)" />
         <td v-for="column in props.fields" :data-label="column.column">
-          {{ client[column.column] }}
+          <template v-if='column.type == "img"'>
+            <img class='max-h-16' :src='client[column.column]' />
+          </template>
+          <template v-else>
+            {{ client[column.column] }}
+          </template>
         </td>
         <td class="before:hidden lg:w-1 whitespace-nowrap">
           <BaseButtons type="justify-start lg:justify-end" no-wrap>
@@ -149,7 +161,6 @@ function deleteAction() {
       </tr>
     </tbody>
   </table>
-
 
 
   <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">

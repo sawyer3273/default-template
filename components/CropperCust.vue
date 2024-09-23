@@ -22,6 +22,18 @@ const props = defineProps({
     type: [Boolean, Number],
     default: true
   },
+  ratio: {
+    type: Number,
+    default: 10/12
+  },
+  folder: {
+    type: String,
+    default: 'main'
+  },
+  placeholder: {
+    type: String,
+    default: 'main'
+  },
   classProp: {
     type: String,
     default: ''
@@ -32,9 +44,9 @@ useHead({
 });
 
 const emit = defineEmits(['update:modelValue', 'onUpload'])
-
+const componentKey = ref(0);
 onMounted(async () => {
-  
+  componentKey.value = Math.ceil(Math.random()*1000000);
 })
 
 let isModalActive = ref(false)
@@ -52,11 +64,11 @@ let errorText = ref('')
 const cropperRef = ref(null)
 
 function chooseFiles() {
-  document.getElementById("inputImage").click()
+  document.getElementById(componentKey.value+"inputImage").click()
 }
 
 function fileChanged() {
-  let file = document.getElementById("inputImage").files[0]
+  let file = document.getElementById(componentKey.value+"inputImage").files[0]
   if (file) {
     let formats = ["image/png", "image/jpg", "image/jpeg"]
     let size = file.size / 10 ** 6
@@ -81,13 +93,13 @@ async function cropSave() {
     await new Promise((resolve) => {
       canvas.toBlob((blob) => {
         form.append("file", blob, imageData.value.name)
-        form.append("type", 'actors')
+        form.append("type", props.folder)
         resolve()
       }, imageData.value.type)
     })
   }
   mainStore.setLoader(true)
-  let image = await adminService.uploadImage(form, 'actors')
+  let image = await adminService.uploadImage(form, props.folder)
   mainStore.setLoader(false)
   if (image.success) {
     emit('update:modelValue', image.data.file)
@@ -102,8 +114,8 @@ async function cropSave() {
 </script>
 
 <template>
-<div :class='classProp'>
-  <img class='mb-1' :src="modelValue ? modelValue : '/img/card_placeholder.png'" :width='width'/>
+<div :key='componentKey' :class='classProp'>
+  <img class='mb-1' :src="modelValue ? modelValue : (placeholder == 'main' ? '/img/card_placeholder.png' : '/img/card_placeholder_horizon.jpg')" :width='width'/>
   <BaseButton
     :disabled='!showbtn'
     @click='isModalActive = true'
@@ -119,14 +131,14 @@ async function cropSave() {
       ref="cropperRef"
       class="cropper"
       :src="imageData.src"
+      :defaultBoundaries='"fit"'
       :stencil-props="{
         aspectRatio: 10/12
       }"
     ></Cropper>
-  
       <input
         @change="fileChanged()"
-        id="inputImage"
+        :id="componentKey+'inputImage'"
         type="file"
         accept=".png, .jpg, .jpeg"
         hidden

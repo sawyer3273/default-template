@@ -15,6 +15,8 @@ export const useMainStore = defineStore('main', () => {
 
   const actors = ref([])
   const actors_count = ref(0)
+  const packs_intuition = ref([])
+  const packs_intuition_count = ref(0)
   
   const isFieldFocusRegistered = ref(false)
 
@@ -56,6 +58,14 @@ export const useMainStore = defineStore('main', () => {
       actors_count.value = payload.total
     }
   }
+  function setPacksIntuition(payload) {
+    if (payload.data) {
+      packs_intuition.value = payload.data
+    }
+    if (payload.total) {
+      packs_intuition_count.value = payload.total
+    }
+  }
 
 
 
@@ -64,12 +74,15 @@ export const useMainStore = defineStore('main', () => {
     user,
     actors,
     actors_count,
+    packs_intuition,
+    packs_intuition_count,
     isFieldFocusRegistered,
     clients,
     history,
     loader,
     setUser,
     setLoader,
-    setActors
+    setActors,
+    setPacksIntuition
   }
 })

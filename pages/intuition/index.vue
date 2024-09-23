@@ -7,7 +7,7 @@ import {
 } from '@mdi/js'
 import * as chartConfig from '@/components/Charts/chart.config.js'
 import LineChart from '@/components/Charts/LineChart.vue'
-import { userService } from '~/utils/services/user.service'
+import { dataService } from '~/utils/services/data.service'
 import { adminService } from '~/utils/services/admin.service'
 
 
@@ -24,17 +24,17 @@ onMounted(async () => {
 })
 
 
-async function getActors(payload) {
-  
+async function getData(payload) {
+  await dataService.getPacksIntuition(payload)
 }
 
-async function deleteActor(payload) {
-  await adminService.deleteActor(payload)
+async function deleteData(payload) {
+  await adminService.deleteIntuitionPack(payload)
 }
 
 const fields = [
   {column: 'id', name: 'ID', type: 'text'},
-  {column: 'avatar', name: 'Фото', type: 'text'},
+  {column: 'logo', name: 'Фото', type: 'img'},
   {column: 'name', name: 'Имя', type: 'text'},
 ]
 </script>
@@ -54,7 +54,7 @@ const fields = [
           />
         </SectionTitleLineWithButton>
         <CardBox class="mb-6" has-table>
-          <TableSampleClients @load-data='getActors' @delete-data='deleteActor' storeModel='actors' :fields='fields' showTitle='name'/>
+          <TableSampleClients @load-data='getData' @delete-data='deleteData' showLink='/intuition/{id}' storeModel='packs_intuition' :fields='fields' showTitle='name'/>
         </CardBox>
       </SectionMain>
     </NuxtLayout>
