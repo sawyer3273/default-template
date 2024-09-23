@@ -77,7 +77,7 @@ export async function createIntuitionPack(req: Request, res: Response, _next: Ne
   try {
    
 
-    console.log('asdasdas', req.query.body)
+    console.log('asdasdas', req.body)
       return res.json({
         success: true,
       });

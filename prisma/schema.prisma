@@ -116,6 +116,8 @@ model IntuitionPack {
 model IntuitionPackContent {
   id     Int     @id @default(autoincrement())
   avatar String?
+  year String?
+  character String?
 
   actror_id Int
   actror    Person        @relation(fields: [actror_id], references: [id])

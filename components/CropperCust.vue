@@ -19,8 +19,12 @@ const props = defineProps({
     default: '166'
   },
   showbtn: {
-    type: Boolean,
+    type: [Boolean, Number],
     default: true
+  },
+  classProp: {
+    type: String,
+    default: ''
   }
 })
 useHead({
@@ -98,16 +102,18 @@ async function cropSave() {
 </script>
 
 <template>
+<div :class='classProp'>
   <img class='mb-1' :src="modelValue ? modelValue : '/img/card_placeholder.png'" :width='width'/>
   <BaseButton
-    v-if='showbtn'
+    :disabled='!showbtn'
     @click='isModalActive = true'
     :icon="mdiUploadCircle"
-    label="Загрузить фото"
+    label="Загрузить"
     color="contrast"
     rounded-full
     small
   />
+  </div>
   <CardBoxModal v-model="isModalActive" classProp='max-w-96'>
     <Cropper
       ref="cropperRef"
@@ -129,7 +135,7 @@ async function cropSave() {
           <BaseButton
             @click='cropSave()'
             :icon="mdiContentSave"
-            label="Сохранить фото"
+            label="Сохранить"
             color="contrast"
             rounded-full
             small

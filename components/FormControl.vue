@@ -49,8 +49,15 @@ const props = defineProps({
   ctrlKFocus: Boolean
 })
 
-const emit = defineEmits(['update:modelValue', 'setRef'])
+const emit = defineEmits(['update:modelValue', 'setRef', 'focus', 'blur'])
 
+function blur() {
+   emit('blur')
+}
+
+function focus() {
+   emit('focus')
+}
 const computedValue = computed({
   get: () => props.modelValue,
   set: (value) => {
@@ -150,6 +157,8 @@ if (props.ctrlKFocus) {
       :id="id"
       ref="inputEl"
       v-model="computedValue"
+      @focus='focus'
+      @blur='blur'
       :name="name"
       :maxlength="maxlength"
       :inputmode="inputmode"

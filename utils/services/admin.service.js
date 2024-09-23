@@ -5,7 +5,8 @@ import { useMainStore } from '@/stores/main'
 export const adminService = {
     deleteActor,
     uploadImage,
-    updateActor
+    updateActor,
+    addIntuitionPack
 };
 
 async function deleteActor(payload) {
@@ -47,4 +48,17 @@ async function uploadImage(form) {
             return resp;
         });
 }
+async function addIntuitionPack(payload) {
+    const requestOptions = {
+        method: 'POST',
+        headers: await authHeader(true),
+        body: JSON.stringify(payload)
+    };
+    return fetch(`/api/admin/intuition`, requestOptions)
+        .then(handleResponse)
+        .then(resp => {
+            return resp;
+        });
+}
+
 

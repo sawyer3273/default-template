@@ -6,8 +6,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
         var cookieAll = headers.cookie ? Cookie.parse(headers.cookie) : {}
         var cookies = cookieAll.main ? JSON.parse(cookieAll.main) : {}
 
-        console.log('quest', cookies.user.token)
-        if (cookies.user.token) {
+        if (cookies.user && cookies.user.token) {
             return navigateTo('/');
         }
     }

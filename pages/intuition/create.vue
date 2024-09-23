@@ -10,7 +10,8 @@ import LineChart from '@/components/Charts/LineChart.vue'
 import { userService } from '~/utils/services/user.service'
 import { adminService } from '~/utils/services/admin.service'
 import { cloneDeep } from 'lodash'
-
+import { useToast } from "vue-toastification";
+const toast = useToast();
 
 const mainStore = useMainStore()
 const router = useRouter()
@@ -25,6 +26,8 @@ onMounted(async () => {
 })
 let emptyValue = {
   actor: {id: 0, name: '', avatar: '',},
+  year: '',
+  character: '',
   text: ''
 }
 let computedValue = ref([cloneDeep(emptyValue)])
@@ -37,7 +40,6 @@ async function deleteActor(payload) {
   await adminService.deleteActor(payload)
 }
 async function changeActorAvatar(file, id) {
-  console.log('ffffffffffff',)
   await adminService.updateActor({avatar: file, id})
 }
 
@@ -45,6 +47,28 @@ async function changeActorAvatar(file, id) {
 async function upload() {
   let image = await adminService.uploadImage()
 }
+
+async function save() {
+  if (computedValue.value.length < 12) {
+   // toast.error('Недостаточно актеров'); return
+  }
+  let errors = []
+  computedValue.value.map((one, i) => {
+    if (!one.actor.id || !one.actor.avatar || !one.year || !one.character || !one.text) {
+      errors.push(i+1)
+    }
+  })
+  if (errors.length) {
+    // toast.error('Не хватает данных у актеров под этими номерами: '+ errors.join()); return
+  }
+  
+  let item = JSON.parse(JSON.stringify(computedValue.value))
+  let data = await adminService.addIntuitionPack({pack: item})
+  console.log('data',data)
+}
+
+
+
 let videoPlayer = ref(null)
 function play() {
   console.log('videoPlayer,videoPlayer',videoPlayer)
@@ -82,32 +106,48 @@ function play() {
         <button @click="setSpeed(1)">1x</button>
         <button @click="setSpeed(1.5)">1.5x</button>
         <button @click="setSpeed(2)">2x</button>
-      </div>-->
       <div @click='upload'> fff </div>
+      </div>-->
         <SectionTitleLineWithButton :icon="mdiNoteEdit" title="Редактор">
           <BaseButton
             @click='computedValue.push(cloneDeep(emptyValue))'
             :icon="mdiPlusBoxMultiple"
-            label="Добавить данные"
+            label="Добавить актера"
             color="contrast"
             rounded-full
             small
           />
         </SectionTitleLineWithButton>
-          <div class='row' v-for='(data, i) in computedValue' :key='"auto"+i'>
-            <div class='col-md-4'> <AutoSelect  v-model="computedValue[i].actor" label='Актер' searchF='getActors'  /> </div>
-            <div class='col-md-4'> <CropperCust :showbtn='computedValue[i].actor.id' v-model='computedValue[i].actor.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor.id)'/> </div>
-            <div class='col-md-4'> 
-             <b-dropdown id="dropdown-1" text="Dropdown Button" class="m-md-2">
-    <b-dropdown-item>First Action</b-dropdown-item>
-    <b-dropdown-item>Second Action</b-dropdown-item>
-    <b-dropdown-item>Third Action</b-dropdown-item>
-    <b-dropdown-divider></b-dropdown-divider>
-    <b-dropdown-item active>Active action</b-dropdown-item>
-    <b-dropdown-item disabled>Disabled action</b-dropdown-item>
-  </b-dropdown>
+        <div class='mb-2'> Введите минимум 12 актеров  </div>
+        <div class='row'>
+          <div class='col-md-6' v-for='(data, i) in computedValue' :key='"auto"+i'>
+          <CardBox class='mb-4 shadow-sm relative'>
+            <div class='row'>
+              <div class='col-md-4'>
+                <CropperCust :classProp='"inline-grid"' :showbtn='computedValue[i].actor.id' v-model='computedValue[i].actor.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor.id)'/> 
+              </div>
+              <div class='col-md-8'> 
+                <AutoSelect v-model="computedValue[i].actor" searchF='getActors' placeholder="Выберите актера" />
+                <FormControl class='mt-1' v-model='computedValue[i].text' type="textarea" placeholder="Введите описание роли" />
+                <FormControl class='mt-1' v-model='computedValue[i].year' placeholder="Введите год выхода фильма" />
+                <FormControl class='mt-1' v-model='computedValue[i].character' placeholder="Введите имя персонажа" />
+                <div class='top-0 left-0 ml-3 mt-1 absolute font-bold'>{{i+1}}</div>
+              </div>
             </div>
+          </CardBox>
           </div>
+        </div>
+
+         <SectionTitleLineWithButton  title="">
+          <BaseButton
+            @click='save'
+            :icon="mdiPlusBoxMultiple"
+            label="Сохранить"
+            color="contrast"
+            rounded-full
+            small
+          />
+        </SectionTitleLineWithButton>
       </SectionMain>
     </NuxtLayout>
   </div>
