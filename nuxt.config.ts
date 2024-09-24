@@ -23,7 +23,7 @@ export default defineNuxtConfig({
     },
   },
 
-  plugins: ['@/plugins/persistedState.js'],
+  plugins: ['@/plugins/persistedState.js', '@/plugins/dayjs.js'],
 
   css: [
     '@/assets/css/main.css',

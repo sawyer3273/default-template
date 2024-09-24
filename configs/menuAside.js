@@ -55,7 +55,7 @@ export default [
     icon: mdiResponsive
   },
   {
-    to: '/admin/ProfileView',
+    to: '/ProfileView',
     label: 'Profile',
     icon: mdiAccountCircle
   },

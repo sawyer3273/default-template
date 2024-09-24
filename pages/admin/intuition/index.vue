@@ -45,7 +45,7 @@ const fields = [
       <SectionMain>
         <SectionTitleLineWithButton :icon="mdiPackageVariantClosed" title="Список паков" >
           <BaseButton
-            @click='router.push("/intuition/create")'
+            @click='router.push("/admin/intuition/create")'
             :icon="mdiPlusBoxMultiple"
             label="Создать"
             color="contrast"
@@ -54,7 +54,7 @@ const fields = [
           />
         </SectionTitleLineWithButton>
         <CardBox class="mb-6" has-table>
-          <TableSampleClients @load-data='getData' @delete-data='deleteData' showLink='/intuition/{id}' storeModel='packs_intuition' :fields='fields' showTitle='name'/>
+          <TableSampleClients @load-data='getData' @delete-data='deleteData' showLink='/admin/intuition/{id}' storeModel='packs_intuition' :fields='fields' showTitle='name'/>
         </CardBox>
       </SectionMain>
     </NuxtLayout>

@@ -133,7 +133,7 @@ async function cropSave() {
       :src="imageData.src"
       :defaultBoundaries='"fit"'
       :stencil-props="{
-        aspectRatio: 10/12
+        aspectRatio: ratio
       }"
     ></Cropper>
       <input

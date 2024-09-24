@@ -43,7 +43,7 @@ onBeforeMount(async () => {
       
     }
   } catch (err) {
-    router.push('/intuition');
+    router.push('/admin/intuition');
   }
 
 });
@@ -102,7 +102,7 @@ async function save() {
     let item = JSON.parse(JSON.stringify(computedValue.value))
     let data = await adminService.addIntuitionPack({pack: item, data: packData.value})
     if (data.success) {
-      router.push('/intuition');
+      router.push('/admin/intuition');
     }
   }
 }

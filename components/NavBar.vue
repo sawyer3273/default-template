@@ -2,9 +2,14 @@
 import { ref } from 'vue'
 import { mdiClose, mdiDotsVertical } from '@mdi/js'
 import { containerMaxW } from '@/configs/config'
+import  {PROJECT_NAME} from '~/constants.js'
 const route = useRoute()
 
 defineProps({
+  isAdmin: {
+    type: Boolean,
+    default: false
+  },
   menu: {
     type: Array,
     required: true
@@ -26,7 +31,7 @@ const isMenuNavBarActive = ref(false)
 <template>
   <nav class="top-0 inset-x-0 bg-gradient-to-r from-blue-start to-blue-end h-18 z-30 transition-position w-screen lg:w-auto dark:bg-slate-800" :class='isMainPage ? "transparent": ""'>
     <div class="flex lg:items-stretch" :class="containerMaxW">
-      <NuxtLink to='/'><div class='absolute flex justify-center items-center text-slate-100 px-3 py-4 font-bold' ><Logo size='20' /><div>MovieQuiz</div></div></NuxtLink>
+      <NuxtLink v-if='!isAdmin' to='/'><div class='absolute flex justify-center items-center text-slate-100 px-3 py-4 font-bold' ><Logo size='20' /><div>{{PROJECT_NAME}}</div></div></NuxtLink>
       <div class="flex flex-1 items-stretch h-18">
         <slot />
       </div>

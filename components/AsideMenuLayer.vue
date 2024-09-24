@@ -31,12 +31,12 @@ const asideLgCloseClick = (event) => {
 <template>
   <aside
     id="aside"
-    class="lg:py-2 w-60 fixed flex z-40 top-0 h-screen transition-position overflow-hidden"
+    class="w-60 fixed flex z-40 top-0 h-screen transition-position overflow-hidden"
   >
     <div class="aside flex-1 flex flex-col overflow-hidden dark:bg-slate-900 bg-slate-900">
       <div class="aside-brand flex flex-row h-18 items-center justify-between dark:bg-slate-900">
         <div class="text-center flex-1 lg:text-left lg:pl-6 xl:text-center xl:pl-0">
-          <b class="font-black text-slate-300">{{PROJECT_NAME}}</b>
+          <NuxtLink to='/'><div class='flex justify-center items-center text-slate-100 font-bold' ><Logo size='20' /><div>{{PROJECT_NAME}}</div></div></NuxtLink>
         </div>
         <button class="hidden lg:inline-block xl:hidden p-3" @click.prevent="asideLgCloseClick">
           <BaseIcon :path="mdiClose" />

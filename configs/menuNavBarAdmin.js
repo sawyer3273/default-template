@@ -6,10 +6,6 @@ import {
 
 export default [
   {
-    label: 'Кино Интуиция',
-    to: '/intuition',
-  },
-  {
     style: 'min-w-40',
     isCurrentUser: true,
     menu: [
