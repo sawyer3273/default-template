@@ -20,6 +20,18 @@ module.exports = {
       gray: "gray",
     },
     extend: {
+      colors: {
+        'blue-start': '#1F1470',
+        'blue-end': ' #06014B',
+      },
+      padding: {  
+        '18': '4.5rem',
+      },
+      spacing: {
+        '18': '4.5rem',
+        '75vh': '75vh',
+        '85vh': '85vh'
+      },
       zIndex: {
         "-1": "-1",
       },

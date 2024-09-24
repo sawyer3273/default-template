@@ -1,12 +1,13 @@
 <script setup>
-import { computed, ref, onBeforeMount } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useMainStore } from '@/stores/main'
 import {
-  mdiNoteEdit, mdiPlusBoxMultiple, mdiDeleteCircleOutline
+  mdiNoteEdit,
+  mdiPlusBoxMultiple
 } from '@mdi/js'
 import * as chartConfig from '@/components/Charts/chart.config.js'
 import LineChart from '@/components/Charts/LineChart.vue'
-import { dataService } from '~/utils/services/data.service'
+import { userService } from '~/utils/services/user.service'
 import { adminService } from '~/utils/services/admin.service'
 import { cloneDeep } from 'lodash'
 import { useToast } from "vue-toastification";
@@ -14,69 +15,34 @@ const toast = useToast();
 
 const mainStore = useMainStore()
 const router = useRouter()
-const route = useRoute()
 
 definePageMeta({
   middleware: 'auth' 
 })
 
 
-onBeforeMount(async () => {
-  try {
-    let data = await dataService.getPacksIntuition({id: route.params.id})
-    if (data.data) {
-      packData.value = {
-        logo: data.data[0].logo,
-        text: data.data[0].name,
-        id: data.data[0].id,
-      }
-      computedValue.value = []
-      data.data[0].IntuitionPackContent.map(one => {
-        computedValue.value.push({
-          actor: {id: one.actor_id, name: one.actorName, avatar: one.avatar},
-          year: one.year,
-          character: one.character,
-          text: one.text,
-          id: one.id,
-        })
-      })
-      
-    }
-  } catch (err) {
-    router.push('/intuition');
-  }
-
-});
-
-
+onMounted(async () => {
+  
+})
 let emptyValue = {
   actor: {id: 0, name: '', avatar: '',},
   year: '',
   character: '',
-  text: '',
-  id: 0
+  text: ''
 }
 let computedValue = ref([cloneDeep(emptyValue)])
 let packData = ref({
   logo: '',
   text: '',
-  id: 0
 })
 
-
-const toDeleteId = ref(0)
-const isModalDangerActive = ref(false)
-async function deleteAction() {
-  isModalDangerActive.value = false
-  let toDeleteObj = computedValue.value[toDeleteId.value]
-  if (toDeleteId.value > -1) { 
-    computedValue.value.splice(toDeleteId.value, 1); 
-  }
-  if (toDeleteObj && toDeleteObj.id) {
-   await adminService.deleteIntuitionItemPack({id: toDeleteObj.id}) 
-  }
+async function getActors(payload) {
+  
 }
 
+async function deleteActor(payload) {
+  await adminService.deleteActor(payload)
+}
 async function changeActorAvatar(file, id) {
   await adminService.updateActor({avatar: file, id})
 }
@@ -108,15 +74,46 @@ async function save() {
 }
 
 
+
+let videoPlayer = ref(null)
+function play() {
+  console.log('videoPlayer,videoPlayer',videoPlayer)
+      videoPlayer.value.play();
+    }
+    function pause() {
+      videoPlayer.value.pause();
+    }
+    function stop() {
+      videoPlayer.value.pause();
+      videoPlayer.value.currentTime = 0;
+     }
+  function  setSpeed(speed) {
+      videoPlayer.value.playbackRate = speed;
+    }
 </script>
 
 <template>
   <div>
-    <NuxtLayout name="authenticated">
-      <CardBoxModal v-model="isModalDangerActive" :title="$t('deleteSure')" button="danger" has-cancel>
-        <BaseButton label="Ok" color="contrast" @click="deleteAction" />
-      </CardBoxModal>
+    <NuxtLayout name="admin">
       <SectionMain>
+      <!--
+      <video width="320" height="240" ref="videoPlayer">
+        <source
+          src="https://s3.timeweb.cloud/1d66ad34-320f94d0-cbe7-493f-bce7-bfb114c821bb/sample-5s.mp4"
+          type="video/mp4"
+        />
+        Your browser does not support the video tag.
+      </video>
+      <div>
+        <button @click="play">play</button>
+        <button @click="pause">pause</button>
+        <button @click="stop">stop</button>
+        <button @click="setSpeed(0.5)">0.5x</button>
+        <button @click="setSpeed(1)">1x</button>
+        <button @click="setSpeed(1.5)">1.5x</button>
+        <button @click="setSpeed(2)">2x</button>
+      <div @click='upload'> fff </div>
+      </div>-->
         <SectionTitleLine :icon="mdiNoteEdit" title="Данные пака">
         </SectionTitleLine>
         <CardBox class='mb-4 shadow-sm '>
@@ -142,9 +139,7 @@ async function save() {
         <div class='mb-2'> Введите минимум 12 актеров  </div>
         <div class='row'>
           <div class='col-md-6' v-for='(data, i) in computedValue' :key='"auto"+i'>
-
-          <CardBox class='mb-4 shadow-sm relative pt-1'>
-             <BaseIcon class='cursor-pointer text-red-500 absolute top-1 right-1' :path="mdiDeleteCircleOutline"  @click="() => {toDeleteId = i; isModalDangerActive = true}" />
+          <CardBox class='mb-4 shadow-sm relative'>
             <div class='row'>
               <div class='col-md-4'>
                 <CropperCust :classProp='"inline-grid"' folder='actors' :showbtn='computedValue[i].actor.id' v-model='computedValue[i].actor.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor.id)'/> 
@@ -158,7 +153,6 @@ async function save() {
               </div>
             </div>
           </CardBox>
-
           </div>
         </div>
 
@@ -176,4 +170,3 @@ async function save() {
     </NuxtLayout>
   </div>
 </template>
-

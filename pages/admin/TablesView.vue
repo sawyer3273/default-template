@@ -1,11 +1,13 @@
 <script setup>
 import { mdiMonitorCellphone, mdiTableBorder, mdiTableOff, mdiGithub } from '@mdi/js'
-
+definePageMeta({
+  middleware: 'auth' 
+})
 </script>
 
 <template>
     <div>
-      <NuxtLayout name="authenticated">
+      <NuxtLayout name="admin">
         <SectionMain>
         <SectionTitleLineWithButton :icon="mdiTableBorder" title="Tables" main>
             <BaseButton

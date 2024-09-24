@@ -9,7 +9,9 @@ const profileForm = reactive({
   name: mainStore.user.username,
   email: mainStore.user.email
 })
-
+definePageMeta({
+  middleware: 'auth' 
+})
 const passwordForm = reactive({
   password_current: '',
   password: '',
@@ -27,7 +29,7 @@ const submitPass = () => {
 
 <template>
   <div>
-    <NuxtLayout name="authenticated">
+    <NuxtLayout name="auth">
       <SectionMain>
         <SectionTitleLineWithButton :icon="mdiAccount" title="Profile" main>
           <BaseButton

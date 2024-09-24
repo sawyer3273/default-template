@@ -24,13 +24,13 @@ const is = computed(() => {
 
   return 'div'
 })
-
 const componentClass = computed(() => {
   const base = [
     isDropdownActive.value
-      ? `navbar-item-label-active dark:text-slate-400`
+      ? `navbar-item-label-active dark:text-slate-400 `
       : `navbar-item-label dark:text-white dark:hover:text-slate-400`,
-    props.item.menu ? 'lg:py-2 lg:px-3' : 'py-2 px-3'
+    props.item.menu ? 'lg:px-3' : 'py-2 px-3',
+    props.item.style ? props.item.style : ''
   ]
 
   if (props.item.isDesktopNoLabel) {
@@ -40,7 +40,7 @@ const componentClass = computed(() => {
   return base
 })
 let mainStore = useMainStore()
-let userLabel = mainStore ? `${mainStore.user.username} (${mainStore.user.email})` : 'Guest'
+let userLabel = mainStore ? `${mainStore.user.username}` : 'Guest'
 const itemLabel = computed(() =>
   props.item.isCurrentUser ? userLabel : props.item.label
 )
@@ -86,14 +86,14 @@ onBeforeUnmount(() => {
     :is="is"
     v-else
     ref="root"
-    class="block lg:flex items-center relative cursor-pointer"
+    class="block lg:flex items-center relative cursor-pointer lg:bg-none bg-gradient-to-r from-blue-start to-blue-end"
     :class="componentClass"
     :to="item.to ?? null"
     :target="item.target ?? null"
     @click="menuClick"
   >
     <div
-      class="flex items-center"
+      class="flex items-center hover:text-blue-500 lg:bg-none bg-gradient-to-r from-blue-start to-blue-end"
       :class="{
         'bg-gray-100 dark:bg-slate-800 lg:bg-transparent lg:dark:bg-transparent p-3 lg:p-0':
           item.menu
@@ -114,7 +114,7 @@ onBeforeUnmount(() => {
     </div>
     <div
       v-if="item.menu"
-      class="text-sm border-b border-gray-100 lg:border lg:bg-white lg:absolute lg:top-full lg:left-0 lg:min-w-full lg:z-20 lg:rounded-lg lg:shadow-lg lg:dark:bg-slate-800 dark:border-slate-700"
+      class="text-sm border-b border-gray-100 lg:border min-w-44 lg:bg-blue-end lg:absolute lg:top-full lg:left-0 lg:z-20 lg:rounded-lg lg:shadow-lg dark:border-slate-700"
       :class="{ 'lg:hidden': !isDropdownActive }"
     >
       <NavBarMenuList :menu="item.menu" @menu-click="menuClickDropdown" />

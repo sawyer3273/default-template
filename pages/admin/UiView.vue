@@ -12,7 +12,9 @@ import {
   mdiReload,
   mdiTrendingUp
 } from '@mdi/js'
-
+definePageMeta({
+  middleware: 'auth' 
+})
 const modalOneActive = ref(false)
 
 const modalTwoActive = ref(false)
@@ -48,7 +50,7 @@ const darkModeStore = useDarkModeStore()
 
 <template>
   <div>
-    <NuxtLayout name="authenticated">
+    <NuxtLayout name="admin">
       <CardBoxModal
         v-model="modalOneActive"
         title="Please confirm action"

@@ -41,7 +41,7 @@ const fields = [
 
 <template>
   <div>
-    <NuxtLayout name="authenticated">
+    <NuxtLayout name="admin">
       <SectionMain>
         <SectionTitleLineWithButton :icon="mdiPackageVariantClosed" title="Список паков" >
           <BaseButton

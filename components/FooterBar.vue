@@ -13,7 +13,7 @@ const year = new Date().getFullYear()
       </div>
       <div class="md:py-2">
         <a>
-          <Logo class="w-auto h-8 md:h-6" />
+          <Logo />
         </a>
       </div>
     </BaseLevel>

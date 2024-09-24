@@ -39,7 +39,7 @@ const transactionBarItems = computed(() => mainStore.history)
 
 <template>
   <div>
-    <NuxtLayout name="authenticated">
+    <NuxtLayout name="admin">
       <SectionMain>
         <div @click='scrap'>Scrap</div>
         <SectionTitleLineWithButton :icon="mdiChartTimelineVariant" title="Overview" main>

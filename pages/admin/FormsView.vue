@@ -43,7 +43,7 @@ const formStatusSubmit = () => {
 
 <template>
   <div>
-    <NuxtLayout name="authenticated">
+    <NuxtLayout name="admin">
       <SectionMain>
         <SectionTitleLineWithButton :icon="mdiBallotOutline" title="Forms example" main>
           <BaseButton

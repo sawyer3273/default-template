@@ -1,6 +1,13 @@
+<script setup>
+
+definePageMeta({
+  middleware: 'auth' 
+})
+
+</script>
 <template>
   <div>
-    <NuxtLayout name="authenticated">
+    <NuxtLayout name="admin">
       <SectionTitle first>Mobile & Tablet</SectionTitle>
 
       <SectionMain>

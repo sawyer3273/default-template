@@ -77,7 +77,7 @@ const submitForm = async () => {
 };
 
 onMounted(() => {
-
+/*
 YaAuthSuggest.init(
       {
          client_id: config.public.yandexClientId,
@@ -107,6 +107,7 @@ YaAuthSuggest.init(
    })
    .catch(error => console.log('Обработка ошибки', error));
 
+*/
 
 });
 </script>
@@ -147,7 +148,7 @@ YaAuthSuggest.init(
               <BaseButton :disabled='$v.$error' type="submit" color="info" :label="$t('enter')" />
               <a href='/register'> <BaseButton :label="$t('Register')" color="info" outline > </BaseButton> </a>
             </BaseButtons>
-            <div class='mt-2' id='buttonContainerId'></div>
+            <!--<div class='mt-2' id='buttonContainerId'></div>-->
           </template>
         </CardBox>
       </SectionFullScreen>

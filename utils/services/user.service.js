@@ -60,7 +60,8 @@ async function logout() {
     let response = await fetch(`/api/user/logout`, requestOptions)
     const parsedValue = await response.json()
     const mainStore = useMainStore()
-    mainStore.setUser()
+    mainStore.setUser(null)
+    localStorage.removeItem('user')
     return parsedValue
 }
 

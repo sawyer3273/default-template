@@ -1,3 +1,11 @@
+<script setup>
+defineProps({
+  class: {
+    type: String,
+    default: 'w-8'
+  },
+})
+</script>
 <template>
-  <img width='24' src='/img/logo.png'/>
+  <img :class='class' src='/img/logo.png'/>
 </template>

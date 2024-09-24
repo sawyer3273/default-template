@@ -15,47 +15,47 @@ import {
 
 export default [
   {
-    to: '/',
+    to: '/admin',
     icon: mdiMonitor,
     label: 'Админка'
   },
   {
-    to: '/actors',
+    to: '/admin/actors',
     icon: mdiAccountStar,
     label: 'Актеры'
   },
   {
-    to: '/intuition',
+    to: '/admin/intuition',
     icon: mdiLightbulbOn,
     label: 'КиноИнтуиция'
   },
   {
-    to: '/Dashboard',
+    to: '/admin/Dashboard',
     icon: mdiMonitor,
     label: 'Dashboard'
   },
   {
-    to: '/TablesView',
+    to: '/admin/TablesView',
     label: 'Tables',
     icon: mdiTable
   },
   {
-    to: '/FormsView',
+    to: '/admin/FormsView',
     label: 'Forms',
     icon: mdiSquareEditOutline
   },
   {
-    to: '/UiView',
+    to: '/admin/UiView',
     label: 'UI',
     icon: mdiTelevisionGuide
   },
   {
-    to: '/ResponsiveView',
+    to: '/admin/ResponsiveView',
     label: 'Responsive',
     icon: mdiResponsive
   },
   {
-    to: '/ProfileView',
+    to: '/admin/ProfileView',
     label: 'Profile',
     icon: mdiAccountCircle
   },
@@ -65,7 +65,7 @@ export default [
     icon: mdiLock
   },
   {
-    to: '/ErrorView',
+    to: '/admin/ErrorView',
     label: 'Error',
     icon: mdiAlertCircle
   },

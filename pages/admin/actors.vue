@@ -40,7 +40,7 @@ const fields = [
 
 <template>
   <div>
-    <NuxtLayout name="authenticated">
+    <NuxtLayout name="admin">
       <SectionMain>
         <SectionTitleLine :icon="mdiAccountStar" title="Актеры" > </SectionTitleLine>
         <CardBox class="mb-6" has-table>

@@ -14,12 +14,17 @@ import {
 
 export default [
   {
+    label: 'Кино Интуиция',
+    to: '/intuition',
+  },
+  {
+    style: 'min-w-40',
     isCurrentUser: true,
     menu: [
       {
         icon: mdiAccount,
         label: 'Мой профиль',
-        to: '/ProfileView'
+        to: '/account'
       },
       {
         icon: mdiCogOutline,
@@ -28,18 +33,7 @@ export default [
       {
         isDivider: true
       },
-      {
-        icon: mdiLogout,
-        label: 'Выход',
-        isLogout: true
-      }
     ]
-  },
-  {
-    icon: mdiThemeLightDark,
-    label: 'Light/Dark',
-    isDesktopNoLabel: true,
-    isToggleLightDark: true
   },
   {
     icon: mdiLogout,
