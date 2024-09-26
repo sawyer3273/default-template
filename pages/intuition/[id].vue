@@ -25,16 +25,6 @@ let log = ref({})
 
 onMounted(async () => {
   getData()
-   localStorage.removeItem('intuition_hintMode')
-    localStorage.removeItem('intuition_hidden')
-    localStorage.removeItem('intuition_showYear')
-    localStorage.removeItem('intuition_hintYear')
-    localStorage.removeItem('intuition_showName')
-    localStorage.removeItem('intuition_hintName')
-    localStorage.removeItem('intuition_guessed')
-    localStorage.removeItem('intuition_lives')
-    localStorage.removeItem('intuition_hint1_3')
-    localStorage.removeItem('intuition')
     
   let logExist = localStorage.getItem('intuition')
   if (logExist) {
@@ -202,14 +192,17 @@ let hintName = ref(false)
 function oneFromThreeLaunch() {
   selectedA.value = -1
   hintMode.value = '1-3'
+  myCarousel.value.slideTo(1)
 }
 function yearLaunch() {
   selectedA.value = -1
   hintMode.value = 'year'
+  myCarousel.value.slideTo(1)
 }
 function nameLaunch() {
   selectedA.value = -1
   hintMode.value = 'name'
+  myCarousel.value.slideTo(1)
 }
 function closeHint() {
   selectedA.value = -1
@@ -246,6 +239,7 @@ function confirmHint() {
       hidden.value.push(arr[rand1])
       arr.splice(rand1, 1)
       hidden.value.push(arr[rand2])
+      myCarousel.value.prev()
     }
     hint1_3.value = true
   } else if (hintMode.value == 'year') {
@@ -273,6 +267,18 @@ function confirmHint() {
   localStorage.setItem('intuition_hintName', JSON.stringify(hintName.value))
   localStorage.setItem('intuition_hint1_3', JSON.stringify(hint1_3.value))
   
+}
+function selectA(actor) {
+  selectedA.value = actor
+  if (!isSelected.value) {
+    myCarousel.value.next()
+  }
+}
+function selectB(actor) {
+  selectedB.value = actor
+  if (!isSelected.value && !hintMode.value) {
+    myCarousel.value.prev()
+  }
 }
 </script>
 
@@ -307,11 +313,11 @@ function confirmHint() {
       </div>
 
       <SectionMain v-else-if='pack.id'>
-        <div class='flex justify-between'>
-          <h1 class='text-2xl mb-2'>{{pack.name}}</h1>
+        <div class='flex justify-between flex-wrap'>
+          <h1 class='text-2xl mb-2 w-full md:w-auto'>{{pack.name}}</h1>
           <Stars :value='lives' title='Количество жизней' />
           
-          <div>
+          <div class='mb-2'>
             <BaseButton
               color="info"
               title='Подсказка "1 из 3"'
@@ -353,7 +359,12 @@ function confirmHint() {
                   </div>
                 </div>
               </div>
-              <div v-if='hintMode' class='absolute top-0 left-0 flex items-center justify-center text-center w-full h-full'>
+            </CardBox>
+          </div>
+          <div class='col-12 col-md-5 mb-3 relative'>
+            <CardBox class='!bg-gray-300 '>
+
+              <div v-if='hintMode' class='mb-2 top-0 left-0 flex items-center justify-center text-center w-full h-full'>
                
                 <div class='bg-green-100 rounded-lg py-2 px-4 shadow-xl relative'>
                   <BaseIcon
@@ -364,7 +375,7 @@ function confirmHint() {
                   /> 
                   <template v-if='hintMode == "1-3"'>
                     <h1 class='text-lg font-bold'>Подсказка "1 из 3"</h1>
-                    <p class='py-2'> Выберите описание, программа оставит только 3 персонажей</p>
+                    <p class='py-1'> Выберите описание, программа оставит только 3 персонажа</p>
                     <BaseButton
                       v-if='selectedB !== -1'
                       color="success"
@@ -376,7 +387,7 @@ function confirmHint() {
                   </template>
                   <template v-if='hintMode == "year"'>
                     <h1 class='text-lg font-bold'>Подсказка "Год выхода"</h1>
-                    <p class='py-2'> Выберите описание, чтоб узнать год выхода фильма</p>
+                    <p class='py-1'> Выберите описание, чтоб узнать год выхода фильма</p>
                     <BaseButton
                       v-if='selectedB !== -1'
                       color="success"
@@ -388,7 +399,7 @@ function confirmHint() {
                   </template>
                   <template v-if='hintMode == "name"'>
                     <h1 class='text-lg font-bold'>Подсказка "Имя персонажа"</h1>
-                    <p class='py-2'> Выберите описание, чтоб узнать имя персонажа</p>
+                    <p class='py-1'> Выберите описание, чтоб узнать имя персонажа</p>
                     <BaseButton
                       v-if='selectedB !== -1'
                       color="success"
@@ -400,10 +411,6 @@ function confirmHint() {
                   </template>
                 </div>
               </div>
-            </CardBox>
-          </div>
-          <div class='col-12 col-md-5 mb-3'>
-            <CardBox class='!bg-gray-300'>
               <div class='row'>
                 <div :class='guessed.includes(actor.id) ? "disabled": ""'  class='col-12 relative'  v-for='(actor, i) in descriptions' @click='() => selectedB = actor'>
                   <div class='rounded-lg cursor-pointer text-md border-2 border-gray-500 shadow-md mb-1 py-1 px-2 bg-gray-100' :class='selectedB.id == actor.id ? "selectedB": "yellow-shine"'>
@@ -421,21 +428,67 @@ function confirmHint() {
           <carousel :items-to-show="1.5" itemsToShow='1' snapAlign='start' ref='myCarousel' :wrapAround='true' v-model="currentSlide">
             <slide key="1">
               <CardBox class='!bg-gray-300'>
-                <div class='row'>
-                  <div class='col-6 col-sm-6 col-md-4 col-lg-3'  v-for='(actor, i) in actors' @click='() => selectedA = actor'>
-                    <div class='mb-3 rounded-lg overflow-hidden cursor-pointer' :class='selectedA.id == actor.id ? "selectedA": "yellow-shine-large"'>
+                <div :class='hintMode ? "disabled": ""' class='row'>
+                  <div :class='guessed.includes(actor.id) || (hidden.length && !hidden.includes(actor.id)) ? "disabled": ""' class='col-6 col-sm-6 col-md-4 col-lg-3'  v-for='(actor, i) in actors' @click='() =>  selectA(actor)'>
+                    <div class='mb-3 rounded-lg overflow-hidden cursor-pointer relative' :class='selectedA.id == actor.id ? "selectedA": "yellow-shine-large"' >
                       <img :src='actor.avatar' />
+                      <img v-if='guessed.includes(actor.id)' class='absolute krest' src="/img/krest.png"  />
                     </div>
                   </div>
                 </div>
               </CardBox>
             </slide>
-            <slide key="12">
+            <slide key="2">
               <CardBox class='!bg-gray-300'>
+                <div v-if='hintMode' class='mb-2 bg-green-100 rounded-lg py-2 px-4 shadow-xl relative'>
+                  <BaseIcon
+                    class='absolute top-1 right-1 cursor-pointer'
+                    :path="mdiClose"
+                    size='22'
+                    @click="closeHint"
+                  /> 
+                  <template v-if='hintMode == "1-3"'>
+                    <h1 class='text-lg font-bold'>Подсказка "1 из 3"</h1>
+                    <p class='py-1'> Выберите описание, программа оставит только 3 персонажа</p>
+                    <BaseButton
+                      v-if='selectedB !== -1'
+                      color="success"
+                      label='Подтвердить'
+                      :icon="mdiCheckOutline"
+                      class='mr-2'
+                      @click="confirmHint"
+                    /> 
+                  </template>
+                  <template v-if='hintMode == "year"'>
+                    <h1 class='text-lg font-bold'>Подсказка "Год выхода"</h1>
+                    <p class='py-1'> Выберите описание, чтоб узнать год выхода фильма</p>
+                    <BaseButton
+                      v-if='selectedB !== -1'
+                      color="success"
+                      label='Подтвердить'
+                      :icon="mdiCheckOutline"
+                      class='mr-2'
+                      @click="confirmHint"
+                    /> 
+                  </template>
+                  <template v-if='hintMode == "name"'>
+                    <h1 class='text-lg font-bold'>Подсказка "Имя персонажа"</h1>
+                    <p class='py-1'> Выберите описание, чтоб узнать имя персонажа</p>
+                    <BaseButton
+                      v-if='selectedB !== -1'
+                      color="success"
+                      label='Подтвердить'
+                      :icon="mdiCheckOutline"
+                      class='mr-2'
+                      @click="confirmHint"
+                    /> 
+                  </template>
+                </div>
                 <div class='row'>
-                  <div class='col-12'  v-for='(actor, i) in descriptions' @click='() => selectedB = actor'>
-                    <div class='rounded-lg cursor-pointer text-md border-2 border-gray-500 shadow-md mb-2 py-1 px-2 bg-gray-100' :class='selectedB.id == actor.id ? "selectedB": "yellow-shine"'>
-                      {{actor.text}}
+                  <div :class='guessed.includes(actor.id) ? "disabled": ""'  class='col-12 relative'  v-for='(actor, i) in descriptions' @click='() => selectB(actor)'>
+                    <div class='rounded-lg cursor-pointer text-md border-2 border-gray-500 shadow-md mb-1 py-1 px-2 bg-gray-100' :class='selectedB.id == actor.id ? "selectedB": "yellow-shine"'>
+                      {{actor.text}} <span v-if='showName == actor.id'>- "{{actor.character}}"</span> <span v-if='showYear == actor.id'>({{actor.year}})</span> <span v-if='showFake && actor.id < 0'>(Fake)</span>
+                      <div v-if='guessed.includes(actor.id)' class='border-red-700 border-2 w-for-underline absolute'></div>
                     </div>
                   </div>
                 </div>
