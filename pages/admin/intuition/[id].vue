@@ -28,6 +28,7 @@ onBeforeMount(async () => {
       packData.value = {
         logo: data.data[0].logo,
         text: data.data[0].name,
+        fakeActor: data.data[0].fakeActor,
         id: data.data[0].id,
       }
       computedValue.value = []
@@ -37,6 +38,7 @@ onBeforeMount(async () => {
           year: one.year,
           character: one.character,
           text: one.text,
+          movie: one.movie,
           id: one.id,
         })
       })
@@ -53,6 +55,7 @@ let emptyValue = {
   actor: {id: 0, name: '', avatar: '',},
   year: '',
   character: '',
+  movie: '',
   text: '',
   id: 0
 }
@@ -60,6 +63,7 @@ let computedValue = ref([cloneDeep(emptyValue)])
 let packData = ref({
   logo: '',
   text: '',
+  fakeActor: '',
   id: 0
 })
 
@@ -125,6 +129,7 @@ async function save() {
               </div>
               <div class='col-md-10'>
                 <FormControl class='mt-1' v-model='packData.text'  placeholder="Введите название пака" />
+                <FormControl class='mt-1' v-model='packData.fakeActor'  placeholder="Введите несуществующего персонажа" />
               </div>
             </div>
         </CardBox>
@@ -144,6 +149,7 @@ async function save() {
                 <FormControl class='mt-1' v-model='computedValue[i].text' type="textarea" placeholder="Введите описание роли" />
                 <FormControl class='mt-1' v-model='computedValue[i].year' placeholder="Введите год выхода фильма" />
                 <FormControl class='mt-1' v-model='computedValue[i].character' placeholder="Введите имя персонажа" />
+                <FormControl class='mt-1' v-model='computedValue[i].movie' placeholder="Введите название фильма" />
                 <div class='top-0 left-0 ml-3 mt-1 absolute font-bold'>{{i+1}}</div>
               </div>
             </div>

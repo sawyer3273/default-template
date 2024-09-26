@@ -83,6 +83,7 @@ export async function createIntuitionPack(req: Request, res: Response, _next: Ne
         data: {
           logo: data.logo,
           name: data.text,
+          fakeActor: data.fakeActor,
           user_id: res.locals.auth.id
         },
       });
@@ -91,6 +92,7 @@ export async function createIntuitionPack(req: Request, res: Response, _next: Ne
         data: {
           logo: data.logo,
           name: data.text,
+          fakeActor: data.fakeActor,
           user_id: res.locals.auth.id
         },
       });
@@ -106,6 +108,7 @@ export async function createIntuitionPack(req: Request, res: Response, _next: Ne
             actor_id: pack[i].actor.id,
             actorName: pack[i].actor.name,
             text: pack[i].text,
+            movie: pack[i].movie,
             pack_id: result.id
           },
         });
@@ -118,6 +121,7 @@ export async function createIntuitionPack(req: Request, res: Response, _next: Ne
             actor_id: pack[i].actor.id,
             actorName: pack[i].actor.name,
             text: pack[i].text,
+            movie: pack[i].movie,
             pack_id: result.id
           },
         });

@@ -36,6 +36,7 @@ model User {
   rate            Int              @default(0)
   userTokens      userAuthTokens[]
   IntuitionPack   IntuitionPack[]
+  IntuitionResult IntuitionResult[]
 }
 
 model userAuthTokens {
@@ -106,11 +107,13 @@ model IntuitionPack {
   id   Int     @id @default(autoincrement())
   name String
   logo String?
+  fakeActor String?
 
   user_id              Int
   user                 User                   @relation(fields: [user_id], references: [id])
   createdAt            DateTime               @default(now())
   IntuitionPackContent IntuitionPackContent[]
+  IntuitionResult IntuitionResult[]
 }
 
 model IntuitionPackContent {
@@ -120,9 +123,23 @@ model IntuitionPackContent {
   character String?
   actorName String?
   text String?
+  movie String?
+
 
   actor_id Int
   actror    Person        @relation(fields: [actor_id], references: [id])
   pack_id   Int
   pack      IntuitionPack @relation(fields: [pack_id], references: [id])
+}
+
+
+model IntuitionResult {
+  id     Int     @id @default(autoincrement())
+  value  Int
+
+  user_id Int
+  user    User        @relation(fields: [user_id], references: [id])
+  pack_id   Int
+  pack      IntuitionPack @relation(fields: [pack_id], references: [id])
+  createdAt            DateTime               @default(now())
 }
