@@ -69,6 +69,7 @@
     "vue": "^3.4.15",
     "vue-advanced-cropper": "^2.8.9",
     "vue-toastification": "^2.0.0-rc.5",
+    "vue3-carousel": "^0.3.4",
     "vuelidate": "^0.7.7"
   },
   "devDependencies": {

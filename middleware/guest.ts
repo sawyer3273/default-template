@@ -14,7 +14,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
             cookies = {user: JSON.parse(JSON.parse(cookies).value)}
         }
     }
-    
+    console.log('cookies',cookies)
     if (cookies && cookies.user && cookies.user.token) {
         return navigateTo('/');
     }

@@ -11,6 +11,7 @@ export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
     '@nuxtjs/i18n',
+    //'vue3-carousel-nuxt',
   ],
   build:{
     // vue-toastification - old commonjs module 

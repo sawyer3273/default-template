@@ -152,6 +152,6 @@ export function parseUserObject(user) {
     } : {}
     const mainStore = useMainStore()
     mainStore.setUser(userData)
-    setLocalStorageWithExpiry('user', JSON.stringify(userData), 1000 * 60 * 5)
+    setLocalStorageWithExpiry('user', JSON.stringify(userData), 1000 * 60 * 60 * 24 * 7)
     return userData 
 }

@@ -6,7 +6,7 @@ import {
 
 export default [
   {
-    label: 'Кино Интуиция',
+    label: 'КиноИнтуиция',
     to: '/intuition',
   },
   {

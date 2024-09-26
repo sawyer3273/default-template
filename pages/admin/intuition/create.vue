@@ -3,7 +3,7 @@ import { computed, ref, onMounted } from 'vue'
 import { useMainStore } from '@/stores/main'
 import {
   mdiNoteEdit,
-  mdiPlusBoxMultiple
+  mdiPlusBoxMultiple, mdiAccountPlusOutline
 } from '@mdi/js'
 import * as chartConfig from '@/components/Charts/chart.config.js'
 import LineChart from '@/components/Charts/LineChart.vue'
@@ -114,8 +114,7 @@ function play() {
         <button @click="setSpeed(2)">2x</button>
       <div @click='upload'> fff </div>
       </div>-->
-        <SectionTitleLine :icon="mdiNoteEdit" title="Данные пака">
-        </SectionTitleLine>
+        <SectionTitleLine :icon="mdiNoteEdit" title="Данные пака"> </SectionTitleLine>
         <CardBox class='mb-4 shadow-sm '>
           <div class='row'>
               <div class='col-md-2'>
@@ -126,16 +125,7 @@ function play() {
               </div>
             </div>
         </CardBox>
-        <SectionTitleLineWithButton :icon="mdiNoteEdit" title="Список актеров">
-          <BaseButton
-            @click='computedValue.push(cloneDeep(emptyValue))'
-            :icon="mdiPlusBoxMultiple"
-            label="Добавить актера"
-            color="contrast"
-            rounded-full
-            small
-          />
-        </SectionTitleLineWithButton>
+        <SectionTitleLine :icon="mdiNoteEdit" title="Список актеров"> </SectionTitleLine>
         <div class='mb-2'> Введите минимум 12 актеров  </div>
         <div class='row'>
           <div class='col-md-6' v-for='(data, i) in computedValue' :key='"auto"+i'>
@@ -157,14 +147,24 @@ function play() {
         </div>
 
          <SectionTitleLineWithButton  title="">
-          <BaseButton
-            @click='save'
-            :icon="mdiPlusBoxMultiple"
-            label="Сохранить"
-            color="contrast"
-            rounded-full
-            small
-          />
+          <div>
+            <BaseButton
+              @click='computedValue.push(cloneDeep(emptyValue))'
+              :icon="mdiAccountPlusOutline"
+              label="Добавить актера"
+              color="contrast"
+              rounded-full
+              small
+            />
+            <BaseButton
+              @click='save'
+              :icon="mdiPlusBoxMultiple"
+              label="Сохранить"
+              color="contrast"
+              rounded-full
+              small
+            />
+          </div>
         </SectionTitleLineWithButton>
       </SectionMain>
     </NuxtLayout>

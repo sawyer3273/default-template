@@ -2,7 +2,7 @@
 import { computed, ref, onBeforeMount } from 'vue'
 import { useMainStore } from '@/stores/main'
 import {
-  mdiNoteEdit, mdiPlusBoxMultiple, mdiDeleteCircleOutline
+  mdiNoteEdit, mdiPlusBoxMultiple, mdiDeleteCircleOutline, mdiAccountPlusOutline
 } from '@mdi/js'
 import * as chartConfig from '@/components/Charts/chart.config.js'
 import LineChart from '@/components/Charts/LineChart.vue'
@@ -117,8 +117,7 @@ async function save() {
         <BaseButton label="Ok" color="contrast" @click="deleteAction" />
       </CardBoxModal>
       <SectionMain>
-        <SectionTitleLine :icon="mdiNoteEdit" title="Данные пака">
-        </SectionTitleLine>
+        <SectionTitleLine :icon="mdiNoteEdit" title="Данные пака"></SectionTitleLine>
         <CardBox class='mb-4 shadow-sm '>
           <div class='row'>
               <div class='col-md-2'>
@@ -129,16 +128,7 @@ async function save() {
               </div>
             </div>
         </CardBox>
-        <SectionTitleLineWithButton :icon="mdiNoteEdit" title="Список актеров">
-          <BaseButton
-            @click='computedValue.push(cloneDeep(emptyValue))'
-            :icon="mdiPlusBoxMultiple"
-            label="Добавить актера"
-            color="contrast"
-            rounded-full
-            small
-          />
-        </SectionTitleLineWithButton>
+        <SectionTitleLine :icon="mdiNoteEdit" title="Список актеров"></SectionTitleLine>
         <div class='mb-2'> Введите минимум 12 актеров  </div>
         <div class='row'>
           <div class='col-md-6' v-for='(data, i) in computedValue' :key='"auto"+i'>
@@ -163,6 +153,15 @@ async function save() {
         </div>
 
          <SectionTitleLineWithButton  title="">
+         <div>
+          <BaseButton
+              @click='computedValue.push(cloneDeep(emptyValue))'
+              :icon="mdiAccountPlusOutline"
+              label="Добавить актера"
+              color="contrast"
+              rounded-full
+              small
+            />
           <BaseButton
             @click='save'
             :icon="mdiPlusBoxMultiple"
@@ -171,6 +170,7 @@ async function save() {
             rounded-full
             small
           />
+          </div>
         </SectionTitleLineWithButton>
       </SectionMain>
     </NuxtLayout>

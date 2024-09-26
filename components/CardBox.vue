@@ -10,6 +10,10 @@ const props = defineProps({
     type: String,
     default: 'flex-col'
   },
+  class: {
+    type: String,
+    default: ''
+  },
   hasComponentLayout: Boolean,
   hasTable: Boolean,
   smallPadding: Boolean,
@@ -28,6 +32,7 @@ const componentClass = computed(() => {
   const base = [
     props.rounded,
     props.flex,
+    props.class,
     props.isModal ? 'dark:bg-slate-900' : 'dark:bg-slate-900/70'
   ]
 
