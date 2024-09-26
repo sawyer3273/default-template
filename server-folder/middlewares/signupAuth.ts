@@ -43,6 +43,7 @@ export const afterSignupAuth = async (req: any, res: Response, next: NextFunctio
             id: decode.userId,
             username: decode.username,
             userEmail: decode.userEmail,
+            userRole: decode.userRole,
          }
         next()        
       }

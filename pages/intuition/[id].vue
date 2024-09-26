@@ -10,6 +10,7 @@ import { mdiDice3, mdiCheckOutline, mdiCounter, mdiAccount, mdiHelpCircle, mdiCl
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 import { useToast } from "vue-toastification";
 import { getRandomNumber } from '~/utils/common'
+import { statsService } from '~/utils/services/stats.service'
 
 definePageMeta({
   middleware: 'auth' 
@@ -20,8 +21,67 @@ const route = useRoute()
 const toast = useToast();
 
 
+let log = ref({})
+
 onMounted(async () => {
   getData()
+   localStorage.removeItem('intuition_hintMode')
+    localStorage.removeItem('intuition_hidden')
+    localStorage.removeItem('intuition_showYear')
+    localStorage.removeItem('intuition_hintYear')
+    localStorage.removeItem('intuition_showName')
+    localStorage.removeItem('intuition_hintName')
+    localStorage.removeItem('intuition_guessed')
+    localStorage.removeItem('intuition_lives')
+    localStorage.removeItem('intuition_hint1_3')
+    localStorage.removeItem('intuition')
+    
+  let logExist = localStorage.getItem('intuition')
+  if (logExist) {
+    log.value = JSON.parse(logExist)
+  } else {
+    log.value = [{type: 'start', date: new Date().getTime()}]
+    localStorage.setItem('intuition', JSON.stringify(log.value))
+  }
+  let hintModeExist = localStorage.getItem('intuition_hintMode')
+  let hiddenExist = localStorage.getItem('intuition_hidden')
+  let showYearExist = localStorage.getItem('intuition_showYear')
+  
+  let hint1_3Exist = localStorage.getItem('intuition_hint1_3')
+  let hintYearExist = localStorage.getItem('intuition_hintYear')
+  let showNameExist = localStorage.getItem('intuition_showName')
+  let hintNameExist = localStorage.getItem('intuition_hintName')
+  let guessedExist = localStorage.getItem('intuition_guessed')
+  let livesExist = localStorage.getItem('intuition_lives')
+
+  if (hintModeExist) {
+    hintMode.value = JSON.parse(hintModeExist)
+  }
+  if (hiddenExist) {
+    hidden.value = JSON.parse(hiddenExist)
+  }
+  if (showYearExist) {
+    showYear.value = JSON.parse(showYearExist)
+  }
+  if (hint1_3Exist) {
+    hint1_3.value = JSON.parse(hint1_3Exist)
+  }
+  if (hintYearExist) {
+    hintYear.value = JSON.parse(hintYearExist)
+  }
+  if (showNameExist) {
+    showName.value = JSON.parse(showNameExist)
+  }
+  if (hintNameExist) {
+    hintName.value = JSON.parse(hintNameExist)
+  }
+  if (guessedExist) {
+    guessed.value = JSON.parse(guessedExist)
+  }
+  if (livesExist) {
+    lives.value = JSON.parse(livesExist)
+  }
+
 })
 
 let pack = ref({})
@@ -58,6 +118,18 @@ function prev() {
   myCarousel.value.prev()
 }
 
+watch(selectedA, () => {
+  if (isSelected.value) {
+    confirmation()
+  }
+})
+watch(selectedB, () => {
+  if (isSelected.value) {
+    confirmation()
+  }
+})
+
+
 let areSure = ref(false)
 function confirmation() {
   areSure.value = true
@@ -69,6 +141,7 @@ function falseSubmit() {
   selectedB.value = -1 
 }
 
+
 let lives = ref(3)
 let guessed = ref([])
 let win = ref(false)
@@ -76,15 +149,49 @@ function trySubmit() {
   hidden.value = []
   if (selectedA.value.id == selectedB.value.id) {
     guessed.value.push(selectedB.value.id)
+    log.value.push({type: 'answer', value: {actor: selectedA.value.character, descr: selectedB.value.character, success: true},date: new Date().getTime()})
+    localStorage.setItem('intuition', JSON.stringify(log.value))
+    localStorage.setItem('intuition_guessed', JSON.stringify(guessed.value))
   } else {
     toast.error('Вы ошиблись');
     lives.value--
+    log.value.push({type: 'answer', value: {actor: selectedA.value.character, descr: selectedB.value.character, success: false},date: new Date().getTime()})
+    localStorage.setItem('intuition', JSON.stringify(log.value))
   }
   areSure.value = false
   selectedA.value = -1
   selectedB.value = -1 
+  localStorage.setItem('intuition_lives', JSON.stringify(lives.value))
+  let finish = false
   if (guessed.value.length == actors.value.length) {
+    finish = true
     win.value = true
+    log.value.push({type: 'end', date: new Date().getTime()})
+    statsService.saveIntuition({
+      value: lives.value,
+      log: JSON.stringify(log.value),
+      pack_id: pack.value.id,
+    })
+  }
+  if (lives.value == 0) {
+    finish = true
+    log.value.push({type: 'end', date: new Date().getTime()})
+    statsService.saveIntuition({
+      value: 0 - actors.value.length + guessed.value.length,
+      log: JSON.stringify(log.value),
+      pack_id: pack.value.id,
+    })
+  }
+  if (finish) {
+    localStorage.removeItem('intuition_hintMode')
+    localStorage.removeItem('intuition_hidden')
+    localStorage.removeItem('intuition_showYear')
+    localStorage.removeItem('intuition_hintYear')
+    localStorage.removeItem('intuition_showName')
+    localStorage.removeItem('intuition_hintName')
+    localStorage.removeItem('intuition_guessed')
+    localStorage.removeItem('intuition_lives')
+    localStorage.removeItem('intuition')
   }
 }
 
@@ -114,6 +221,7 @@ let hidden = ref([])
 let showYear = ref(null)
 let showName = ref(null)
 let showFake= ref(false)
+
 
 function confirmHint() {
   let isFake = false
@@ -153,6 +261,18 @@ function confirmHint() {
   }
   selectedA.value = -1
   hintMode.value = ''
+
+
+  log.value.push({type: 'hint', value: {hint: hintMode.value, descr: selectedB.value.character},date: new Date().getTime()})
+  localStorage.setItem('intuition', JSON.stringify(log.value))
+  localStorage.setItem('intuition_hintMode', JSON.stringify(hintMode.value))
+  localStorage.setItem('intuition_hidden', JSON.stringify(hidden.value))
+  localStorage.setItem('intuition_showYear', JSON.stringify(showYear.value))
+  localStorage.setItem('intuition_hintYear', JSON.stringify(hintYear.value))
+  localStorage.setItem('intuition_showName', JSON.stringify(showName.value))
+  localStorage.setItem('intuition_hintName', JSON.stringify(hintName.value))
+  localStorage.setItem('intuition_hint1_3', JSON.stringify(hint1_3.value))
+  
 }
 </script>
 
@@ -192,14 +312,6 @@ function confirmHint() {
           <Stars :value='lives' title='Количество жизней' />
           
           <div>
-            <BaseButton
-              color="success"
-              title='Подтвердить'
-              :icon="mdiCheckOutline"
-              class='mr-2'
-              :disabled='!isSelected'
-              @click="confirmation"
-            /> 
             <BaseButton
               color="info"
               title='Подсказка "1 из 3"'
@@ -252,10 +364,11 @@ function confirmHint() {
                   /> 
                   <template v-if='hintMode == "1-3"'>
                     <h1 class='text-lg font-bold'>Подсказка "1 из 3"</h1>
-                    <p class='py-2'> Выберите описание и вам оставят 3 персонажа</p>
+                    <p class='py-2'> Выберите описание, программа оставит только 3 персонажей</p>
                     <BaseButton
                       v-if='selectedB !== -1'
                       color="success"
+                      label='Подтвердить'
                       :icon="mdiCheckOutline"
                       class='mr-2'
                       @click="confirmHint"
@@ -267,6 +380,7 @@ function confirmHint() {
                     <BaseButton
                       v-if='selectedB !== -1'
                       color="success"
+                      label='Подтвердить'
                       :icon="mdiCheckOutline"
                       class='mr-2'
                       @click="confirmHint"
@@ -278,6 +392,7 @@ function confirmHint() {
                     <BaseButton
                       v-if='selectedB !== -1'
                       color="success"
+                      label='Подтвердить'
                       :icon="mdiCheckOutline"
                       class='mr-2'
                       @click="confirmHint"

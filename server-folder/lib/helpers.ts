@@ -58,16 +58,17 @@ export const generateUserTokens = async (user: User, req: any, res: Response) =>
     const userId = user.id;
     const username = user.username;
     const userEmail = user.email;
+    const userRole = user.role;
     const payloadAccess = {
-      data: { userId, username, userEmail },
+      data: { userId, username, userEmail, userRole },
       tokenType: `${process.env.ACCESS_TOKEN_SECRET}`,
       expiresIn: 1000 * 60 * 5, // 5 minutes
     };
 
     const accessToken = await signAccessToken(payloadAccess);
-
+    
     const payloadRefresh = {
-      data: { userId, username, userEmail },
+      data: { userId, username, userEmail, userRole },
       tokenType: `${process.env.REFRESH_TOKEN_SECRET}`,
       expiresIn: "7d",
     };

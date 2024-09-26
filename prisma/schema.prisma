@@ -108,6 +108,7 @@ model IntuitionPack {
   name String
   logo String?
   fakeActor String?
+  enable Boolean? @default(true)
 
   user_id              Int
   user                 User                   @relation(fields: [user_id], references: [id])
@@ -136,6 +137,8 @@ model IntuitionPackContent {
 model IntuitionResult {
   id     Int     @id @default(autoincrement())
   value  Int
+  log    String?
+  time   Int?
 
   user_id Int
   user    User        @relation(fields: [user_id], references: [id])

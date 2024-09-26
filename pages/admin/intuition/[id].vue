@@ -28,6 +28,7 @@ onBeforeMount(async () => {
       packData.value = {
         logo: data.data[0].logo,
         text: data.data[0].name,
+        enable: data.data[0].enable,
         fakeActor: data.data[0].fakeActor,
         id: data.data[0].id,
       }
@@ -64,7 +65,8 @@ let packData = ref({
   logo: '',
   text: '',
   fakeActor: '',
-  id: 0
+  id: 0,
+  enable: false
 })
 
 
@@ -131,6 +133,14 @@ async function save() {
                 <FormControl class='mt-1' v-model='packData.text'  placeholder="Введите название пака" />
                 <FormControl class='mt-1' v-model='packData.fakeActor'  placeholder="Введите несуществующего персонажа" />
               </div>
+            </div>
+            <div class='flex justify-end'>
+              <FormCheckRadioGroup
+                v-model="packData.enable"
+                type="switch"
+                name="notifications-switch"
+                :options="{ outline: 'Активно' }"
+              />
             </div>
         </CardBox>
         <SectionTitleLine :icon="mdiNoteEdit" title="Список актеров"></SectionTitleLine>

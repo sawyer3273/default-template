@@ -46,7 +46,16 @@ export async function getPacksIntuition(req: any, res: Response, _next: NextFunc
     if (req.query.id) {
       cond.id = parseInt(req.query.id)
     }
-    let data = await findMany(req, 'intuitionPack', cond, {IntuitionPackContent: true})
+    let include: any = {IntuitionPackContent: true}
+    if (res.locals.auth.userRole == 'USER') {
+      include.IntuitionResult = {
+        where: {
+          user_id: res.locals.auth.userId
+        }
+      }
+      cond.enable = true
+    }
+    let data = await findMany(req, 'intuitionPack', cond, include)
     let count = await getCount('intuitionPack', cond)
     
     return res.json({
@@ -67,7 +76,7 @@ export async function getPacksIntuition(req: any, res: Response, _next: NextFunc
 export const routes: RouteConfig = {
   routes: [
     { method: 'get', path: '/actors', handler: [afterSignupAuth, isAdmin, getActors] },
-    { method: 'get', path: '/packsIntuition', handler: [ getPacksIntuition ] },
+    { method: 'get', path: '/packsIntuition', handler: [ afterSignupAuth, getPacksIntuition ] },
 
 
 

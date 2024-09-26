@@ -83,6 +83,7 @@ export async function createIntuitionPack(req: Request, res: Response, _next: Ne
         data: {
           logo: data.logo,
           name: data.text,
+          enable: data.enable,
           fakeActor: data.fakeActor,
           user_id: res.locals.auth.id
         },
@@ -93,6 +94,7 @@ export async function createIntuitionPack(req: Request, res: Response, _next: Ne
           logo: data.logo,
           name: data.text,
           fakeActor: data.fakeActor,
+          enable: data.enable,
           user_id: res.locals.auth.id
         },
       });

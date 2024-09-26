@@ -52,17 +52,19 @@ function showItem(id) {
   }
 }
 
-
 </script>
 
 <template>
   <div class='row'>
     <div v-for="pack in items" :key="pack.id" class='col-md-3 mb-3 '>
-      <div class='rounded-lg overflow-hidden shadow-lg cursor-pointer' @click='() => showItem(pack.id)'>
-        <img :src='pack.logo'/>
-        <div class='p-1 '>
+      <div class='rounded-lg overflow-hidden shadow-lg cursor-pointer relative' @click='() => showItem(pack.id)'>
+        <img :src='pack.logo' :class='pack.IntuitionResult && pack.IntuitionResult.length ? "opacity-65": ""'/>
+        <div class='p-1'>
           <div class='font-medium text-lg'>{{pack.name}}</div>
           <div class='text-xs text-gray-400 text-capitalize'>{{ dayjs(pack.createdAt).locale(locale).format('MMMM D, HH:mm, YYYY') }}</div>
+          <div v-if='pack.IntuitionResult && pack.IntuitionResult.length' class='bg-gray-300 absolute top-0 left-0 w-full flex justify-center'>
+            <Stars :value='pack.IntuitionResult[0].value'/>
+          </div>
         </div>
       </div>
     </div>
