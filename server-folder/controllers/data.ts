@@ -50,7 +50,7 @@ export async function getPacksIntuition(req: any, res: Response, _next: NextFunc
     if (res.locals.auth.userRole == 'USER') {
       include.IntuitionResult = {
         where: {
-          user_id: res.locals.auth.userId
+          user_id: res.locals.auth.id
         }
       }
       cond.enable = true

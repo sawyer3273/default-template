@@ -6,11 +6,14 @@ import { dataService } from '~/utils/services/data.service'
 import { cloneDeep } from 'lodash'
 import { shuffle } from '~/utils/common'
 import 'vue3-carousel/dist/carousel.css'
-import { mdiDice3, mdiCheckOutline, mdiCounter, mdiAccount, mdiHelpCircle, mdiClose } from '@mdi/js'
+import { mdiDice3, mdiCounter, mdiAccount, mdiHelpCircle } from '@mdi/js'
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 import { useToast } from "vue-toastification";
 import { getRandomNumber } from '~/utils/common'
 import { statsService } from '~/utils/services/stats.service'
+import ActorsBox from '@/components/Intuition/ActorsBox.vue'
+import DescriptionBox from '@/components/Intuition/DescriptionBox.vue'
+
 
 definePageMeta({
   middleware: 'auth' 
@@ -164,7 +167,6 @@ function trySubmit() {
     })
   }
   if (lives.value == 0) {
-    finish = true
     log.value.push({type: 'end', date: new Date().getTime()})
     statsService.saveIntuition({
       value: 0 - actors.value.length + guessed.value.length,
@@ -280,6 +282,9 @@ function selectB(actor) {
     myCarousel.value.prev()
   }
 }
+function refresh() {
+  lives.value = 100
+}
 </script>
 
 <template>
@@ -289,12 +294,9 @@ function selectB(actor) {
         <div class='flex justify-center'><Looser/></div> 
         <div class='text-center text-blue-700 font-bold mt-3'> 
           <NuxtLink to='/intuition'>
-            <BaseButton
-              color="info"
-              label='Список игр'
-              class='mr-2'
-            />  
+            <BaseButton color="info"  label='Список игр' class='mr-2' />  
           </NuxtLink>
+           <BaseButton color="info" label='Продолжить игру'  class='mr-2' @click='refresh' />  
         </div>
       </div> 
 
@@ -303,11 +305,7 @@ function selectB(actor) {
         <div class='flex justify-center'><Winner :value='lives'/></div> 
         <div class='text-center text-blue-700 font-bold mt-3'> 
           <NuxtLink to='/intuition'>
-            <BaseButton
-              color="info"
-              label='Список игр'
-              class='mr-2'
-            />  
+            <BaseButton color="info"  label='Список игр' class='mr-2' />  
           </NuxtLink>
         </div>
       </div>
@@ -318,188 +316,33 @@ function selectB(actor) {
           <Stars :value='lives' title='Количество жизней' />
           
           <div class='mb-2'>
-            <BaseButton
-              color="info"
-              title='Подсказка "1 из 3"'
-              :icon="mdiDice3"
-              :disabled='hint1_3'
-              @click="oneFromThreeLaunch"
-            />
-            <BaseButton
-              color="info"
-              title='Подсказка "Год выхода"'
-              :icon="mdiCounter"
-              :disabled='hintYear'
-              @click="yearLaunch"
-            />
-            <BaseButton
-              color="info"
-              title='Подсказка "Имя персонажа"'
-              :icon="mdiAccount"
-              :disabled='hintName'
-              @click="nameLaunch"
-              class='mr-2'
-            />
-            <BaseButton
-              color="warning"
-              :icon="mdiHelpCircle"
-              @click=""
-            />
-
+            <BaseButton color="info" title='Подсказка "1 из 3"' :icon="mdiDice3" :disabled='hint1_3' @click="oneFromThreeLaunch" />
+            <BaseButton color="info" title='Подсказка "Год выхода"' :icon="mdiCounter" :disabled='hintYear' @click="yearLaunch" />
+            <BaseButton color="info" title='Подсказка "Имя персонажа"' :icon="mdiAccount" :disabled='hintName' @click="nameLaunch" class='mr-2' />
+            <BaseButton color="warning" :icon="mdiHelpCircle" @click="" />
           </div>
         </div>
         <div class='row hidden md:flex'>
           <div class='col-xs-6 col-md-7 mb-3'>
-            <CardBox class='!bg-gray-300 relative'>
-              <div :class='hintMode ? "disabled": ""' class='row'>
-                <div :class='guessed.includes(actor.id) || (hidden.length && !hidden.includes(actor.id)) ? "disabled": ""' class='col-6 col-sm-6 col-md-4 col-lg-3'  v-for='(actor, i) in actors' @click='() => selectedA = actor'>
-                  <div class='mb-3 rounded-lg overflow-hidden cursor-pointer relative' :class='selectedA.id == actor.id ? "selectedA": "yellow-shine-large"' >
-                    <img :src='actor.avatar' />
-                    <img v-if='guessed.includes(actor.id)' class='absolute krest' src="/img/krest.png"  />
-                  </div>
-                </div>
-              </div>
-            </CardBox>
+            <ActorsBox :actors='actors' :hidden='hidden' :guessed='guessed' :selectedA='selectedA' :hintMode='hintMode' @chooseData='selectA' />
           </div>
           <div class='col-12 col-md-5 mb-3 relative'>
-            <CardBox class='!bg-gray-300 '>
-
-              <div v-if='hintMode' class='mb-2 top-0 left-0 flex items-center justify-center text-center w-full h-full'>
-               
-                <div class='bg-green-100 rounded-lg py-2 px-4 shadow-xl relative'>
-                  <BaseIcon
-                    class='absolute top-1 right-1 cursor-pointer'
-                    :path="mdiClose"
-                    size='22'
-                    @click="closeHint"
-                  /> 
-                  <template v-if='hintMode == "1-3"'>
-                    <h1 class='text-lg font-bold'>Подсказка "1 из 3"</h1>
-                    <p class='py-1'> Выберите описание, программа оставит только 3 персонажа</p>
-                    <BaseButton
-                      v-if='selectedB !== -1'
-                      color="success"
-                      label='Подтвердить'
-                      :icon="mdiCheckOutline"
-                      class='mr-2'
-                      @click="confirmHint"
-                    /> 
-                  </template>
-                  <template v-if='hintMode == "year"'>
-                    <h1 class='text-lg font-bold'>Подсказка "Год выхода"</h1>
-                    <p class='py-1'> Выберите описание, чтоб узнать год выхода фильма</p>
-                    <BaseButton
-                      v-if='selectedB !== -1'
-                      color="success"
-                      label='Подтвердить'
-                      :icon="mdiCheckOutline"
-                      class='mr-2'
-                      @click="confirmHint"
-                    /> 
-                  </template>
-                  <template v-if='hintMode == "name"'>
-                    <h1 class='text-lg font-bold'>Подсказка "Имя персонажа"</h1>
-                    <p class='py-1'> Выберите описание, чтоб узнать имя персонажа</p>
-                    <BaseButton
-                      v-if='selectedB !== -1'
-                      color="success"
-                      label='Подтвердить'
-                      :icon="mdiCheckOutline"
-                      class='mr-2'
-                      @click="confirmHint"
-                    /> 
-                  </template>
-                </div>
-              </div>
-              <div class='row'>
-                <div :class='guessed.includes(actor.id) ? "disabled": ""'  class='col-12 relative'  v-for='(actor, i) in descriptions' @click='() => selectedB = actor'>
-                  <div class='rounded-lg cursor-pointer text-md border-2 border-gray-500 shadow-md mb-1 py-1 px-2 bg-gray-100' :class='selectedB.id == actor.id ? "selectedB": "yellow-shine"'>
-                    {{actor.text}} <span v-if='showName == actor.id'>- "{{actor.character}}"</span> <span v-if='showYear == actor.id'>({{actor.year}})</span> <span v-if='showFake && actor.id < 0'>(Fake)</span>
-                    <div v-if='guessed.includes(actor.id)' class='border-red-700 border-2 w-for-underline absolute'></div>
-                  </div>
-                </div>
-              </div>
-            </CardBox>
+            <DescriptionBox :showName='showName' :showYear='showYear' :descriptions='descriptions' :guessed='guessed' :selectedB='selectedB' :hintMode='hintMode' @chooseData='selectB' @confirmHint='confirmHint' @closeHint='closeHint' />
           </div>
         </div>
-
 
         <div class='flex md:hidden relative'>
           <carousel :items-to-show="1.5" itemsToShow='1' snapAlign='start' ref='myCarousel' :wrapAround='true' v-model="currentSlide">
             <slide key="1">
-              <CardBox class='!bg-gray-300'>
-                <div :class='hintMode ? "disabled": ""' class='row'>
-                  <div :class='guessed.includes(actor.id) || (hidden.length && !hidden.includes(actor.id)) ? "disabled": ""' class='col-6 col-sm-6 col-md-4 col-lg-3'  v-for='(actor, i) in actors' @click='() =>  selectA(actor)'>
-                    <div class='mb-3 rounded-lg overflow-hidden cursor-pointer relative' :class='selectedA.id == actor.id ? "selectedA": "yellow-shine-large"' >
-                      <img :src='actor.avatar' />
-                      <img v-if='guessed.includes(actor.id)' class='absolute krest' src="/img/krest.png"  />
-                    </div>
-                  </div>
-                </div>
-              </CardBox>
+              <ActorsBox :actors='actors' :hidden='hidden' :guessed='guessed' :selectedA='selectedA' :hintMode='hintMode' @chooseData='selectA' />
             </slide>
             <slide key="2">
-              <CardBox class='!bg-gray-300'>
-                <div v-if='hintMode' class='mb-2 bg-green-100 rounded-lg py-2 px-4 shadow-xl relative'>
-                  <BaseIcon
-                    class='absolute top-1 right-1 cursor-pointer'
-                    :path="mdiClose"
-                    size='22'
-                    @click="closeHint"
-                  /> 
-                  <template v-if='hintMode == "1-3"'>
-                    <h1 class='text-lg font-bold'>Подсказка "1 из 3"</h1>
-                    <p class='py-1'> Выберите описание, программа оставит только 3 персонажа</p>
-                    <BaseButton
-                      v-if='selectedB !== -1'
-                      color="success"
-                      label='Подтвердить'
-                      :icon="mdiCheckOutline"
-                      class='mr-2'
-                      @click="confirmHint"
-                    /> 
-                  </template>
-                  <template v-if='hintMode == "year"'>
-                    <h1 class='text-lg font-bold'>Подсказка "Год выхода"</h1>
-                    <p class='py-1'> Выберите описание, чтоб узнать год выхода фильма</p>
-                    <BaseButton
-                      v-if='selectedB !== -1'
-                      color="success"
-                      label='Подтвердить'
-                      :icon="mdiCheckOutline"
-                      class='mr-2'
-                      @click="confirmHint"
-                    /> 
-                  </template>
-                  <template v-if='hintMode == "name"'>
-                    <h1 class='text-lg font-bold'>Подсказка "Имя персонажа"</h1>
-                    <p class='py-1'> Выберите описание, чтоб узнать имя персонажа</p>
-                    <BaseButton
-                      v-if='selectedB !== -1'
-                      color="success"
-                      label='Подтвердить'
-                      :icon="mdiCheckOutline"
-                      class='mr-2'
-                      @click="confirmHint"
-                    /> 
-                  </template>
-                </div>
-                <div class='row'>
-                  <div :class='guessed.includes(actor.id) ? "disabled": ""'  class='col-12 relative'  v-for='(actor, i) in descriptions' @click='() => selectB(actor)'>
-                    <div class='rounded-lg cursor-pointer text-md border-2 border-gray-500 shadow-md mb-1 py-1 px-2 bg-gray-100' :class='selectedB.id == actor.id ? "selectedB": "yellow-shine"'>
-                      {{actor.text}} <span v-if='showName == actor.id'>- "{{actor.character}}"</span> <span v-if='showYear == actor.id'>({{actor.year}})</span> <span v-if='showFake && actor.id < 0'>(Fake)</span>
-                      <div v-if='guessed.includes(actor.id)' class='border-red-700 border-2 w-for-underline absolute'></div>
-                    </div>
-                  </div>
-                </div>
-              </CardBox>
+              <DescriptionBox :showName='showName' :showYear='showYear' :descriptions='descriptions' :guessed='guessed' :selectedB='selectedB' :hintMode='hintMode' @chooseData='selectB' @confirmHint='confirmHint' @closeHint='closeHint' />
             </slide>
           </carousel>
           <div @click="next" class='arrow-css right absolute'></div>
           <div @click="prev" class='arrow-css left absolute'></div>
         </div>
-
-
         
       <CardBoxModal v-model="areSure" >
         <div class='w-full flex justify-center'>
@@ -507,19 +350,8 @@ function selectB(actor) {
         </div>
         <p>Вы уверены что это <span class='text-lowercase text-slate-600'> {{selectedB.text}} </span>?</p>
         <div class='w-full flex justify-end'>
-          <BaseButton
-            color="info"
-            label='Да'
-            class='mr-2'
-            @click="trySubmit"
-          /> 
-          <BaseButton
-            color="info"
-            label='Нет'
-            class='mr-2'
-            outline
-            @click="falseSubmit"
-          /> 
+          <BaseButton color="info" label='Да' class='mr-2'  @click="trySubmit" /> 
+          <BaseButton color="info" label='Нет' class='mr-2'  outline  @click="falseSubmit" /> 
         </div>
       </CardBoxModal>
 

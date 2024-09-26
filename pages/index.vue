@@ -21,7 +21,7 @@ onMounted(() => {
     <NuxtLayout name="auth">
         <div class="-mt-18 xl:-mt-52 w-full">
           <img src="/img/hero-bg.png" class='min-w-full hidden lg:inline-block' alt="">
-          <div class='min-w-full inline-block lg:hidden bg-gradient-to-r from-blue-start to-blue-end min-h-85vh md:min-h-75vh' alt=""> </div>
+          <div class='min-w-full inline-block lg:hidden bg-gradient-to-r from-blue-start to-blue-end min-h-screen md:min-h-75vh' alt=""> </div>
           <div class="flex items-center justify-center w-full absolute top-24 px-6 xl:px-0" >
             <div class="row" :class='containerMaxW'>
               <div class="col-md-6 flex items-center justify-center">

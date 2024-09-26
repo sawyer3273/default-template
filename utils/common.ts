@@ -22,7 +22,8 @@ export function getLocalStorageWithExpiry(key: string) {
 	if (now.getTime() > item.expiry) {
 		// If the item is expired, delete the item from storage
 		// and return null
-		localStorage.removeItem(key)
+	alert( now.getTime().toString() + 'asdasd'  + item.expiry.toString() + 'fff' + (item.expiry  - now.getTime()).toString())
+	//	localStorage.removeItem(key)
 		return null
 	}
 	return item.value ? item.value : null
