@@ -20,16 +20,16 @@ definePageMeta({
 
 
 onMounted(async () => {
-  
+  mainStore.setBreadCrumbs([{name: 'Каст'}])
 })
 
 
 async function getData(payload) {
- // await dataService.getPacksCast(payload)
+  await dataService.getPacksCast(payload)
 }
 
 async function deleteData(payload) {
-//  await adminService.deleteCastPack(payload)
+  await adminService.deleteCastPack(payload)
 }
 
 const fields = [

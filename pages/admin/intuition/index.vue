@@ -20,7 +20,7 @@ definePageMeta({
 
 
 onMounted(async () => {
-  
+  mainStore.setBreadCrumbs([{name: 'КиноИнтуиция'}])
 })
 
 

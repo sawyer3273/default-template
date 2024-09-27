@@ -72,7 +72,7 @@ function hide() {
 function choose(data) {
   chooseDelay.value = true
   componentStore.setAutofillData([])
-  inputValue.value = data.name
+  inputValue.value = data.name ? data.name : data.title 
   emit('update:modelValue', data)
   setTimeout(() => chooseDelay.value = false, 600)
 }
@@ -87,6 +87,11 @@ function onBLur(data) {
   <label v-if='label' :for="id" class="form-label">{{label}}</label>
   <FormControl v-model="inputValue" @focus='isFocused=true' @blur='onBLur' :placeholder="placeholder" :id="id"/>
   <div v-if='isFocused' class='shadow-md rounded-md absolute z-30 bg-white' v-outside="hide">
-    <div class='p-2 hover:bg-gray-100 cursor-pointer' v-for='suggest in componentStore.autofillData' @click='()=>choose(suggest)'> {{suggest.name}} </div>
+    <div class='p-2 hover:bg-gray-100 cursor-pointer' v-for='suggest in componentStore.autofillData' @click='()=>choose(suggest)'> 
+    
+      <span v-if='suggest.name'>{{suggest.name}}</span> 
+      <template v-else><div>{{suggest.title}}</div><div class='text-xs text-gray-400'>{{suggest.origin}}</div></template> 
+      
+    </div>
   </div>
 </template>

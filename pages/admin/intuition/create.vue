@@ -22,8 +22,10 @@ definePageMeta({
 
 
 onMounted(async () => {
-  
+  mainStore.setBreadCrumbs([{name: 'КиноИнтуиция', to: '/admin/intuition'}, {name: 'Создать пак'}])
 })
+
+
 let emptyValue = {
   actor: {id: 0, name: '', avatar: '',},
   year: '',

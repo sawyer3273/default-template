@@ -62,10 +62,12 @@ model Movie {
   year     Int
   country  String?
   type     String?
+  image    String?
 
-  cast     Cast[]
-  library  Library[]
-  castPack CastPack[]
+  cast            Cast[]
+  library         Library[]
+  castPack        CastPack[]
+  CastPackContent CastPackContent[]
 }
 
 model Person {
@@ -151,17 +153,18 @@ model IntuitionResult {
 model CastPack {
   id     Int      @id @default(autoincrement())
   name   String
+  logo   String?
   enable Boolean? @default(true)
 
-  user_id  Int
-  user     User  @relation(fields: [user_id], references: [id])
-  movie_id Int
-  movie    Movie @relation(fields: [movie_id], references: [id])
+  user_id Int
+  user    User @relation(fields: [user_id], references: [id])
 
   CastPackContent CastPackContent[]
   CastResult      CastResult[]
 
   createdAt DateTime @default(now())
+  Movie     Movie?   @relation(fields: [movieId], references: [id])
+  movieId   Int?
 }
 
 model CastPackContent {
@@ -175,8 +178,10 @@ model CastPackContent {
   actor7 String?
   actor8 String?
 
-  pack_id Int
-  pack    CastPack @relation(fields: [pack_id], references: [id])
+  movie_id Int
+  movie    Movie    @relation(fields: [movie_id], references: [id])
+  pack_id  Int
+  pack     CastPack @relation(fields: [pack_id], references: [id])
 }
 
 model CastResult {

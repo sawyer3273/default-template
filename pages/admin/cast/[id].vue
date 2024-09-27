@@ -21,6 +21,10 @@ definePageMeta({
 })
 
 
+onMounted(async () => {
+  mainStore.setBreadCrumbs([{name: 'Каст', to: '/admin/cast'}, {name: 'Редактировать пак'}])
+})
+
 onBeforeMount(async () => {
   try {
     let data = await dataService.getPacksIntuition({id: route.params.id})

@@ -15,7 +15,7 @@ export const where = (cond: Object) => {
       */
 }
 
-export const findMany = (req: any, model: DataModels, where: any = {}, include: any = null) => {
+export const findMany = (req: any, model: DataModels, where: any = {}, options: any = null) => {
     const size: string | null = <string>req.query.size || req.body.size || null
     const page: string | null = <string>req.query.page || req.body.page || null
     let sizeInt = parseInt(size ? size : '50')
@@ -25,8 +25,11 @@ export const findMany = (req: any, model: DataModels, where: any = {}, include: 
         skip: (pageInt - 1) * sizeInt, 
         where: where,
     }
-    if (include) {
-        params.include = include
+    if (options.include) {
+        params.include = options.include
+    }
+    if (options.limit) {
+        params.take = options.limit
     }
     return new Promise((resolve, reject) => {
         //@ts-ignore

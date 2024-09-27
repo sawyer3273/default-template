@@ -21,6 +21,10 @@ definePageMeta({
 })
 
 
+onMounted(async () => {
+  mainStore.setBreadCrumbs([{name: 'КиноИнтуиция', to: '/admin/intuition'}, {name: 'Редактировать пак'}])
+})
+
 onBeforeMount(async () => {
   try {
     let data = await dataService.getPacksIntuition({id: route.params.id})

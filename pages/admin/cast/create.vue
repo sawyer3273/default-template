@@ -22,10 +22,11 @@ definePageMeta({
 
 
 onMounted(async () => {
-  
+  mainStore.setBreadCrumbs([{name: 'Каст', to: '/admin/cast'}, {name: 'Создать пак'}])
 })
+
 let emptyValue = {
-  actor: {id: 0, name: '', avatar: '',},
+  actor: {id: 0, name: '', image: '',},
   year: '',
   character: '',
   movie: '',
@@ -35,7 +36,6 @@ let computedValue = ref([cloneDeep(emptyValue)])
 let packData = ref({
   logo: '',
   text: '',
-  fakeActor: '',
 })
 
 async function getActors(payload) {
@@ -60,7 +60,7 @@ async function save() {
   }
   let errors = []
   computedValue.value.map((one, i) => {
-    if (!one.actor.id || !one.actor.avatar || !one.year || !one.character || !one.text) {
+    if (!one.actor.id || !one.actor.image || !one.year || !one.character || !one.text) {
       errors.push(i+1)
     }
   })
@@ -75,47 +75,12 @@ async function save() {
   }
 }
 
-
-
-let videoPlayer = ref(null)
-function play() {
-  console.log('videoPlayer,videoPlayer',videoPlayer)
-      videoPlayer.value.play();
-    }
-    function pause() {
-      videoPlayer.value.pause();
-    }
-    function stop() {
-      videoPlayer.value.pause();
-      videoPlayer.value.currentTime = 0;
-     }
-  function  setSpeed(speed) {
-      videoPlayer.value.playbackRate = speed;
-    }
 </script>
 
 <template>
   <div>
     <NuxtLayout name="admin">
       <SectionMain>
-      <!--
-      <video width="320" height="240" ref="videoPlayer">
-        <source
-          src="https://s3.timeweb.cloud/1d66ad34-320f94d0-cbe7-493f-bce7-bfb114c821bb/sample-5s.mp4"
-          type="video/mp4"
-        />
-        Your browser does not support the video tag.
-      </video>
-      <div>
-        <button @click="play">play</button>
-        <button @click="pause">pause</button>
-        <button @click="stop">stop</button>
-        <button @click="setSpeed(0.5)">0.5x</button>
-        <button @click="setSpeed(1)">1x</button>
-        <button @click="setSpeed(1.5)">1.5x</button>
-        <button @click="setSpeed(2)">2x</button>
-      <div @click='upload'> fff </div>
-      </div>-->
         <SectionTitleLine :icon="mdiNoteEdit" title="Данные пака"> </SectionTitleLine>
         <CardBox class='mb-4 shadow-sm '>
           <div class='row'>
@@ -124,21 +89,21 @@ function play() {
               </div>
               <div class='col-md-10'>
                 <FormControl class='mt-1' v-model='packData.text'  placeholder="Введите название пака" />
-                <FormControl class='mt-1' v-model='packData.fakeActor'  placeholder="Введите несуществующего персонажа" />
               </div>
             </div>
         </CardBox>
-        <SectionTitleLine :icon="mdiNoteEdit" title="Список актеров"> </SectionTitleLine>
-        <div class='mb-2'> Введите минимум 12 актеров  </div>
+        <SectionTitleLine :icon="mdiNoteEdit" title="Список Фильмов"> </SectionTitleLine>
+        {{computedValue}}
+        <div class='mb-2'> Добавьте минимум 6 фильмов  </div>
         <div class='row'>
           <div class='col-md-6' v-for='(data, i) in computedValue' :key='"auto"+i'>
           <CardBox class='mb-4 shadow-sm relative'>
             <div class='row'>
               <div class='col-md-4'>
-                <CropperCust :classProp='"inline-grid"' folder='actors' :showbtn='computedValue[i].actor.id' v-model='computedValue[i].actor.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor.id)'/> 
+                <CropperCust :classProp='"inline-grid"' folder='actors' :showbtn='computedValue[i].actor.id' v-model='computedValue[i].actor.image' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor.id)'/> 
               </div>
               <div class='col-md-8'> 
-                <AutoSelect v-model="computedValue[i].actor" searchF='getActors' placeholder="Выберите актера" />
+                <AutoSelect v-model="computedValue[i].actor" searchF='getMovies' placeholder="Выберите фильм" />
                 <FormControl class='mt-1' v-model='computedValue[i].text' type="textarea" placeholder="Введите описание роли" />
                 <FormControl class='mt-1' v-model='computedValue[i].year' placeholder="Введите год выхода фильма" />
                 <FormControl class='mt-1' v-model='computedValue[i].character' placeholder="Введите имя персонажа" />

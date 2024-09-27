@@ -6,15 +6,9 @@ export const useMainStore = defineStore('main', () => {
   
   const loader = ref(false)
   const isFieldFocusRegistered = ref(false)
-
-
-  
-
-  const clients = ref([
-    
-  ])
-  const history = ref([
-  ])
+  const breadCrumbs = ref([])
+  const clients = ref([])
+  const history = ref([])
 
 
 
@@ -22,6 +16,9 @@ export const useMainStore = defineStore('main', () => {
     loader.value = payload
   }
 
+  function setBreadCrumbs(payload) {
+    breadCrumbs.value = payload
+  }
 
 
 
@@ -32,6 +29,8 @@ export const useMainStore = defineStore('main', () => {
     clients,
     history,
     loader,
+    breadCrumbs,
     setLoader,
+    setBreadCrumbs
   }
 })

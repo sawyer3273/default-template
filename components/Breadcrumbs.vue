@@ -1,5 +1,7 @@
 <script setup>
 import { mdiHomeAccount } from '@mdi/js';
+import { useMainStore } from '@/stores/main'
+const mainStore = useMainStore()
 
 defineProps({
   mainLink: {
@@ -8,14 +10,13 @@ defineProps({
   }
 })
 
-let data = ref([])
 </script>
 
 <template>
-<div class="crumbs pt-6 pl-6 -mb-4" v-if='data.length'>
+<div class="crumbs pt-6 pl-6 -mb-4" v-if='mainStore.breadCrumbs.length'>
   <ul>
-		<li><NuxtLink :to='mainLink'><BaseIcon :path='mdiHomeAccount' /></NuxtLink></li>
-		<li v-for='link in data'><NuxtLink :to='link.to'>{{link.name}}</NuxtLink></li>
+	<li><NuxtLink :to='mainLink'><BaseIcon :path='mdiHomeAccount' /></NuxtLink></li>
+	<li v-for='link in mainStore.breadCrumbs'><NuxtLink :to='link.to'>{{link.name}}</NuxtLink></li>
 	</ul>
 </div>
 
@@ -39,7 +40,6 @@ ul {
 		display: inline-table;
 		li {
 			display: inline;
-			
 			a {
 			display: block;
 			float: left;
@@ -49,7 +49,7 @@ ul {
 			text-align: center;
 			padding: 5px 10px 0 30px;
 			position: relative;
-			margin: 0 10px 0 0 !important;
+			margin: 0 10px 5px 0 !important;
 			
 			font-size: 20px;
 			text-decoration: none;

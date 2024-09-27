@@ -34,6 +34,9 @@ const menuClick = async (event, item) => {
     }
   }
 }
+onBeforeUnmount(() => {
+  mainStore.setBreadCrumbs([])
+})
 </script>
 
 <template>
