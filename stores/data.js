@@ -12,6 +12,9 @@ export const useDataStore = defineStore('data', () => {
   const packs_intuition = ref([])
   const packs_intuition_count = ref(0)
 
+  const packs_cast = ref([])
+  const packs_cast_count = ref(0)
+
   function setActors(payload) {
     if (payload.data) {
       actors.value = payload.data
@@ -39,6 +42,15 @@ export const useDataStore = defineStore('data', () => {
     }
   }
 
+  function setPacksCast(payload) {
+    if (payload.data) {
+      packs_cast.value = payload.data
+    }
+    if (payload.total) {
+      packs_cast_count.value = payload.total
+    }
+  }
+
   return {
     actors,
     actors_count,
@@ -46,8 +58,11 @@ export const useDataStore = defineStore('data', () => {
     movies_count,
     packs_intuition,
     packs_intuition_count,
+    packs_cast,
+    packs_cast_count,
     setActors,
     setMovies,
-    setPacksIntuition
+    setPacksIntuition,
+    setPacksCast
   }
 })

@@ -24,7 +24,7 @@ export async function getActors(req: Request, res: Response, _next: NextFunction
     if (req.query.key) {
       cond.name = { contains: req.query.key, mode: 'insensitive',}
     }
-    let actors = await findMany(req, 'person', cond)
+    let actors = await findMany(req, 'person', cond, {limit: 10})
     let count = await getCount('person', cond)
     
     return res.json({
@@ -48,10 +48,8 @@ export async function getMovies(req: Request, res: Response, _next: NextFunction
         {origin: { contains: req.query.key, mode: 'insensitive'}},
       ]
     }
-    console.log('asdasdasd', req.query)
     let options = {limit: 10}
     let movies = await findMany(req, 'movie', cond, options)
-    console.log('movies,',movies)
     let count = await getCount('movie', cond)
     
     return res.json({
@@ -104,7 +102,7 @@ export async function getPacksCast(req: any, res: Response, _next: NextFunction)
     if (req.query.id) {
       cond.id = parseInt(req.query.id)
     }
-    let options: any = {include: {CastPackContent: true}}
+    let options: any = {include: {CastPackContent: { include: {movie: true}} }}
     
     if (res.locals.auth.userRole == 'USER') {
       options.include.CastResult = {

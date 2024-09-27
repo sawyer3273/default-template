@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { userStore } from '@/stores/user'
+import { useUserStore } from '@/stores/user'
 import { mdiCheckDecagram } from '@mdi/js'
 
 let userStore = useUserStore()

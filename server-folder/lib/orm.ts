@@ -15,7 +15,7 @@ export const where = (cond: Object) => {
       */
 }
 
-export const findMany = (req: any, model: DataModels, where: any = {}, options: any = null) => {
+export const findMany = (req: any, model: DataModels, where: any = {}, options: any = {}) => {
     const size: string | null = <string>req.query.size || req.body.size || null
     const page: string | null = <string>req.query.page || req.body.page || null
     let sizeInt = parseInt(size ? size : '50')

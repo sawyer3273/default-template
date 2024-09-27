@@ -11,7 +11,8 @@ export const adminService = {
     deleteIntuitionItemPack,
     addCastPack,
     deleteCastPack,
-    deleteCastItemPack
+    deleteCastItemPack,
+    updateMovie
 };
 
 async function deleteActor(payload) {
@@ -41,6 +42,21 @@ async function updateActor(payload) {
             return resp;
         });
 }
+
+async function updateMovie(payload) {
+    const requestOptions = {
+        method: 'POST',
+        headers: await authHeader(),
+        body: JSON.stringify(payload)
+    };
+    return fetch(`/api/admin/movie`, requestOptions)
+        .then(handleResponse)
+        .then(resp => {
+            return resp;
+        });
+}
+
+
 async function uploadImage(form) {
     const requestOptions = {
         method: 'POST',

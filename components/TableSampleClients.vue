@@ -113,7 +113,7 @@ function showItem(id) {
 const toDeleteId = ref(0)
 function deleteAction() {
   emit('delete-data', {id: toDeleteId.value, size: perPage.value, page: currentPage.value})
-  isModalActive.value = false
+  isModalDangerActive.value = false
 }
 </script>
 

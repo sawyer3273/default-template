@@ -85,7 +85,7 @@ function onBLur(data) {
 
 <template>
   <label v-if='label' :for="id" class="form-label">{{label}}</label>
-  <FormControl v-model="inputValue" @focus='isFocused=true' @blur='onBLur' :placeholder="placeholder" :id="id"/>
+  <FormControl class='mb-2' v-model="inputValue" @focus='isFocused=true' @blur='onBLur' :placeholder="placeholder" :id="id"/>
   <div v-if='isFocused' class='shadow-md rounded-md absolute z-30 bg-white' v-outside="hide">
     <div class='p-2 hover:bg-gray-100 cursor-pointer' v-for='suggest in componentStore.autofillData' @click='()=>choose(suggest)'> 
     

@@ -128,6 +128,7 @@ async function cropSave() {
   </div>
   <CardBoxModal v-model="isModalActive" classProp='max-w-96'>
     <Cropper
+     v-if='isModalActive'
       ref="cropperRef"
       class="cropper"
       :src="imageData.src"

@@ -27,42 +27,47 @@ onMounted(async () => {
 
 onBeforeMount(async () => {
   try {
-    let data = await dataService.getPacksIntuition({id: route.params.id})
+    let data = await dataService.getPacksCast({id: route.params.id})
     if (data.data) {
       packData.value = {
         logo: data.data[0].logo,
         text: data.data[0].name,
         enable: data.data[0].enable,
-        fakeActor: data.data[0].fakeActor,
         id: data.data[0].id,
       }
       computedValue.value = []
-      data.data[0].IntuitionPackContent.map(one => {
+      data.data[0].CastPackContent.map(one => {
         computedValue.value.push({
-          actor: {id: one.actor_id, name: one.actorName, avatar: one.avatar},
-          year: one.year,
-          character: one.character,
-          text: one.text,
-          movie: one.movie,
           id: one.id,
+          movie: {id: one.movie_id, image: one.movie.image},
+          actor1: {avatar: one.actor1},
+          actor2: {avatar: one.actor2},
+          actor3: {avatar: one.actor3},
+          actor4: {avatar: one.actor4},
+          actor5: {avatar: one.actor5},
+          actor6: {avatar: one.actor6},
+          actor7: {avatar: one.actor7},
         })
       })
       
     }
   } catch (err) {
-    router.push('/admin/intuition');
+    console.log('err',err)
+    router.push('/admin/cast');
   }
 
 });
 
 
 let emptyValue = {
-  actor: {id: 0, name: '', avatar: '',},
-  year: '',
-  character: '',
-  movie: '',
-  text: '',
-  id: 0
+  movie: {id: 0, name: '', image: '',},
+  actor1: {id: 0, name: '', avatar: '',},
+  actor2: {id: 0, name: '', avatar: '',},
+  actor3: {id: 0, name: '', avatar: '',},
+  actor4: {id: 0, name: '', avatar: '',},
+  actor5: {id: 0, name: '', avatar: '',},
+  actor6: {id: 0, name: '', avatar: '',},
+  actor7: {id: 0, name: '', avatar: '',},
 }
 let computedValue = ref([cloneDeep(emptyValue)])
 let packData = ref({
@@ -83,7 +88,7 @@ async function deleteAction() {
     computedValue.value.splice(toDeleteId.value, 1); 
   }
   if (toDeleteObj && toDeleteObj.id) {
-   await adminService.deleteIntuitionItemPack({id: toDeleteObj.id}) 
+   await adminService.deleteCastItemPack({id: toDeleteObj.id}) 
   }
 }
 
@@ -91,28 +96,34 @@ async function changeActorAvatar(file, id) {
   await adminService.updateActor({avatar: file, id})
 }
 
+async function changeMovieAvatar(file, id) {
+  await adminService.updateMovie({image: file, id})
+}
 
 async function upload() {
   let image = await adminService.uploadImage()
 }
 
 async function save() {
-  if (computedValue.value.length < 12) {
-   // toast.error('Недостаточно актеров'); return
-  }
   let errors = []
   computedValue.value.map((one, i) => {
-    if (!one.actor.id || !one.actor.avatar || !one.year || !one.character || !one.text) {
+    if (!one.movie.id || !one.actor1.avatar || !one.actor2.avatar|| !one.actor3.avatar|| !one.actor4.avatar|| !one.actor5.avatar|| !one.actor6.avatar|| !one.actor7.avatar) {
       errors.push(i+1)
     }
   })
+  if (!packData.value.logo) {
+    toast.error('Загрузите главную картинку'); return
+  }
+  if (!packData.value.text) {
+    toast.error('Введите название'); return
+  }
   if (errors.length) {
-     toast.error('Не хватает данных у актеров под этими номерами: '+ errors.join()); return
+     toast.error('Не хватает данных у фильмов под этими номерами: '+ errors.join()); return
   } else {
     let item = JSON.parse(JSON.stringify(computedValue.value))
-    let data = await adminService.addIntuitionPack({pack: item, data: packData.value})
+    let data = await adminService.addCastPack({pack: item, data: packData.value})
     if (data.success) {
-      router.push('/admin/intuition');
+      router.push('/admin/cast');
     }
   }
 }
@@ -135,7 +146,6 @@ async function save() {
               </div>
               <div class='col-md-10'>
                 <FormControl class='mt-1' v-model='packData.text'  placeholder="Введите название пака" />
-                <FormControl class='mt-1' v-model='packData.fakeActor'  placeholder="Введите несуществующего персонажа" />
               </div>
             </div>
             <div class='flex justify-end'>
@@ -147,37 +157,69 @@ async function save() {
               />
             </div>
         </CardBox>
-        <SectionTitleLine :icon="mdiNoteEdit" title="Список актеров"></SectionTitleLine>
-        <div class='mb-2'> Введите минимум 12 актеров  </div>
+        <SectionTitleLine :icon="mdiNoteEdit" title="Список Фильмов"> </SectionTitleLine>
+        <div class='mb-2'> Добавьте минимум 6 фильмов  </div>
         <div class='row'>
-          <div class='col-md-6' v-for='(data, i) in computedValue' :key='"auto"+i'>
-
-          <CardBox class='mb-4 shadow-sm relative pt-1'>
-             <BaseIcon class='cursor-pointer text-red-500 absolute top-1 right-1' :path="mdiDeleteCircleOutline"  @click="() => {toDeleteId = i; isModalDangerActive = true}" />
+          <div class='col-md-12' v-for='(data, i) in computedValue' :key='"auto"+i'>
+          <CardBox class='mb-4 shadow-sm relative'>
+          <BaseIcon class='cursor-pointer text-red-500 absolute top-1 right-1' :path="mdiDeleteCircleOutline"  @click="() => {toDeleteId = i; isModalDangerActive = true}" />
             <div class='row'>
-              <div class='col-md-4'>
-                <CropperCust :classProp='"inline-grid"' folder='actors' :showbtn='computedValue[i].actor.id' v-model='computedValue[i].actor.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor.id)'/> 
+              <div class='col-md-3'>
+                <div class='mb-2 justify-center flex flex-wrap'>
+                  <AutoSelect v-model="computedValue[i].movie" searchF='getMovies' placeholder="Выберите фильм" />
+                  <CropperCust :classProp='"inline-grid"' folder='movies' :showbtn='computedValue[i].movie.id' v-model='computedValue[i].movie.image' @onUpload='(file) => changeMovieAvatar(file, computedValue[i].movie.id)'/> 
+                </div>
+                <div class='mb-2 justify-center flex flex-wrap'>
+                  <AutoSelect v-model="computedValue[i].actor1" searchF='getActors' placeholder="Выберите актера" />
+                  <CropperCust :classProp='"inline-grid"' folder='actors' :showbtn='!!computedValue[i].actor1.avatar || !!computedValue[i].actor1.id' v-model='computedValue[i].actor1.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor1.id)'/> 
+                </div>
               </div>
-              <div class='col-md-8'> 
-                <AutoSelect v-model="computedValue[i].actor" searchF='getActors' placeholder="Выберите актера" />
-                <FormControl class='mt-1' v-model='computedValue[i].text' type="textarea" placeholder="Введите описание роли" />
-                <FormControl class='mt-1' v-model='computedValue[i].year' placeholder="Введите год выхода фильма" />
-                <FormControl class='mt-1' v-model='computedValue[i].character' placeholder="Введите имя персонажа" />
-                <FormControl class='mt-1' v-model='computedValue[i].movie' placeholder="Введите название фильма" />
+              <div class='col-md-3'> 
+                <div class='mb-2 justify-center flex flex-wrap'>
+                  <AutoSelect v-model="computedValue[i].actor2" searchF='getActors' placeholder="Выберите актера" />
+                  <CropperCust :classProp='"inline-grid"' folder='actors' :showbtn='!!computedValue[i].actor2.avatar || !!computedValue[i].actor2.id' v-model='computedValue[i].actor2.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor2.id)'/> 
+                </div>
+                <div class='mb-2 justify-center flex flex-wrap'>
+                  <AutoSelect v-model="computedValue[i].actor3" searchF='getActors' placeholder="Выберите актера" />
+                  <CropperCust :classProp='"inline-grid"' folder='actors' :showbtn='!!computedValue[i].actor3.avatar || !!computedValue[i].actor3.id' v-model='computedValue[i].actor3.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor3.id)'/> 
+                </div>
+              </div>
+              <div class='col-md-3'> 
+                <div class='mb-2 justify-center flex flex-wrap'>
+                  <AutoSelect v-model="computedValue[i].actor4" searchF='getActors' placeholder="Выберите актера" />
+                  <CropperCust :classProp='"inline-grid"' folder='actors' :showbtn='!!computedValue[i].actor4.avatar || !!computedValue[i].actor4.id' v-model='computedValue[i].actor4.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor4.id)'/> 
+                </div>
+                <div class='mb-2 justify-center flex flex-wrap'>
+                  <AutoSelect v-model="computedValue[i].actor5" searchF='getActors' placeholder="Выберите актера" />
+                  <CropperCust :classProp='"inline-grid"' folder='actors' :showbtn='!!computedValue[i].actor5.avatar || !!computedValue[i].actor5.id' v-model='computedValue[i].actor5.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor5.id)'/> 
+                </div>
+              </div>
+
+              <div class='col-md-3'> 
+                <div class='mb-2 justify-center flex flex-wrap'>
+                  <AutoSelect v-model="computedValue[i].actor6" searchF='getActors' placeholder="Выберите актера" />
+                  <CropperCust :classProp='"inline-grid"' folder='actors' :showbtn='!!computedValue[i].actor6.avatar || !!computedValue[i].actor6.id' v-model='computedValue[i].actor6.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor6.id)'/> 
+                </div>
+                <div class='mb-2 justify-center flex flex-wrap'>
+                  <AutoSelect v-model="computedValue[i].actor7" searchF='getActors' placeholder="Выберите актера" />
+                  <CropperCust :classProp='"inline-grid"' folder='actors' :showbtn='!!computedValue[i].actor7.avatar || !!computedValue[i].actor7.id' v-model='computedValue[i].actor7.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor7.id)'/> 
+                </div>
                 <div class='top-0 left-0 ml-3 mt-1 absolute font-bold'>{{i+1}}</div>
               </div>
             </div>
           </CardBox>
 
+         
           </div>
         </div>
+
 
          <SectionTitleLineWithButton  title="">
          <div>
           <BaseButton
               @click='computedValue.push(cloneDeep(emptyValue))'
               :icon="mdiAccountPlusOutline"
-              label="Добавить актера"
+              label="Добавить фильм"
               color="contrast"
               rounded-full
               small
