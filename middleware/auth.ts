@@ -6,20 +6,20 @@ export default defineNuxtRouteMiddleware((to, from) => {
         
         let headers = useRequestHeaders(['cookie'])
         var cookieAll = headers.cookie ? Cookie.parse(headers.cookie) : {}
-        cookies = cookieAll.main ? JSON.parse(cookieAll.main) : {}
-        
+        cookies = cookieAll.user ? JSON.parse(cookieAll.user) : {}
     } else {
-        cookies = localStorage.getItem('user')
-        if (cookies) {
-            cookies = {user: JSON.parse(JSON.parse(cookies).value)}
-        }
-
+        //cookies = localStorage.getItem('user')
+        //if (cookies) {
+       //     cookies = {user: JSON.parse(JSON.parse(cookies).value)}
+      //  }
+        let userStore = useUserStore()
+        cookies = {user: userStore.user}
   // console.log('import.mer   ', import.meta.server)
   //  console.log('cookies auth',cookies && cookies.user)
    // return
     }
- //  console.log('import.mer   ', import.meta.server)
-  // console.log('cookies auth',cookies && cookies.user)
+   console.log('import.mer   ', import.meta.server)
+  console.log('cookies auth',cookies && cookies.user)
     if (!cookies || !cookies.user || !cookies.user.token) {
         return navigateTo('/login');
     }

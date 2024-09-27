@@ -1,13 +1,11 @@
 <script setup>
 import { reactive } from 'vue'
-import { useMainStore } from '@/stores/main'
 import { mdiAccount, mdiMail, mdiAsterisk, mdiFormTextboxPassword, mdiGithub } from '@mdi/js'
 
-const mainStore = useMainStore()
-
+let userStore = useUserStore()
 const profileForm = reactive({
-  name: mainStore.user.username,
-  email: mainStore.user.email
+  name: userStore.user.username,
+  email: userStore.user.email
 })
 definePageMeta({
   middleware: 'auth' 
@@ -19,7 +17,7 @@ const passwordForm = reactive({
 })
 
 const submitProfile = () => {
-  mainStore.setUser(profileForm)
+  userStore.setUser(profileForm)
 }
 
 const submitPass = () => {

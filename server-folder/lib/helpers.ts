@@ -74,7 +74,7 @@ export const generateUserTokens = async (user: User, req: any, res: Response) =>
     };
 
     const refreshToken = await signAccessToken(payloadRefresh);
-    
+    console.log('refreshToken',refreshToken)
     if (accessToken && refreshToken) {
       await prisma.userAuthTokens.deleteMany({
         where: { fingerprint: req.fingerprint.hash }

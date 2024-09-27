@@ -25,7 +25,11 @@ export default function ({ $pinia, ssrContext }) {
         },
         // Please see https://github.com/js-cookie/js-cookie#json, on how to handle JSON.
         setItem: (key, value) =>
-          Cookies.set(key, value, { expires: 7, secure: false }),
+          {
+            if (key !== 'data') {
+              Cookies.set(key, value, { expires: 7, secure: false })
+            }
+          },
         removeItem: (key) => Cookies.remove(key),
       },
     }),

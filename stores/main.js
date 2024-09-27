@@ -3,86 +3,35 @@ import { ref, computed } from 'vue'
 
 export const useMainStore = defineStore('main', () => {
 
-  const user = ref({
-    email: '', 
-    isEmailVerified: false,
-    rate: 0, 
-    role: 'USER', 
-    username: '', 
-    token: ''
-  })
-  const loader = ref(false)
-
-  const actors = ref([])
-  const actors_count = ref(0)
-  const packs_intuition = ref([])
-  const packs_intuition_count = ref(0)
   
+  const loader = ref(false)
   const isFieldFocusRegistered = ref(false)
+
+
+  
 
   const clients = ref([
     
   ])
   const history = ref([
-    {
-      amount: 375.53,
-      name: 'Home Loan Account',
-      date: '3 days ago',
-      type: 'deposit',
-      business: 'Turcotte',
-      account: "1"
-    },
-  
   ])
 
-  function setUser(payload) {
-    user.value = payload ? payload : {
-      email: '', 
-      isEmailVerified: false,
-      rate: 0, 
-      role: 'USER', 
-      username: '', 
-      token: ''
-    }
-  }
+
 
   function setLoader(payload) {
     loader.value = payload
   }
 
-  function setActors(payload) {
-    if (payload.data) {
-      actors.value = payload.data
-    }
-    if (payload.total) {
-      actors_count.value = payload.total
-    }
-  }
-  function setPacksIntuition(payload) {
-    if (payload.data) {
-      packs_intuition.value = payload.data
-    }
-    if (payload.total) {
-      packs_intuition_count.value = payload.total
-    }
-  }
+
 
 
 
 
   return {
-    user,
-    actors,
-    actors_count,
-    packs_intuition,
-    packs_intuition_count,
     isFieldFocusRegistered,
     clients,
     history,
     loader,
-    setUser,
     setLoader,
-    setActors,
-    setPacksIntuition
   }
 })

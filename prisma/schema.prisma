@@ -22,21 +22,23 @@ enum Role {
 }
 
 model User {
-  id              Int              @id @default(autoincrement())
-  email           String           @unique
-  username        String?          @unique
+  id              Int               @id @default(autoincrement())
+  email           String            @unique
+  username        String?           @unique
   password        String
-  role            Role             @default(USER)
-  isEmailVerified Boolean          @default(false)
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  role            Role              @default(USER)
+  isEmailVerified Boolean           @default(false)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
   deletedAt       DateTime?
   forgotToken     String?
   avatar          String?
-  rate            Int              @default(0)
+  rate            Int               @default(0)
   userTokens      userAuthTokens[]
   IntuitionPack   IntuitionPack[]
   IntuitionResult IntuitionResult[]
+  CastPack        CastPack[]
+  CastResult      CastResult[]
 }
 
 model userAuthTokens {
@@ -61,8 +63,9 @@ model Movie {
   country  String?
   type     String?
 
-  cast    Cast[]
-  library Library[]
+  cast     Cast[]
+  library  Library[]
+  castPack CastPack[]
 }
 
 model Person {
@@ -104,45 +107,87 @@ model Link {
 }
 
 model IntuitionPack {
-  id   Int     @id @default(autoincrement())
-  name String
-  logo String?
+  id        Int      @id @default(autoincrement())
+  name      String
+  logo      String?
   fakeActor String?
-  enable Boolean? @default(true)
+  enable    Boolean? @default(true)
 
   user_id              Int
   user                 User                   @relation(fields: [user_id], references: [id])
   createdAt            DateTime               @default(now())
   IntuitionPackContent IntuitionPackContent[]
-  IntuitionResult IntuitionResult[]
+  IntuitionResult      IntuitionResult[]
 }
 
 model IntuitionPackContent {
-  id     Int     @id @default(autoincrement())
-  avatar String?
-  year String?
+  id        Int     @id @default(autoincrement())
+  avatar    String?
+  year      String?
   character String?
   actorName String?
-  text String?
-  movie String?
-
+  text      String?
+  movie     String?
 
   actor_id Int
-  actror    Person        @relation(fields: [actor_id], references: [id])
-  pack_id   Int
-  pack      IntuitionPack @relation(fields: [pack_id], references: [id])
+  actror   Person        @relation(fields: [actor_id], references: [id])
+  pack_id  Int
+  pack     IntuitionPack @relation(fields: [pack_id], references: [id])
 }
 
-
 model IntuitionResult {
-  id     Int     @id @default(autoincrement())
-  value  Int
-  log    String?
-  time   Int?
+  id    Int     @id @default(autoincrement())
+  value Int
+  log   String?
+  time  Int?
 
-  user_id Int
-  user    User        @relation(fields: [user_id], references: [id])
+  user_id   Int
+  user      User          @relation(fields: [user_id], references: [id])
   pack_id   Int
   pack      IntuitionPack @relation(fields: [pack_id], references: [id])
-  createdAt            DateTime               @default(now())
+  createdAt DateTime      @default(now())
+}
+
+model CastPack {
+  id     Int      @id @default(autoincrement())
+  name   String
+  enable Boolean? @default(true)
+
+  user_id  Int
+  user     User  @relation(fields: [user_id], references: [id])
+  movie_id Int
+  movie    Movie @relation(fields: [movie_id], references: [id])
+
+  CastPackContent CastPackContent[]
+  CastResult      CastResult[]
+
+  createdAt DateTime @default(now())
+}
+
+model CastPackContent {
+  id     Int     @id @default(autoincrement())
+  actor1 String?
+  actor2 String?
+  actor3 String?
+  actor4 String?
+  actor5 String?
+  actor6 String?
+  actor7 String?
+  actor8 String?
+
+  pack_id Int
+  pack    CastPack @relation(fields: [pack_id], references: [id])
+}
+
+model CastResult {
+  id    Int     @id @default(autoincrement())
+  value Float
+  log   String?
+  time  Int?
+
+  user_id   Int
+  user      User     @relation(fields: [user_id], references: [id])
+  pack_id   Int
+  pack      CastPack @relation(fields: [pack_id], references: [id])
+  createdAt DateTime @default(now())
 }

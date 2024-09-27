@@ -1,12 +1,10 @@
 <script setup>
-import { useMainStore } from '@/stores/main'
-
-const mainStore = useMainStore()
+let userStore = useUserStore()
 </script>
 
 <template>
 <!--
-  <UserAvatar :username="mainStore.userName" :avatar="mainStore.userAvatar">
+  <UserAvatar :username="userStore.userName" :avatar="userStore.userAvatar">
     <slot />
   </UserAvatar>-->
 </template>

@@ -3,6 +3,7 @@ import { _ } from 'lodash'
 import { handleResponse } from './response';
 import {setLocalStorageWithExpiry} from '../common'
 import { useMainStore } from '@/stores/main'
+import { useUserStore } from '@/stores/user'
 
 export const userService = {
     login,
@@ -61,7 +62,7 @@ async function logout() {
     const parsedValue = await response.json()
     const mainStore = useMainStore()
     mainStore.setUser(null)
-    localStorage.removeItem('user')
+   // localStorage.removeItem('user')
     return parsedValue
 }
 
@@ -150,8 +151,8 @@ export function parseUserObject(user) {
         role: user.role,
         token: user.token,
     } : {}
-    const mainStore = useMainStore()
-    mainStore.setUser(userData)
-    setLocalStorageWithExpiry('user', JSON.stringify(userData), 1000 * 60 * 60 * 24 * 7)
+    const userStore = useUserStore()
+    userStore.setUser(userData)
+    //setLocalStorageWithExpiry('user', JSON.stringify(userData), 1000 * 60 * 60 * 24 * 7)
     return userData 
 }

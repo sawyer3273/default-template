@@ -47,6 +47,7 @@ export async function getPacksIntuition(req: any, res: Response, _next: NextFunc
       cond.id = parseInt(req.query.id)
     }
     let include: any = {IntuitionPackContent: true}
+    console.log('res.locals.auth.userRole',res.locals.auth.userRole)
     if (res.locals.auth.userRole == 'USER') {
       include.IntuitionResult = {
         where: {

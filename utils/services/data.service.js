@@ -1,10 +1,11 @@
 import { authHeader } from './auth-header';
 import { handleResponse } from './response';
-import { useMainStore } from '@/stores/main'
+import { useDataStore } from '@/stores/data'
 
 export const dataService = {
     getActors,
     getPacksIntuition,
+    getPacksCast
 };
 
 async function getActors(payload) {
@@ -12,11 +13,11 @@ async function getActors(payload) {
         method: 'Get',
         headers: await authHeader(),
     };
-    const mainStore = useMainStore()
+    const dataStore = useDataStore()
     return fetch(`/api/data/actors?` + new URLSearchParams(payload), requestOptions)
         .then(handleResponse)
         .then(resp => {
-            mainStore.setActors(resp)
+            dataStore.setActors(resp)
             return resp;
         });
 }
@@ -26,11 +27,25 @@ async function getPacksIntuition(payload) {
         method: 'Get',
         headers: await authHeader(),
     };
-    const mainStore = useMainStore()
+    const dataStore = useDataStore()
     return fetch(`/api/data/packsIntuition?` + new URLSearchParams(payload), requestOptions)
         .then(handleResponse)
         .then(resp => {
-            mainStore.setPacksIntuition(resp)
+            dataStore.setPacksIntuition(resp)
+            return resp;
+        });
+}
+
+async function getPacksCast(payload) {
+    const requestOptions = {
+        method: 'Get',
+        headers: await authHeader(),
+    };
+    const dataStore = useDataStore()
+    return fetch(`/api/data/packsCast?` + new URLSearchParams(payload), requestOptions)
+        .then(handleResponse)
+        .then(resp => {
+            dataStore.setPacksCast(resp)
             return resp;
         });
 }

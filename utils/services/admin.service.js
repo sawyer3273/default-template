@@ -1,6 +1,6 @@
 import { authHeader } from './auth-header';
 import { handleResponse } from './response';
-import { useMainStore } from '@/stores/main'
+import { useDataStore } from '@/stores/data'
 
 export const adminService = {
     deleteActor,
@@ -8,7 +8,10 @@ export const adminService = {
     updateActor,
     addIntuitionPack,
     deleteIntuitionPack,
-    deleteIntuitionItemPack
+    deleteIntuitionItemPack,
+    addCastPack,
+    deleteCastPack,
+    deleteCastItemPack
 };
 
 async function deleteActor(payload) {
@@ -17,11 +20,11 @@ async function deleteActor(payload) {
         headers: await authHeader(),
         body: JSON.stringify(payload)
     };
-    const mainStore = useMainStore()
+    const dataStore = useDataStore()
     return fetch(`/api/admin/actors`, requestOptions)
         .then(handleResponse)
         .then(resp => {
-            mainStore.setActors(resp)
+            dataStore.setActors(resp)
             return resp;
         });
 }
@@ -69,11 +72,11 @@ async function deleteIntuitionPack(payload) {
         headers: await authHeader(),
         body: JSON.stringify(payload)
     };
-    const mainStore = useMainStore()
+    const dataStore = useDataStore()
     return fetch(`/api/admin/intuition`, requestOptions)
         .then(handleResponse)
         .then(resp => {
-            mainStore.setPacksIntuition(resp)
+            dataStore.setPacksIntuition(resp)
             return resp;
         });
 }
@@ -84,11 +87,54 @@ async function deleteIntuitionItemPack(payload) {
         headers: await authHeader(),
         body: JSON.stringify(payload)
     };
-    const mainStore = useMainStore()
+    const dataStore = useDataStore()
     return fetch(`/api/admin/intuitionItem`, requestOptions)
         .then(handleResponse)
         .then(resp => {
-            mainStore.setPacksIntuition(resp)
+            dataStore.setPacksIntuition(resp)
+            return resp;
+        });
+}
+
+async function addCastPack(payload) {
+    const requestOptions = {
+        method: 'POST',
+        headers: await authHeader(true),
+        body: JSON.stringify(payload)
+    };
+    return fetch(`/api/admin/cast`, requestOptions)
+        .then(handleResponse)
+        .then(resp => {
+            return resp;
+        });
+}
+
+async function deleteCastPack(payload) {
+    const requestOptions = {
+        method: 'DELETE',
+        headers: await authHeader(),
+        body: JSON.stringify(payload)
+    };
+    const dataStore = useDataStore()
+    return fetch(`/api/admin/cast`, requestOptions)
+        .then(handleResponse)
+        .then(resp => {
+            dataStore.setPacksCast(resp)
+            return resp;
+        });
+}
+
+async function deleteCastItemPack(payload) {
+    const requestOptions = {
+        method: 'DELETE',
+        headers: await authHeader(),
+        body: JSON.stringify(payload)
+    };
+    const dataStore = useDataStore()
+    return fetch(`/api/admin/castItem`, requestOptions)
+        .then(handleResponse)
+        .then(resp => {
+            dataStore.setPacksCast(resp)
             return resp;
         });
 }

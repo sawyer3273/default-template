@@ -5,9 +5,10 @@ import { handleResponse } from './response';
 export async function authHeader(needToken = true, headers = {'Content-Type': 'application/json'}) {
     // return authorization header with jwt token
     let user
-    user = JSON.parse(getLocalStorageWithExpiry('user'));
+    const userStore = useUserStore()
+    user = userStore.user;
     if (needToken) {
-        user = JSON.parse(getLocalStorageWithExpiry('user'));
+        user = userStore.user;
         if (!user || !user.token) {
             const requestOptions = {
                 method: 'POST',

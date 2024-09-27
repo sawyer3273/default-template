@@ -39,8 +39,9 @@ const componentClass = computed(() => {
 
   return base
 })
+let userStore = useUserStore()
 let mainStore = useMainStore()
-let userLabel = mainStore ? `${mainStore.user.username}` : 'Guest'
+let userLabel = mainStore ? `${userStore.user.username}` : 'Guest'
 const itemLabel = computed(() =>
   props.item.isCurrentUser ? userLabel : props.item.label
 )

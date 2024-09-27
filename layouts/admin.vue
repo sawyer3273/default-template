@@ -72,6 +72,7 @@ const menuClick = async (event, item) => {
         @menu-click="menuClick"
         @aside-lg-close-click="isAsideLgActive = false"
       />
+      <Breadcrumbs />
       <slot />
       <FooterBar>
         {{ config.public.projectName }}

@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 import { computed, ref } from 'vue'
-import { useMainStore } from '@/stores/main'
+import { useDataStore } from '@/stores/data'
 import { mdiEye, mdiTrashCan } from '@mdi/js'
 
 const router = useRouter()
@@ -32,10 +32,10 @@ onMounted(async () => {
 
 
 
-const mainStore = useMainStore()
+const dataStore = useDataStore()
 
-const items = computed(() => mainStore[props.storeModel] ? mainStore[props.storeModel] : [])
-const total = computed(() => mainStore[props.storeModel] ? mainStore[props.storeModel+'_count'] : 0)
+const items = computed(() => dataStore[props.storeModel] ? dataStore[props.storeModel] : [])
+const total = computed(() => dataStore[props.storeModel] ? dataStore[props.storeModel+'_count'] : 0)
 const numPages = computed(() => Math.ceil(total.value / perPage.value))
 const perPage = ref(props.size)
 const currentPage = ref(1)
