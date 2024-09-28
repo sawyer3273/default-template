@@ -30,7 +30,11 @@ export default function ({ $pinia, ssrContext }) {
               Cookies.set(key, value, { expires: 7, secure: false })
             }
           },
-        removeItem: (key) => Cookies.remove(key),
+        removeItem: (key) => {
+         console.log('remove cookies ', key) 
+         console.log('Cookies.get(key)',Cookies.get(key))
+          Cookies.remove(key)
+        },
       },
     }),
   )

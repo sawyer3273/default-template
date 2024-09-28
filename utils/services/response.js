@@ -1,6 +1,7 @@
 import { useToast } from "vue-toastification";
 import { ERROR_EXPIRED } from "~/constants";
 import { useMainStore } from '@/stores/main'
+import { useUserStore } from '@/stores/user'
 const toast = useToast();
 
 
@@ -18,8 +19,8 @@ export function handleResponse(response) {
             }
             if (response.status === 401) {
                 // auto logout if 401 response returned from api
-                const mainStore = useMainStore()
-                mainStore.setUser()
+                const userStore = useUserStore()
+                userStore.setUser()
                 location.reload(true);
             }
             

@@ -98,7 +98,7 @@ async function save() {
               <div class='col-md-3'>
                 <div class='mb-2 justify-center flex flex-wrap'>
                   <AutoSelect v-model="computedValue[i].movie" searchF='getMovies' placeholder="Выберите фильм" />
-                  <CropperCust :classProp='"inline-grid"' folder='movies' :showbtn='computedValue[i].movie.id' v-model='computedValue[i].movie.image' @onUpload='(file) => changeMovieAvatar(file, computedValue[i].movie.id)'/> 
+                  <CropperCust :classProp='"inline-grid"' folder='movies' :ratio='9/12' :showbtn='computedValue[i].movie.id' v-model='computedValue[i].movie.image' @onUpload='(file) => changeMovieAvatar(file, computedValue[i].movie.id)'/> 
                 </div>
                 <div class='mb-2 justify-center flex flex-wrap'>
                   <AutoSelect v-model="computedValue[i].actor1" searchF='getActors' placeholder="Выберите актера" />

@@ -6,6 +6,10 @@ import {
 
 export default [
   {
+    label: 'Угадай по касту ',
+    to: '/cast',
+  },
+  {
     label: 'КиноИнтуиция',
     to: '/intuition',
   },
