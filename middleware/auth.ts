@@ -8,15 +8,8 @@ export default defineNuxtRouteMiddleware((to, from) => {
         var cookieAll = headers.cookie ? Cookie.parse(headers.cookie) : {}
         cookies = cookieAll.user ? JSON.parse(cookieAll.user) : {}
     } else {
-        //cookies = localStorage.getItem('user')
-        //if (cookies) {
-       //     cookies = {user: JSON.parse(JSON.parse(cookies).value)}
-      //  }
         let userStore = useUserStore()
         cookies = {user: userStore.user}
-  // console.log('import.mer   ', import.meta.server)
-  //  console.log('cookies auth',cookies && cookies.user)
-   // return
     }
    console.log('import.mer   ', import.meta.server)
   console.log('cookies auth',cookies && cookies.user)

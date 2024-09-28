@@ -31,9 +31,9 @@ export default function ({ $pinia, ssrContext }) {
             }
           },
         removeItem: (key) => {
-         console.log('remove cookies ', key) 
-         console.log('Cookies.get(key)',Cookies.get(key))
-          Cookies.remove(key)
+      //   console.log('remove cookies ', key) 
+       //  console.log('Cookies.get(key)',Cookies.get(key))
+        //  Cookies.remove(key)
         },
       },
     }),

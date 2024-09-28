@@ -123,6 +123,7 @@ export async function createCastPack(req: Request, res: Response, _next: NextFun
         actor5: pack[i].actor5.avatar,
         actor6: pack[i].actor6.avatar,
         actor7: pack[i].actor7.avatar,
+        actor8: pack[i].actor8.avatar,
         pack_id: result.id
       }
       if (pack[i].id) {

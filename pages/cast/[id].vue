@@ -45,13 +45,7 @@ async function getData() {
     pack.value = packData.data[0]
     movies.value = cloneDeep(pack.value.CastPackContent)
     movies.value.map(one => {
-      if (one.actor1) totalPoints.value++
-      if (one.actor2) totalPoints.value++
-      if (one.actor3) totalPoints.value++
-      if (one.actor4) totalPoints.value++
-      if (one.actor5) totalPoints.value++
-      if (one.actor6) totalPoints.value++
-      if (one.actor7) totalPoints.value++
+      totalPoints.value = totalPoints.value + 5
     })
   }
 }
@@ -90,11 +84,16 @@ function trySubmit() {
 }
 
 let actorBoxes = ref([])
+let actorBoxesMobile = ref([])
 function success(i) {
   guessed.value.push(i)
-  for (let j = 0; j < 7;j++) {
+  for (let j = 0; j < 8;j++) {
     if (!actorBoxes.value[i].show.includes(j)) {
       actorBoxes.value[i].open(j, false)
+    }
+    console.log('actorBoxesMobile.value[i].show,',actorBoxesMobile.value[i].show)
+    if (!actorBoxesMobile.value[i].show.includes(j)) {
+      actorBoxesMobile.value[i].open(j, false)
     }
   }
 }
@@ -103,31 +102,17 @@ function success(i) {
 <template>
   <div>
     <NuxtLayout name="auth">
-      <SectionMain v-if='pack.id'>
+      <SectionMain v-if='pack.id' class='relative'>
         <div class='flex justify-between flex-wrap'>
           <h1 class='text-2xl mb-2 w-full md:w-auto'>{{pack.name}}</h1>
-          <div>{{totalPoints}}</div>
         </div>
-        <CardBox class='!bg-gray-300 mb-2'  v-for='(actors, i) in movies'>
-          <ActorsBox ref='actorBoxes' :data='actors' :guessed='guessed.includes(i)' @chooseData='(avatar) => onOpenActor(i ,avatar)' />
+        <CardBox :smallPadding='true' class='!bg-gray-300 mb-2 px-3'  v-for='(actors, i) in movies'>
+          <ActorsBox ref='actorBoxes' :number='i+1' :data='actors' :guessed='guessed.includes(i)' @chooseData='(avatar) => onOpenActor(i ,avatar)' />
         </CardBox>
-
-
-        <div class='flex md:hidden relative'>
-          <carousel :items-to-show="1.5" itemsToShow='1' snapAlign='start' ref='myCarousel' :wrapAround='true' v-model="currentSlide">
-            <slide key="1">
-             
-            </slide>
-            <slide key="2">
-             
-            </slide>
-          </carousel>
-          <div @click="next" class='arrow-css right absolute'></div>
-          <div @click="prev" class='arrow-css left absolute'></div>
-        </div>
-      
+         
         <div class='bg-gradient-to-r from-blue-start to-blue-end w-full fixed bottom-0 left-0 pt-3 pb-2' >
           <div :class='containerMaxW' class='px-6 flex items-center flex-wrap md:!flex-nowrap'>
+            <div class='w-full md:w-48 text-center rounded-md py-0 md:py-2 text-white text-2xl px-6 mb-2' ><span>Очки: {{totalPoints}}</span></div>
             <div class='w-full'><AutoSelect v-model="answer" searchF='getMovies' placeholder="Введите название фильма" /></div> 
             <div class='md:ml-2 w-full md:w-fit'><BaseButton :label="'Подтвердить'"  color="info" @click='trySubmit' class='w-full md:w-fit mb-2' /></div>
           </div>

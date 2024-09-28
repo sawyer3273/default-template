@@ -47,6 +47,7 @@ onBeforeMount(async () => {
           actor5: {avatar: one.actor5},
           actor6: {avatar: one.actor6},
           actor7: {avatar: one.actor7},
+          actor8: {avatar: one.actor8},
         })
       })
       
@@ -68,6 +69,7 @@ let emptyValue = {
   actor5: {id: 0, name: '', avatar: '',},
   actor6: {id: 0, name: '', avatar: '',},
   actor7: {id: 0, name: '', avatar: '',},
+  actor8: {id: 0, name: '', avatar: '',},
 }
 let computedValue = ref([cloneDeep(emptyValue)])
 let packData = ref({
@@ -164,17 +166,13 @@ async function save() {
           <CardBox class='mb-4 shadow-sm relative'>
           <BaseIcon class='cursor-pointer text-red-500 absolute top-1 right-1' :path="mdiDeleteCircleOutline"  @click="() => {toDeleteId = i; isModalDangerActive = true}" />
             <div class='row'>
-              <div class='col-md-3'>
+              <div class='col-md-2'>
                 <div class='mb-2 justify-center flex flex-wrap'>
                   <AutoSelect v-model="computedValue[i].movie" searchF='getMovies' placeholder="Выберите фильм" />
                   <CropperCust :classProp='"inline-grid"' folder='movies' :ratio='9/12' :showbtn='computedValue[i].movie.id' v-model='computedValue[i].movie.image' @onUpload='(file) => changeMovieAvatar(file, computedValue[i].movie.id)'/> 
                 </div>
-                <div class='mb-2 justify-center flex flex-wrap'>
-                  <AutoSelect v-model="computedValue[i].actor1" searchF='getActors' placeholder="Выберите актера" />
-                  <CropperCust :classProp='"inline-grid"' folder='actors' :showbtn='!!computedValue[i].actor1.avatar || !!computedValue[i].actor1.id' v-model='computedValue[i].actor1.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor1.id)'/> 
-                </div>
               </div>
-              <div class='col-md-3'> 
+              <div class='col-md-2'> 
                 <div class='mb-2 justify-center flex flex-wrap'>
                   <AutoSelect v-model="computedValue[i].actor2" searchF='getActors' placeholder="Выберите актера" />
                   <CropperCust :classProp='"inline-grid"' folder='actors' :showbtn='!!computedValue[i].actor2.avatar || !!computedValue[i].actor2.id' v-model='computedValue[i].actor2.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor2.id)'/> 
@@ -184,7 +182,7 @@ async function save() {
                   <CropperCust :classProp='"inline-grid"' folder='actors' :showbtn='!!computedValue[i].actor3.avatar || !!computedValue[i].actor3.id' v-model='computedValue[i].actor3.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor3.id)'/> 
                 </div>
               </div>
-              <div class='col-md-3'> 
+              <div class='col-md-2'> 
                 <div class='mb-2 justify-center flex flex-wrap'>
                   <AutoSelect v-model="computedValue[i].actor4" searchF='getActors' placeholder="Выберите актера" />
                   <CropperCust :classProp='"inline-grid"' folder='actors' :showbtn='!!computedValue[i].actor4.avatar || !!computedValue[i].actor4.id' v-model='computedValue[i].actor4.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor4.id)'/> 
@@ -194,18 +192,30 @@ async function save() {
                   <CropperCust :classProp='"inline-grid"' folder='actors' :showbtn='!!computedValue[i].actor5.avatar || !!computedValue[i].actor5.id' v-model='computedValue[i].actor5.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor5.id)'/> 
                 </div>
               </div>
-
-              <div class='col-md-3'> 
+              <div class='col-md-2'> 
                 <div class='mb-2 justify-center flex flex-wrap'>
                   <AutoSelect v-model="computedValue[i].actor6" searchF='getActors' placeholder="Выберите актера" />
                   <CropperCust :classProp='"inline-grid"' folder='actors' :showbtn='!!computedValue[i].actor6.avatar || !!computedValue[i].actor6.id' v-model='computedValue[i].actor6.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor6.id)'/> 
                 </div>
+                 <div class='mb-2 justify-center flex flex-wrap'>
+                  <AutoSelect v-model="computedValue[i].actor1" searchF='getActors' placeholder="Выберите актера" />
+                  <CropperCust :classProp='"inline-grid"' folder='actors' :showbtn='!!computedValue[i].actor1.avatar || !!computedValue[i].actor1.id' v-model='computedValue[i].actor1.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor1.id)'/> 
+                </div>
+              </div>
+              <div class='col-md-2'> 
                 <div class='mb-2 justify-center flex flex-wrap'>
                   <AutoSelect v-model="computedValue[i].actor7" searchF='getActors' placeholder="Выберите актера" />
                   <CropperCust :classProp='"inline-grid"' folder='actors' :showbtn='!!computedValue[i].actor7.avatar || !!computedValue[i].actor7.id' v-model='computedValue[i].actor7.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor7.id)'/> 
                 </div>
+                <div class='mb-2 justify-center flex flex-wrap'>
+                  <AutoSelect v-model="computedValue[i].actor8" searchF='getActors' placeholder="Выберите актера" />
+                  <CropperCust :classProp='"inline-grid"' folder='actors' :showbtn='!!computedValue[i].actor8.avatar || !!computedValue[i].actor8.id' v-model='computedValue[i].actor8.avatar' @onUpload='(file) => changeActorAvatar(file, computedValue[i].actor8.id)'/> 
+                </div>
+              </div>
+              <div class='col-md-2'> 
                 <div class='top-0 left-0 ml-3 mt-1 absolute font-bold'>{{i+1}}</div>
               </div>
+
             </div>
           </CardBox>
 
