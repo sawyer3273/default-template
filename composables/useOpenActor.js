@@ -1,6 +1,6 @@
 import { ref, customRef,  } from 'vue'
 
-const useOpenActor = (actors, className, classI, show, emit) => {
+const useOpenActor = (actors, className, classI, show, emit, disabled) => {
   return function open(i, decrement = true) {
     if (decrement) {
       emit('chooseData', actors.value[i])
@@ -15,6 +15,7 @@ const useOpenActor = (actors, className, classI, show, emit) => {
               classI.value.splice(index, 1);
             }
         }, 1000)
+        disabled.value.push(i)
         setTimeout(() => {
            show.value.push(i)
         }, 500)

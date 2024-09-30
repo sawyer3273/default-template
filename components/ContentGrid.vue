@@ -58,13 +58,16 @@ function showItem(id) {
   <div class='row'>
     <div v-for="pack in items" :key="pack.id" class='col-md-3 mb-3 '>
       <div class='rounded-lg overflow-hidden shadow-lg cursor-pointer relative' @click='() => showItem(pack.id)'>
-        <img :src='pack.logo' :class='pack.IntuitionResult && pack.IntuitionResult.length ? "opacity-65": ""'/>
-        <div class='p-1'>
-          <div class='font-medium text-lg'>{{pack.name}}</div>
-          <div class='text-xs text-gray-400 text-capitalize'>{{ dayjs(pack.createdAt).locale(locale).format('MMMM D, HH:mm, YYYY') }}</div>
-          <div v-if='pack.IntuitionResult && pack.IntuitionResult.length' class='bg-gray-300 absolute top-0 left-0 w-full flex justify-center'>
-            <Stars :value='pack.IntuitionResult[0].value'/>
-          </div>
+        <img :src='pack.logo' :class='pack.IntuitionResult && pack.IntuitionResult.length || pack.CastResult && pack.CastResult.length ? "opacity-65": ""'/>
+        <div class='p-1 absolute bottom-0'>
+          <div class='font-medium text-lg textWithShadow text-white'>{{pack.name}}</div>
+          <div class='text-xs text-gray-300 text-capitalize textWithShadow'>{{ dayjs(pack.createdAt).locale(locale).format('MMMM D, YYYY') }}</div>
+        </div>
+        <div v-if='pack.IntuitionResult && pack.IntuitionResult.length' class='bg-gradient-to-r from-blue-start to-blue-end absolute top-0 left-0 w-full flex justify-center'>
+          <Stars :value='pack.IntuitionResult[0].value'/>
+        </div>
+        <div v-if='pack.CastResult && pack.CastResult.length' class='bg-gradient-to-r from-blue-start to-blue-end absolute top-0 left-0 w-full flex justify-center text-white'>
+          {{pack.CastResult[0].value}}
         </div>
       </div>
     </div>

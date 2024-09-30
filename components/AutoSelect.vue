@@ -37,13 +37,13 @@ onMounted(async () => {
   window.addEventListener('scroll', handleScroll);
   handleScroll();
   handleDebounce = debounce(async function (val) {
-      if (val.length > 1 && !chooseDelay.value) {
+      if (val && val.length > 1 && !chooseDelay.value) {
         componentStore.setAutofillLoading(true)
         let autofill = await dataService[props.searchF]({key: val})
         componentStore.setAutofillData(autofill.success ? autofill.data : [])
         componentStore.setAutofillLoading(false)
       } else {
-       // componentStore.setAutofillData([])
+        componentStore.setAutofillData([])
       }
   }, 500);
   
@@ -77,14 +77,13 @@ watch(() => props.modelValue, async val => {
    }
 }, { deep: true })
 function hide() {
-
-  if (!props.modelValue.id) {
-    inputValue.value = ''
-  }
-  if (props.modelValue.title) {
-    inputValue.value = props.modelValue.title 
-  }
-  componentStore.setAutofillData([])
+    if (!props.modelValue.id) {
+      inputValue.value = ''
+    }
+    if (props.modelValue.title) {
+      inputValue.value = props.modelValue.title 
+    }
+    componentStore.setAutofillData([])
 }
 
 
@@ -97,18 +96,20 @@ function choose(data) {
 }
 
 function onBLur(data) {
-  setTimeout(() => isFocused.value = false, 100)
+  setTimeout(() => isFocused.value = false, 1000)
 }
 
 let mode = ref('bottom')
 function handleScroll() {
   let element = document.querySelector('#'+id)
-  const position = element.getBoundingClientRect().bottom
-  let viewportBottom =  window.document.documentElement.clientHeight
-  if ((position + 200) > viewportBottom) {
-    mode.value = 'top'
-  } else {
-    mode.value = 'bottom'
+  if (element) {
+    const position = element.getBoundingClientRect().bottom
+    let viewportBottom =  window.document.documentElement.clientHeight
+    if ((position + 200) > viewportBottom) {
+      mode.value = 'top'
+    } else {
+      mode.value = 'bottom'
+    }
   }
 }
 </script>
@@ -116,22 +117,20 @@ function handleScroll() {
 <template>
 <div class='relative'>
   <label v-if='label' :for="id" class="form-label">{{label}}</label>
-  
-  <div v-if='mode=="top" && isFocused' class='shadow-md rounded-md absolute z-30 bg-white bottom-0 mb-14' v-outside="hide" >
-    <div class='p-2 hover:bg-gray-100 cursor-pointer rounded-md' v-for='suggest in componentStore.autofillData' @click='()=>choose(suggest)'> 
-    
+  <div v-if='mode=="top" ' class='shadow-md rounded-md absolute z-30 bg-white bottom-0 mb-14' v-outside="hide" >
+    <div class='p-2 hover:bg-gray-100 cursor-pointer rounded-md' :key='suggest.id' v-for='suggest in componentStore.autofillData' @click='()=>choose(suggest)'> 
       <span v-if='suggest.name'>{{suggest.name}}</span> 
-      <template v-else><div>{{suggest.title}}</div><div class='text-xs text-gray-400'>{{suggest.origin}}</div></template> 
+      <template v-else><div>{{suggest.title}} ({{suggest.year}})</div><div class='text-xs text-gray-400'>{{suggest.origin}}</div></template> 
       
     </div>
   </div>
   <FormControl class='mb-2' v-model="inputValue" @focus='isFocused=true' @blur='onBLur' :placeholder="placeholder" :id="id"/>
   
-  <div v-if='mode=="bottom" && isFocused' class='shadow-md rounded-md absolute z-30 bg-white' v-outside="hide" >
+  <div v-if='mode=="bottom" ' class='shadow-md rounded-md absolute z-30 bg-white' v-outside="hide" >
     <div class='p-2 hover:bg-gray-100 cursor-pointer rounded-md' v-for='suggest in componentStore.autofillData' @click='()=>choose(suggest)'> 
     
       <span v-if='suggest.name'>{{suggest.name}}</span> 
-      <template v-else><div>{{suggest.title}}</div><div class='text-xs text-gray-400'>{{suggest.origin}}</div></template> 
+      <template v-else><div>{{suggest.title}} ({{suggest.year}})</div><div class='text-xs text-gray-400'>{{suggest.origin}}</div></template> 
       
     </div>
   </div>

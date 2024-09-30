@@ -29,23 +29,23 @@ let log = ref({})
 onMounted(async () => {
   getData()
     
-  let logExist = localStorage.getItem('intuition')
+  let logExist = localStorage.getItem('intuition'+route.params.id)
   if (logExist) {
     log.value = JSON.parse(logExist)
   } else {
     log.value = [{type: 'start', date: new Date().getTime()}]
-    localStorage.setItem('intuition', JSON.stringify(log.value))
+    localStorage.setItem('intuition'+route.params.id, JSON.stringify(log.value))
   }
-  let hintModeExist = localStorage.getItem('intuition_hintMode')
-  let hiddenExist = localStorage.getItem('intuition_hidden')
-  let showYearExist = localStorage.getItem('intuition_showYear')
+  let hintModeExist = localStorage.getItem('intuition_hintMode'+route.params.id)
+  let hiddenExist = localStorage.getItem('intuition_hidden'+route.params.id)
+  let showYearExist = localStorage.getItem('intuition_showYear'+route.params.id)
   
-  let hint1_3Exist = localStorage.getItem('intuition_hint1_3')
-  let hintYearExist = localStorage.getItem('intuition_hintYear')
-  let showNameExist = localStorage.getItem('intuition_showName')
-  let hintNameExist = localStorage.getItem('intuition_hintName')
-  let guessedExist = localStorage.getItem('intuition_guessed')
-  let livesExist = localStorage.getItem('intuition_lives')
+  let hint1_3Exist = localStorage.getItem('intuition_hint1_3'+route.params.id)
+  let hintYearExist = localStorage.getItem('intuition_hintYear'+route.params.id)
+  let showNameExist = localStorage.getItem('intuition_showName'+route.params.id)
+  let hintNameExist = localStorage.getItem('intuition_hintName'+route.params.id)
+  let guessedExist = localStorage.getItem('intuition_guessed'+route.params.id)
+  let livesExist = localStorage.getItem('intuition_lives'+route.params.id)
 
   if (hintModeExist) {
     hintMode.value = JSON.parse(hintModeExist)
@@ -143,18 +143,18 @@ function trySubmit() {
   if (selectedA.value.id == selectedB.value.id) {
     guessed.value.push(selectedB.value.id)
     log.value.push({type: 'answer', value: {actor: selectedA.value.character, descr: selectedB.value.character, success: true},date: new Date().getTime()})
-    localStorage.setItem('intuition', JSON.stringify(log.value))
-    localStorage.setItem('intuition_guessed', JSON.stringify(guessed.value))
+    localStorage.setItem('intuition'+route.params.id, JSON.stringify(log.value))
+    localStorage.setItem('intuition_guessed'+route.params.id, JSON.stringify(guessed.value))
   } else {
     toast.error('Вы ошиблись');
     lives.value--
-    log.value.push({type: 'answer', value: {actor: selectedA.value.character, descr: selectedB.value.character, success: false},date: new Date().getTime()})
-    localStorage.setItem('intuition', JSON.stringify(log.value))
+    log.value.push({type: 'answer'+route.params.id, value: {actor: selectedA.value.character, descr: selectedB.value.character, success: false},date: new Date().getTime()})
+    localStorage.setItem('intuition'+route.params.id, JSON.stringify(log.value))
   }
   areSure.value = false
   selectedA.value = -1
   selectedB.value = -1 
-  localStorage.setItem('intuition_lives', JSON.stringify(lives.value))
+  localStorage.setItem('intuition_lives'+route.params.id, JSON.stringify(lives.value))
   let finish = false
   if (guessed.value.length == actors.value.length) {
     finish = true
@@ -175,15 +175,15 @@ function trySubmit() {
     })
   }
   if (finish) {
-    localStorage.removeItem('intuition_hintMode')
-    localStorage.removeItem('intuition_hidden')
-    localStorage.removeItem('intuition_showYear')
-    localStorage.removeItem('intuition_hintYear')
-    localStorage.removeItem('intuition_showName')
-    localStorage.removeItem('intuition_hintName')
-    localStorage.removeItem('intuition_guessed')
-    localStorage.removeItem('intuition_lives')
-    localStorage.removeItem('intuition')
+    localStorage.removeItem('intuition_hintMode'+route.params.id)
+    localStorage.removeItem('intuition_hidden'+route.params.id)
+    localStorage.removeItem('intuition_showYear'+route.params.id)
+    localStorage.removeItem('intuition_hintYear'+route.params.id)
+    localStorage.removeItem('intuition_showName'+route.params.id)
+    localStorage.removeItem('intuition_hintName'+route.params.id)
+    localStorage.removeItem('intuition_guessed'+route.params.id)
+    localStorage.removeItem('intuition_lives'+route.params.id)
+    localStorage.removeItem('intuition'+route.params.id)
   }
 }
 
@@ -260,14 +260,14 @@ function confirmHint() {
 
 
   log.value.push({type: 'hint', value: {hint: hintMode.value, descr: selectedB.value.character},date: new Date().getTime()})
-  localStorage.setItem('intuition', JSON.stringify(log.value))
-  localStorage.setItem('intuition_hintMode', JSON.stringify(hintMode.value))
-  localStorage.setItem('intuition_hidden', JSON.stringify(hidden.value))
-  localStorage.setItem('intuition_showYear', JSON.stringify(showYear.value))
-  localStorage.setItem('intuition_hintYear', JSON.stringify(hintYear.value))
-  localStorage.setItem('intuition_showName', JSON.stringify(showName.value))
-  localStorage.setItem('intuition_hintName', JSON.stringify(hintName.value))
-  localStorage.setItem('intuition_hint1_3', JSON.stringify(hint1_3.value))
+  localStorage.setItem('intuition'+route.params.id, JSON.stringify(log.value))
+  localStorage.setItem('intuition_hintMode'+route.params.id, JSON.stringify(hintMode.value))
+  localStorage.setItem('intuition_hidden'+route.params.id, JSON.stringify(hidden.value))
+  localStorage.setItem('intuition_showYear'+route.params.id, JSON.stringify(showYear.value))
+  localStorage.setItem('intuition_hintYear'+route.params.id, JSON.stringify(hintYear.value))
+  localStorage.setItem('intuition_showName'+route.params.id, JSON.stringify(showName.value))
+  localStorage.setItem('intuition_hintName'+route.params.id, JSON.stringify(hintName.value))
+  localStorage.setItem('intuition_hint1_3'+route.params.id, JSON.stringify(hint1_3.value))
   
 }
 function selectA(actor) {

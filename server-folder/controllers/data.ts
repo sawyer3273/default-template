@@ -22,7 +22,8 @@ export async function getActors(req: Request, res: Response, _next: NextFunction
   try {
     let cond: any = {}
     if (req.query.key) {
-      cond.name = { contains: req.query.key, mode: 'insensitive',}
+      let key = req.query.key.toString().trim()
+      cond.name = { contains: key, mode: 'insensitive',}
     }
     let actors = await findMany(req, 'person', cond, {limit: 10})
     let count = await getCount('person', cond)
@@ -43,9 +44,10 @@ export async function getMovies(req: Request, res: Response, _next: NextFunction
   try {
     let cond: any = {}
     if (req.query.key) {
+      let key = req.query.key.toString().trim()
       cond.OR = [
-        {title: { contains: req.query.key, mode: 'insensitive'}},
-        {origin: { contains: req.query.key, mode: 'insensitive'}},
+        {title: { contains: key, mode: 'insensitive'}},
+        {origin: { contains: key, mode: 'insensitive'}},
       ]
     }
     let options = {limit: 10}

@@ -9,7 +9,7 @@ import { findMany, getCount } from '../lib/orm';
 
 
 
-export async function saveStats(req: Request, res: Response, _next: NextFunction) {
+export async function saveStatsIntuition(req: Request, res: Response, _next: NextFunction) {
   try {
     let { log, value, pack_id } = req.body
     let logParsed = JSON.parse(log)
@@ -43,10 +43,45 @@ export async function saveStats(req: Request, res: Response, _next: NextFunction
   }
 }
 
+export async function saveStatsCast(req: Request, res: Response, _next: NextFunction) {
+  try {
+    let { log, value, pack_id } = req.body
+    let logParsed = JSON.parse(log)
+    let isExist = await prisma.castResult.findFirst({
+      where: {
+        pack_id: pack_id,
+        user_id: res.locals.auth.id
+      }
+    })
+    let result = 'exist'
+    if (!isExist) {
+      result = await prisma.castResult.create({
+        data: {
+          value: value,
+          time: logParsed[logParsed.length-1].date - logParsed[0].date,
+          log: log,
+          pack_id: pack_id,
+          user_id: res.locals.auth.id
+        },
+      });
+    }
+    
+    return res.json({
+      success: true,
+      data: result,
+    });
+    
+  } catch (err) {
+    console.log('err',err)
+    return errorHandler(createError.InternalServerError(), req, res)
+  }
+}
+
 // Mounted in routes.ts
 export const routes: RouteConfig = {
   routes: [
-    { method: 'post', path: '/intuition', handler: [afterSignupAuth, saveStats] },
+    { method: 'post', path: '/intuition', handler: [afterSignupAuth, saveStatsIntuition] },
+    { method: 'post', path: '/cast', handler: [afterSignupAuth, saveStatsCast] },
 
 
   ],
