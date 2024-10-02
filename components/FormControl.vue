@@ -157,6 +157,7 @@ if (props.ctrlKFocus) {
       :id="id"
       ref="inputEl"
       v-model="computedValue"
+      @input='evt=>computedValue=evt.target.value'
       @focus='focus'
       @blur='blur'
       :name="name"

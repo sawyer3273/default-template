@@ -25,7 +25,7 @@ export async function getActors(req: Request, res: Response, _next: NextFunction
       let key = req.query.key.toString().trim()
       cond.name = { contains: key, mode: 'insensitive',}
     }
-    let actors = await findMany(req, 'person', cond, {limit: 10})
+    let actors = await findMany(req, 'person', cond, {limit: 50})
     let count = await getCount('person', cond)
     
     return res.json({
@@ -50,7 +50,7 @@ export async function getMovies(req: Request, res: Response, _next: NextFunction
         {origin: { contains: key, mode: 'insensitive'}},
       ]
     }
-    let options = {limit: 10}
+    let options = {limit: 50}
     let movies = await findMany(req, 'movie', cond, options)
     let count = await getCount('movie', cond)
     

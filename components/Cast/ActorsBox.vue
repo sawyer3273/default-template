@@ -86,10 +86,11 @@ defineExpose({
       <div class='text-2xl mb-2'> <span v-if='!showMovie'>Фильм # {{round + 1}}</span> <span v-else> {{data.movie.title}} </span>   </div>
         <div :class='showMovie ? "": "hidden"' class=' sm:flex'><img :class='classI.length > 0 && showMovie ? "movieOpen" : ""' class='rounded-lg' :src='!showMovie ? "/img/question.png" : data.movie.image' /></div>
         <div v-if='showMovie' class='w-full'><BaseButton :label="round == (total - 1) ? 'Завершить игру': 'Следующий раунд'"  color="info" @click='next' class='w-full  mt-2' /></div>
-
+        <div v-if='showMovie'> Очков за фильм: {{roundPoints}} </div>
+        <div v-if='showMovie'> Всего: {{totalPoints}} </div>
         <div v-if='!showMovie' class='bg-gradient-to-r from-blue-start to-blue-end text-white text-sm rounded-md py-1 px-2 mt-2 mr-2 w-full' > 
           <div>Бесплатных открытий: <strong>{{freePoints}}</strong></div>
-          <div>Возможные очки за раунд: <strong>{{roundPoints}}</strong></div>
+          <div>Возможные очки за фильм: <strong>{{roundPoints}}</strong></div>
         </div>
         <div v-if='!showMovie' class='bg-gradient-to-r from-blue-start to-blue-end text-white text-2xl rounded-md py-1 px-2 mt-2 items-center flex w-full' > 
           <div>Всего очков: <strong>{{totalPoints}}</strong></div>

@@ -81,6 +81,8 @@ watch(freePoints, (val) => { localStorage.setItem('freePoints'+route.params.id, 
 
 function nextRound() {
   round.value++
+  roundPoints.value = 3
+  freePoints.value = 2
   showMovie.value = false
   if (round.value == movies.value.length) {
     setTimeout(() => {
@@ -153,8 +155,6 @@ function trySubmit() {
   } else {
     toast.error('Вы ошиблись');
   }
-  roundPoints.value = 3
-  freePoints.value = 2
   openMovies()
   answer.value = ''
   showMovie.value = true

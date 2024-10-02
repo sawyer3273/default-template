@@ -36,6 +36,9 @@ let handleDebounce
 onMounted(async () => {
   window.addEventListener('scroll', handleScroll);
   handleScroll();
+  if (!props.modelValue.value) {
+    componentStore.setAutofillData([])
+  }
   handleDebounce = debounce(async function (val) {
       if (val && val.length > 1 && !chooseDelay.value) {
         componentStore.setAutofillLoading(true)
@@ -74,6 +77,7 @@ watch(inputValue, async val => {
 watch(() => props.modelValue, async val => {
    if (!val) {
     inputValue.value = ''
+    componentStore.setAutofillData([])
    }
 }, { deep: true })
 function hide() {
@@ -117,8 +121,8 @@ function handleScroll() {
 <template>
 <div class='relative'>
   <label v-if='label' :for="id" class="form-label">{{label}}</label>
-  <div v-if='mode=="top" ' class='shadow-md rounded-md absolute z-30 bg-white bottom-0 mb-14' v-outside="hide" >
-    <div class='p-2 hover:bg-gray-100 cursor-pointer rounded-md' :key='suggest.id' v-for='suggest in componentStore.autofillData' @click='()=>choose(suggest)'> 
+  <div v-if='mode=="top" && componentStore.autofillData.length' class='shadow-md rounded-md absolute z-30 bg-white bottom-0 mb-14 autofill-content' v-outside="hide" >
+    <div class='p-2 hover:bg-gray-100 border-b first:rounded-t-md autofill-odd cursor-pointer' :key='suggest.id' v-for='suggest in componentStore.autofillData' @click='()=>choose(suggest)'> 
       <span v-if='suggest.name'>{{suggest.name}}</span> 
       <template v-else><div>{{suggest.title}} ({{suggest.year}})</div><div class='text-xs text-gray-400'>{{suggest.origin}}</div></template> 
       
@@ -126,8 +130,8 @@ function handleScroll() {
   </div>
   <FormControl class='mb-2' v-model="inputValue" @focus='isFocused=true' @blur='onBLur' :placeholder="placeholder" :id="id"/>
   
-  <div v-if='mode=="bottom" ' class='shadow-md rounded-md absolute z-30 bg-white' v-outside="hide" >
-    <div class='p-2 hover:bg-gray-100 cursor-pointer rounded-md' v-for='suggest in componentStore.autofillData' @click='()=>choose(suggest)'> 
+  <div v-if='mode=="bottom" && componentStore.autofillData.length' class='shadow-md rounded-md absolute z-30 bg-white autofill-content' v-outside="hide" >
+    <div class='p-2 hover:bg-gray-100  border-b cursor-pointer first:rounded-t-md autofill-odd cursor-pointer' v-for='suggest in componentStore.autofillData' @click='()=>choose(suggest)'> 
     
       <span v-if='suggest.name'>{{suggest.name}}</span> 
       <template v-else><div>{{suggest.title}} ({{suggest.year}})</div><div class='text-xs text-gray-400'>{{suggest.origin}}</div></template> 
@@ -136,3 +140,9 @@ function handleScroll() {
   </div>
 </div>
 </template>
+<style scoped>
+.autofill-content {
+  max-height: 325px;
+  overflow: auto;
+}
+</style>
