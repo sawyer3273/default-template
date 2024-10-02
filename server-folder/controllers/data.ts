@@ -5,11 +5,11 @@ import md5 from "md5"
 import Cookie from 'cookie'
 import { errorHandler } from '../middlewares/errorHandler';
 import prisma from "../../tools/prisma";
+import { generateUniqueString, generateUserTokens } from '../lib/helpers';
 import { encryptPassword, isPasswordMatch } from "../../utils/encryption";
 import { sendEmail } from '~/utils/email';
 import { getMessages } from "../lib/validation";
 import { afterSignupAuth, isAdmin } from '../middlewares/signupAuth';
-import { generateUserTokens } from '../lib/helpers';
 import multer from 'multer'
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
@@ -129,6 +129,36 @@ export async function getPacksCast(req: any, res: Response, _next: NextFunction)
   }
 }
 
+export async function getRoom(req: any, res: Response, _next: NextFunction) {
+  try {
+    let type = req.query.type ? req.query.type : 'user' 
+    let room = await prisma.Room.findFirst({
+      where: {
+        entity_id: res.locals.auth.id,
+        type: type
+      }
+    })
+    if (!room) {
+      room = await prisma.Room.create({
+        data: {
+          entity_id: res.locals.auth.id,
+          type: type,
+          token: generateUniqueString()
+        }
+      })
+    }
+    
+    return res.json({
+      success: true,
+      data: room
+    });
+    
+  } catch (err) {
+    console.log('err',err)
+    return errorHandler(createError.InternalServerError(), req, res)
+  }
+}
+
 // Mounted in routes.ts
 export const routes: RouteConfig = {
   routes: [
@@ -136,6 +166,9 @@ export const routes: RouteConfig = {
     { method: 'get', path: '/movies', handler: [afterSignupAuth, getMovies] },
     { method: 'get', path: '/packsIntuition', handler: [ afterSignupAuth, getPacksIntuition ] },
     { method: 'get', path: '/packsCast', handler: [ afterSignupAuth, getPacksCast ] },
+
+
+    { method: 'get', path: '/room', handler: [ afterSignupAuth, getRoom ] },
 
 
     

@@ -13,8 +13,8 @@ export default defineNuxtRouteMiddleware((to, from) => {
         cookies = {user: userStore.user}
     }
     
-   console.log('impor1',import.meta.server)
-    console.log('cookies guest1',cookies && cookies)
+    //console.log('impor1',import.meta.server)
+   // console.log('cookies guest1',cookies && cookies)
     if (cookies && cookies.user && cookies.user.token) {
         return navigateTo('/');
     }

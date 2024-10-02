@@ -32,7 +32,7 @@ onMounted(() => {
                   <p>
                     Присоединяйтесь к нашему сообществу любителей кино и наслаждайтесь увлекательными квизами с необычными механиками
                   </p>
-                  <NuxtLink to='/intuition'><BaseButton :label="'Играть'"  class='mt-6' color="info"  /> </NuxtLink>
+                  <NuxtLink to='/quizroom'><BaseButton :label="'Играть'"  class='mt-6' color="info"  /> </NuxtLink>
                 </div>
               </div>
               <div class="col-md-6 flex items-center justify-center">

@@ -11,8 +11,8 @@ export default defineNuxtRouteMiddleware((to, from) => {
         let userStore = useUserStore()
         cookies = {user: userStore.user}
     }
-   console.log('import.mer   ', import.meta.server)
-  console.log('cookies auth',cookies && cookies.user)
+   //console.log('import.mer   ', import.meta.server)
+   //console.log('cookies auth',cookies && cookies.user)
     if (!cookies || !cookies.user || !cookies.user.token) {
         return navigateTo('/login');
     }

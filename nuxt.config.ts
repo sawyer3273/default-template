@@ -11,8 +11,16 @@ export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
     '@nuxtjs/i18n',
+    'nuxt-socket-io',
     //'vue3-carousel-nuxt',
   ],
+  io: {
+    // module options
+    sockets: [{
+      name: 'main',
+      url: 'http://localhost:3000'
+    }]
+  },
   build:{
     // vue-toastification - old commonjs module 
     transpile: ['vue-toastification'],
