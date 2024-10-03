@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 import bodyParser from 'body-parser'
 import http from 'http';
 import { Server } from "socket.io";
-import { addToRoom, removeFromRoom } from './lib/socketFunctions'
+import { addToRoom, removeFromRoom, changeUserStatusInRoom } from './lib/socketFunctions'
 
 import routes from './routes'
 import i18next from 'i18next'
@@ -40,36 +40,40 @@ function initializeApplication() {
     connectionStateRecovery: {}
   });
   io.on('connection', async (socket) => {
-    console.log('-------------------');
-    console.log('a user connected', socket.id);
     socket.on('disconnect', async () => {
-      console.log('user disconnected', socket.id);
-      let result = await removeFromRoom({ socket_id: socket.id})
-      console.log('delete',result)
+      let result = await removeFromRoom({ socket_id: socket.id}, io)
       io.to(result.room).emit('roomChange', result.data);
     });
 
 
     socket.on('connectToRoom', async (room, userToken) => {
       socket.join(room);
-      console.log('connectToRoom', room)
       var clients_in_the_room = Array.from(io.sockets.adapter.rooms.get(room));
-      let result = await addToRoom({room_token: room, user_token: userToken, socket_id: socket.id, clients: clients_in_the_room})
-      console.log('add',result)
+      let result = await addToRoom({room_token: room, user_token: userToken, socket_id: socket.id, clients: clients_in_the_room},io)
       io.to(room).emit('roomChange', result.data);
-
     });
+
 
     socket.on('disconnectFromRoom', async (room, userToken) => {
       socket.leave(room);
-      console.log('disconnectFromRoom', room)
-      let result = await removeFromRoom({socket_id: socket.id})
-      console.log('delete',result)
+      let result = await removeFromRoom({socket_id: socket.id}, io)
       io.to(room).emit('roomChange', result.data);
     });
+
+    socket.on('joinRoom', async (room) => {
+      socket.join(room);
+    });
+
+    socket.on('leaveRoom', async (room) => {
+      socket.leave(room);
+    });
     
-
-
+    socket.on('changeUserStatusInRoom', async (room, user_id, status, field) => {
+      let result = await changeUserStatusInRoom(room.id, user_id, status, field);
+      io.to(room.token).emit('roomChange', result.data);
+    });
+    
+    
   });
   server.listen(3000, () => {
     console.log('server running at http://localhost:3000');

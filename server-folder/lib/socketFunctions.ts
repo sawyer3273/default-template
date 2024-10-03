@@ -1,6 +1,6 @@
 import prisma from "~/tools/prisma";
 
-export const addToRoom = async (payload: any = {}) => {
+export const addToRoom = async (payload: any = {}, io: any) => {
     try {
       let room = await prisma.room.findFirst({
         where: {
@@ -16,7 +16,8 @@ export const addToRoom = async (payload: any = {}) => {
         let data = {
           user_id: userToken.user_id,
           room_id: room.id,
-          socket_id: payload.socket_id
+          socket_id: payload.socket_id,
+          isAdmin: room.entity_id == userToken.user_id
         }
         let whereData = {
           user_id: userToken.user_id,
@@ -43,13 +44,16 @@ export const addToRoom = async (payload: any = {}) => {
         inRoom = inRoom.filter((obj1: any, i: any, arr: any) => 
           arr.findIndex((obj2: any) => (obj2.user_id === obj1.user_id)) === i
         )
+        if (inRoom.length == 1) {
+          io.to('quizeslist').emit('updateQuizlist');
+        }
         return {
           success: true, 
           data: inRoom
         }
       } else {
         return {
-          success: false
+          success: false, room, userToken
         }
       }
     } catch (err) {
@@ -61,9 +65,8 @@ export const addToRoom = async (payload: any = {}) => {
 };
 
 
-export const removeFromRoom = async (payload: any = {}) => {
+export const removeFromRoom = async (payload: any = {}, io: any) => {
   try {
-    console.log('payload',payload)
     if (payload.socket_id) {
       let roomUser = await prisma.roomUsers.findFirst({
           where:  {
@@ -86,6 +89,24 @@ export const removeFromRoom = async (payload: any = {}) => {
         inRoom = inRoom.filter((obj1: any, i: any, arr: any) => 
           arr.findIndex((obj2: any) => (obj2.user_id === obj1.user_id)) === i
         )
+        if (!inRoom.length) {
+          await prisma.room.delete({
+            where:  {
+              id: roomUser.room_id
+            }
+          })
+          io.to('quizeslist').emit('updateQuizlist');
+        } else {
+          if (roomUser.isAdmin) {
+            await prisma.roomUsers.update({
+              where:  {
+                id: inRoom[0].id,
+              },
+              data: {isAdmin: true}
+            })
+            inRoom[0].isAdmin = true
+          }
+        }
         return {
           success: true,
           data: inRoom,
@@ -113,7 +134,7 @@ export const removeFromRoom = async (payload: any = {}) => {
 };
 
 
-export const getRoom = async (id: any) => {
+export const getRoom = async (id: any, filter = false) => {
   try {
     let result =  await prisma.roomUsers.findMany({
       include: {user: {select: {
@@ -121,9 +142,16 @@ export const getRoom = async (id: any) => {
       }}},
       where:  {
         room_id: id,
-      }
+      },
+      orderBy: [{
+        id: 'asc'
+      }]
     })
-    
+    if (filter) {
+      result = result.filter((obj1: any, i: any, arr: any) => 
+        arr.findIndex((obj2: any) => (obj2.user_id === obj1.user_id)) === i
+      )
+    }
     return result
   } catch (err) {
     console.log('err',err)
@@ -150,5 +178,27 @@ export const deleteOldInRoom = async (inRoom: any, clients: any) => {
   } catch (err) {
     console.log('err',err)
     return  []
+  }
+};
+
+export const changeUserStatusInRoom = async (room_id: any, user_id: any, status: boolean = true, field = 'isActive') => {
+  try {
+    await prisma.roomUsers.updateMany({
+      where:  {
+        room_id,
+        user_id
+      }, 
+      data: {[field]: status}
+    })
+    return {
+      success: false,
+      data: await getRoom(room_id, true)
+    }
+  } catch (err) {
+    console.log('err',err)
+    return  {
+      success: false,
+      data: []
+    }
   }
 };

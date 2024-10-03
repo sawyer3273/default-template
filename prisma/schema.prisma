@@ -201,6 +201,7 @@ model CastResult {
 model Room {
   id        Int      @id @default(autoincrement())
   token     String   @unique
+  name      String?
   entity_id Int
   type      String @default("user")
   @@unique([ entity_id, type])
@@ -215,6 +216,9 @@ model RoomUsers {
   user_id   Int
   room_id   Int
   socket_id String
+  isActive  Boolean  @default(false)
+  isReady   Boolean  @default(false)
+  isAdmin   Boolean  @default(false)
   room      Room     @relation(fields: [room_id], references: [id])
   user      User     @relation(fields: [user_id], references: [id])
 }

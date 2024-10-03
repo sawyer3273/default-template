@@ -7,7 +7,8 @@ export const dataService = {
     getPacksIntuition,
     getPacksCast,
     getMovies,
-    getRoom
+    getRoom,
+    getRooms
 };
 
 async function getActors(payload) {
@@ -74,6 +75,20 @@ async function getRoom(payload) {
     return fetch(`/api/data/room?` + new URLSearchParams(payload), requestOptions)
         .then(handleResponse)
         .then(resp => {
+            return resp;
+        });
+}
+
+async function getRooms(payload) {
+    const requestOptions = {
+        method: 'Get',
+        headers: await authHeader(),
+    };
+    const dataStore = useDataStore()
+    return fetch(`/api/data/rooms?` + new URLSearchParams(payload), requestOptions)
+        .then(handleResponse)
+        .then(resp => {
+            dataStore.setRooms(resp)
             return resp;
         });
 }

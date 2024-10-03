@@ -131,22 +131,52 @@ export async function getPacksCast(req: any, res: Response, _next: NextFunction)
 
 export async function getRoom(req: any, res: Response, _next: NextFunction) {
   try {
-    let type = req.query.type ? req.query.type : 'user' 
-    let room = await prisma.Room.findFirst({
-      where: {
-        entity_id: res.locals.auth.id,
-        type: type
-      }
-    })
-    if (!room) {
-      room = await prisma.Room.create({
-        data: {
-          entity_id: res.locals.auth.id,
-          type: type,
-          token: generateUniqueString()
+    let room
+    if (req.query.id) {
+      room = await prisma.Room.findFirst({
+        where: {
+          token: req.query.id,
         }
       })
+    } 
+    if (!room) {
+      let type = req.query.type ? req.query.type : 'user' 
+      room = await prisma.Room.findFirst({
+        where: {
+          entity_id: res.locals.auth.id,
+          type: type
+        }
+      })
+      if (!room) {
+        room = await prisma.Room.create({
+          data: {
+            entity_id: res.locals.auth.id,
+            type: type,
+            token: req.query.id ? req.query.id : generateUniqueString()
+          }
+        })
+      }
     }
+    
+    return res.json({
+      success: true,
+      data: room
+    });
+    
+  } catch (err) {
+    console.log('err',err)
+    return errorHandler(createError.InternalServerError(), req, res)
+  }
+}
+
+
+export async function getRooms(req: any, res: Response, _next: NextFunction) {
+  try {
+    let room = await prisma.Room.findMany({
+      where: {
+        type: 'user'
+      }
+    })
     
     return res.json({
       success: true,
@@ -169,6 +199,7 @@ export const routes: RouteConfig = {
 
 
     { method: 'get', path: '/room', handler: [ afterSignupAuth, getRoom ] },
+    { method: 'get', path: '/rooms', handler: [ afterSignupAuth, getRooms ] },
 
 
     

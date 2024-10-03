@@ -143,6 +143,7 @@ async function customRoute(payload) {
 
 
 export function parseUserObject(user) {
+    console.log('user',user)
     let userData = user ? {
         id: user.id,
         email: user.email,

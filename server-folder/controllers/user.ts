@@ -92,6 +92,7 @@ export const login = async (req: Request, res: Response, next: Function) => {
         res.json({
           success: true,
           user: {
+            id: user.id, 
             email: user.email, 
             isEmailVerified: user.isEmailVerified, 
             rate: user.rate, 
