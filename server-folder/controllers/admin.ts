@@ -300,6 +300,111 @@ export async function deleteIntuitionItemPack(req: Request, res: Response, _next
   }
 }
 
+
+export async function createQuizPack(req: Request, res: Response, _next: NextFunction) {
+  try {
+    let {data, pack} = req.body
+    let result
+    if (data.id) {
+      result = await prisma.quizPack.update({
+        where: { id: data.id },
+        data: {
+          logo: data.logo,
+          name: data.text,
+          enable: data.enable,
+          user_id: res.locals.auth.id
+        },
+      });
+    } else {
+      result = await prisma.quizPack.create({
+        data: {
+          logo: data.logo,
+          name: data.text,
+          enable: data.enable,
+          user_id: res.locals.auth.id
+        },
+      });
+    }
+    for (let i = 0; i < pack.length; i++) {
+      let data =  {
+        text: pack[i].text,
+        number: pack[i].number,
+        score: pack[i].score,
+        time: pack[i].time,
+        image: pack[i].image,
+        video: pack[i].video,
+        audio: pack[i].audio,
+        type: pack[i].type.id,
+        libraryType: pack[i].libraryType.id,
+        answer_id: pack[i].answer_id.id,
+        pack_id: result.id
+      }
+      if (pack[i].id) {
+        await prisma.quizPackRound.update({
+          where: {id: pack[i].id},
+          data,
+        });
+      } else {
+        await prisma.quizPackRound.create({
+          data,
+        });
+      }
+    }
+      return res.json({
+        success: true,
+      });
+    
+  } catch (err) {
+    console.log('err',err)
+    return errorHandler(createError.InternalServerError(), req, res)
+  }
+}
+
+export async function deleteQuizPack(req: Request, res: Response, _next: NextFunction) {
+  try {
+    await prisma.quizPackRound.deleteMany({
+      where: { pack_id: req.body.id }
+    });
+    await prisma.quizPack.delete({
+      where: { id: req.body.id }
+    });
+
+    if (req.body.page) {
+      let cond = {}
+      let actors = await findMany(req, 'quizPack', cond)
+      let count = await getCount('quizPack', cond)
+      return res.json({
+        success: true,
+        data: actors,
+        total: count
+      });
+    } else {
+      return res.json({
+        success: true,
+      });
+    }
+  } catch (err) {
+    console.log('err',err)
+    return errorHandler(createError.InternalServerError(), req, res)
+  }
+}
+
+export async function deleteQuizItemPack(req: Request, res: Response, _next: NextFunction) {
+  try {
+    await prisma.quizPackRound.deleteMany({
+      where: { id: req.body.id }
+    });
+    return res.json({
+      success: true,
+    });
+  } catch (err) {
+    console.log('err',err)
+    return errorHandler(createError.InternalServerError(), req, res)
+  }
+}
+
+
+
 export async function uploadImage(req: Request, ress: Response, _next: NextFunction) {
   try {
     if (req.file) {
@@ -343,6 +448,9 @@ export const routes: RouteConfig = {
     { method: 'post', path: '/cast', handler: [afterSignupAuth, isAdmin, createCastPack] },
     { method: 'delete', path: '/cast', handler: [afterSignupAuth, isAdmin, deleteCastPack] },
     { method: 'delete', path: '/castItem', handler: [afterSignupAuth, isAdmin, deleteCastItemPack] },
+    { method: 'post', path: '/quiz', handler: [afterSignupAuth, isAdmin, createQuizPack] },
+    { method: 'delete', path: '/quiz', handler: [afterSignupAuth, isAdmin, deleteQuizPack] },
+    { method: 'delete', path: '/quizItem', handler: [afterSignupAuth, isAdmin, deleteQuizItemPack] },
     { method: 'post', path: '/upload', handler: [afterSignupAuth, isAdmin, upload.single('file'), uploadImage] },
 
     

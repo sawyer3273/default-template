@@ -17,6 +17,34 @@ import { findMany, getCount } from '../lib/orm';
 
 
 
+export async function find(req: Request, res: Response, _next: NextFunction) {
+  try {
+    let cond: any = {}
+    if (req.query.key) {
+      let key = req.query.key.toString().trim()
+      cond.OR = [
+        {word: { contains: key, mode: 'insensitive'}},
+        {translation: { contains: key, mode: 'insensitive'}},
+      ]
+    }
+    if (req.query.type) {
+      cond.type = req.query.type
+    }
+    let actors = await findMany(req, 'library', cond, {limit: 50})
+    let count = await getCount('library', cond)
+    
+    return res.json({
+      success: true,
+      data: actors,
+      total: count
+    });
+    
+  } catch (err) {
+    console.log('err',err)
+    return errorHandler(createError.InternalServerError(), req, res)
+  }
+}
+
 
 export async function getActors(req: Request, res: Response, _next: NextFunction) {
   try {
@@ -129,6 +157,37 @@ export async function getPacksCast(req: any, res: Response, _next: NextFunction)
   }
 }
 
+export async function getPacksQuiz(req: any, res: Response, _next: NextFunction) {
+  try {
+    let cond: any = {}
+    if (req.query.id) {
+      cond.id = parseInt(req.query.id)
+    }
+    let options: any = {include: {QuizPackRound: { include: {answer: true}} }}
+    
+    if (res.locals.auth.userRole == 'USER') {
+      options.include.QuizResult = {
+        where: {
+          user_id: res.locals.auth.id
+        }
+      }
+      cond.enable = true
+    }
+    let data = await findMany(req, 'quizPack', cond, options)
+    let count = await getCount('quizPack', cond)
+    
+    return res.json({
+      success: true,
+      data: data,
+      total: count
+    });
+    
+  } catch (err) {
+    console.log('err',err)
+    return errorHandler(createError.InternalServerError(), req, res)
+  }
+}
+
 export async function getRoom(req: any, res: Response, _next: NextFunction) {
   try {
     let room
@@ -194,8 +253,10 @@ export const routes: RouteConfig = {
   routes: [
     { method: 'get', path: '/actors', handler: [afterSignupAuth, getActors] },
     { method: 'get', path: '/movies', handler: [afterSignupAuth, getMovies] },
+    { method: 'get', path: '/find', handler: [afterSignupAuth, find] },
     { method: 'get', path: '/packsIntuition', handler: [ afterSignupAuth, getPacksIntuition ] },
     { method: 'get', path: '/packsCast', handler: [ afterSignupAuth, getPacksCast ] },
+    { method: 'get', path: '/packsQuiz', handler: [ afterSignupAuth, getPacksQuiz ] },
 
 
     { method: 'get', path: '/room', handler: [ afterSignupAuth, getRoom ] },

@@ -12,6 +12,9 @@ export const adminService = {
     addCastPack,
     deleteCastPack,
     deleteCastItemPack,
+    addQuizPack,
+    deleteQuizPack,
+    deleteQuizItemPack,
     updateMovie
 };
 
@@ -151,6 +154,51 @@ async function deleteCastItemPack(payload) {
         .then(handleResponse)
         .then(resp => {
             dataStore.setPacksCast(resp)
+            return resp;
+        });
+}
+
+
+
+async function addQuizPack(payload) {
+    const requestOptions = {
+        method: 'POST',
+        headers: await authHeader(true),
+        body: JSON.stringify(payload)
+    };
+    return fetch(`/api/admin/quiz`, requestOptions)
+        .then(handleResponse)
+        .then(resp => {
+            return resp;
+        });
+}
+
+async function deleteQuizPack(payload) {
+    const requestOptions = {
+        method: 'DELETE',
+        headers: await authHeader(),
+        body: JSON.stringify(payload)
+    };
+    const dataStore = useDataStore()
+    return fetch(`/api/admin/quiz`, requestOptions)
+        .then(handleResponse)
+        .then(resp => {
+            dataStore.setPacksQuiz(resp)
+            return resp;
+        });
+}
+
+async function deleteQuizItemPack(payload) {
+    const requestOptions = {
+        method: 'DELETE',
+        headers: await authHeader(),
+        body: JSON.stringify(payload)
+    };
+    const dataStore = useDataStore()
+    return fetch(`/api/admin/quizItem`, requestOptions)
+        .then(handleResponse)
+        .then(resp => {
+            dataStore.setPacksQuiz(resp)
             return resp;
         });
 }

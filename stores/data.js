@@ -15,6 +15,11 @@ export const useDataStore = defineStore('data', () => {
   const packs_cast = ref([])
   const packs_cast_count = ref(0)
 
+  const packs_quiz = ref([])
+  const packs_quiz_count = ref(0)
+
+  const searchData = ref([])
+  const searchData_count = ref(0)
 
   const rooms = ref([])
 
@@ -54,6 +59,25 @@ export const useDataStore = defineStore('data', () => {
     }
   }
 
+  function setPacksQuiz(payload) {
+    if (payload.data) {
+      packs_quiz.value = payload.data
+    }
+    if (payload.total) {
+      packs_quiz_count.value = payload.total
+    }
+  }
+
+  function setSearchData(payload) {
+    if (payload.data) {
+      searchData.value = payload.data
+    }
+    if (payload.total) {
+      searchData_count.value = payload.total
+    }
+  }
+  
+
   function setRooms(payload) {
     if (payload.data) {
       rooms.value = payload.data
@@ -68,11 +92,17 @@ export const useDataStore = defineStore('data', () => {
     packs_intuition_count,
     packs_cast,
     packs_cast_count,
+    packs_quiz,
+    packs_quiz_count,
+    searchData,
+    searchData_count,
     rooms,
     setActors,
     setMovies,
     setPacksIntuition,
     setPacksCast,
+    setPacksQuiz,
+    setSearchData,
     setRooms
   }
 })

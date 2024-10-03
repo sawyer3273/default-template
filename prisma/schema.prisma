@@ -40,6 +40,8 @@ model User {
   CastPack        CastPack[]
   CastResult      CastResult[]
   RoomUser        RoomUsers[]
+  QuizPack        QuizPack[]
+  QuizResult      QuizResult[]
 }
 
 model userAuthTokens {
@@ -102,6 +104,7 @@ model Library {
 
   movie  Movie?  @relation(fields: [movie_id], references: [id])
   person Person? @relation(fields: [person_id], references: [id])
+  QuizPackRounds              QuizPackRound[]
 }
 
 model Link {
@@ -221,4 +224,52 @@ model RoomUsers {
   isAdmin   Boolean  @default(false)
   room      Room     @relation(fields: [room_id], references: [id])
   user      User     @relation(fields: [user_id], references: [id])
+}
+
+
+
+model QuizPack {
+  id     Int      @id @default(autoincrement())
+  name   String
+  logo   String?
+  enable Boolean? @default(true)
+
+  user_id Int
+  user    User @relation(fields: [user_id], references: [id])
+
+  QuizPackRound QuizPackRound[]
+  QuizResult      QuizResult[]
+
+  createdAt DateTime @default(now())
+}
+
+model QuizPackRound {
+  id        Int     @id @default(autoincrement())
+  number    Int
+  score     Int
+  time      Int
+  text      String?
+  image     String?
+  audio     String?
+  video     String?
+  type      String  @default("text")
+  libraryType  String  @default("movie")
+
+  answer_id   Int?
+  pack_id     Int
+  answer      Library?   @relation(fields: [answer_id], references: [id])
+  pack        QuizPack @relation(fields: [pack_id], references: [id])
+}
+
+model QuizResult {
+  id    Int     @id @default(autoincrement())
+  value Float
+  log   String?
+  time  Int?
+
+  user_id   Int
+  user      User     @relation(fields: [user_id], references: [id])
+  pack_id   Int
+  pack      QuizPack @relation(fields: [pack_id], references: [id])
+  createdAt DateTime @default(now())
 }

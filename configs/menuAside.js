@@ -11,7 +11,8 @@ import {
   mdiResponsive,
   mdiAccountStar,
   mdiLightbulbOn,
-  mdiAccountGroup
+  mdiAccountGroup,
+  mdiHelpBoxMultiple
 } from '@mdi/js'
 
 export default [
@@ -24,6 +25,11 @@ export default [
     to: '/admin/actors',
     icon: mdiAccountStar,
     label: 'Актеры'
+  },
+  {
+    to: '/admin/quiz',
+    icon: mdiHelpBoxMultiple,
+    label: 'Квиз'
   },
   {
     to: '/admin/intuition',

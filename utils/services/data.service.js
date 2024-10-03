@@ -7,6 +7,8 @@ export const dataService = {
     getPacksIntuition,
     getPacksCast,
     getMovies,
+    getPacksQuiz,
+    librarySearch,
     getRoom,
     getRooms
 };
@@ -21,6 +23,20 @@ async function getActors(payload) {
         .then(handleResponse)
         .then(resp => {
             dataStore.setActors(resp)
+            return resp;
+        });
+}
+
+async function librarySearch(payload) {
+    const requestOptions = {
+        method: 'Get',
+        headers: await authHeader(),
+    };
+    const dataStore = useDataStore()
+    return fetch(`/api/data/find?` + new URLSearchParams(payload), requestOptions)
+        .then(handleResponse)
+        .then(resp => {
+            dataStore.setSearchData(resp)
             return resp;
         });
 }
@@ -67,6 +83,19 @@ async function getPacksCast(payload) {
         });
 }
 
+async function getPacksQuiz(payload) {
+    const requestOptions = {
+        method: 'Get',
+        headers: await authHeader(),
+    };
+    const dataStore = useDataStore()
+    return fetch(`/api/data/packsQuiz?` + new URLSearchParams(payload), requestOptions)
+        .then(handleResponse)
+        .then(resp => {
+            dataStore.setPacksQuiz(resp)
+            return resp;
+        });
+}
 async function getRoom(payload) {
     const requestOptions = {
         method: 'Get',

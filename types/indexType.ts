@@ -8,7 +8,7 @@ type UserDataType = {
 };
 
 type RoleType = "ADMIN" | "USER" | "SUBUSER" | "MASTER"
-type DataModels = "user" | "person" | "movie" | "intuitionPack" | "castPack"
+type DataModels = "user" | "person" | "movie" | "intuitionPack" | "castPack" | "quizPack" | "library"
 type DataFunctions = "getActors" 
 
 
