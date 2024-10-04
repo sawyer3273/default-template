@@ -1,0 +1,30 @@
+HOST="127.0.0.1"
+PORT="8000"
+SOCKET_URL= "http://moviequiz.ru:3000"
+SOCKET_PORT= "3000"
+projectName='"MovieQuiz"'
+databaseConnectOnInit=true
+baseURL="http://moviequiz.ru:8000"
+emailAddress="zernoffoleq@yandex.ru"
+emailPassword="jzctykqdevfpcsfy"
+yandexToken='y0_AgAAAAAuq1spAAxkfgAAAAEQCEoqAAD3p3_otaVFG5VGaTW1eraTIsAQ4g'
+yandexClientId='0c620bd214aa47d0bcebb5d65ea85433'
+yandexClientSecret='eacfaf267522476593f158d9d883c716'
+mailuser='zernov3273@gmail.com'
+mailclientId='443870695700-9t4mpdtt7v5gj7669o1v24s61kopsajf.apps.googleusercontent.com'
+mailclientSecret='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'
+mailrefreshToken='1//04Q70FZO6xO16CgYIARAAGAQSNwF-L9IrgJZXDAs9AwMV8mPWDvTtoUoiTob1VEGbFKyEN6Jmtu4S08r6KF1gQYM_lFQgCNYRJxw'
+timewebToken='eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCIsImtpZCI6IjFrYnhacFJNQGJSI0tSbE1xS1lqIn0.eyJ1c2VyIjoiY2EyMTY2MSIsInR5cGUiOiJhcGlfa2V5IiwicG9ydGFsX3Rva2VuIjoiNjM5Mjg5OGUtMzVkNC00NTczLWE4ZTItMjg4YjdkYzA5NTQ5IiwiYXBpX2tleV9pZCI6IjYyMWM3OWU5LTgyY2EtNDUxMC1hMDM4LWViNzJhY2U5MzJhYiIsImlhdCI6MTcyNjAzMzYxN30.eH73zBj6EJeYea6afOk3J6QCnge6iscWC2L-1kdO95z8dyMYPEV0Akx4-xqwrNbf3dzJhaHhKryzlNtuJL8yuhj1BIv9AYpGJNZWOy3pU3jPw_q6jugRJQbxk3jXwDyDQbOqhC931pymYXJ6VrbnjtoDXwSVAviKtkdqoErBg8htEHTyE_9fKRvA8RStFV5f2sQ1pqo6ZnO-TZuhxFhi4OXWxPXfBDV9VQMWeEDIGdx7OA5jpT4iXOWYC8uWTErItcaftzsAVHsW_XuFJ_utKncnVsdajjTeC--0gfaSduUdH_8ddDYF2aQvyhrlJm0JErvgTZd-OXvhomCO_8JCC1IqePqhsxY4zz-bxtnivI_Go4bHISHRRQ25992Zb2-UyqrN6zBTWtZaiCWJwwbG7zC2oO4rchAceMjb-T9_xRjof_Ycg7QUz0AqtexPIMuPEdTXPo0cIM-N8ApnZ3efZhbP7OtwqRBYQAycgkz8_ogXFMVk1Nr3I4azDt3sp4WU'
+timewebBucket='326885'
+timewebURL='https://s3.timeweb.cloud/1d66ad34-320f94d0-cbe7-493f-bce7-bfb114c821bb/'
+# This was inserted by `prisma init`:
+# Environment variables declared in this file are automatically made available to Prisma.
+# See the documentation for more detail: https://pris.ly/d/prisma-schema#accessing-environment-variables-from-the-schema
+
+# Prisma supports the native connection string format for PostgreSQL, MySQL, SQLite, SQL Server, MongoDB and CockroachDB.
+# See the documentation for all the connection string options: https://pris.ly/d/connection-strings
+
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/newdb?schema=public"
+ACCESS_TOKEN_SECRET="MzUtyqOooyu9aMro"
+REFRESH_TOKEN_SECRET="5o68ZEBibp9AkBFX"
+AWS_SDK_JS_SUPPRESS_MAINTENANCE_MODE_MESSAGE = '1'
