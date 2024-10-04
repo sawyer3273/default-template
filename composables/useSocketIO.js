@@ -1,6 +1,9 @@
 import { io } from "socket.io-client";
 const useSocketIO = () => {
-    const socket = io('ws://localhost:3000')
+    const config = useRuntimeConfig()
+    const socket = io('ws://localhost:' + (config.public.SOCKET_PORT), {
+       
+    })
     return {
         socket,
     }

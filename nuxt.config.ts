@@ -6,7 +6,7 @@ export default defineNuxtConfig({
     // NOTE: If change route, paths in .env, config and lib/url.ts must be changed
     { route: '/api/**', handler: './server-folder/index.ts' },
   ],
-  devtools: { enabled: true },
+  devtools: { enabled: false },
 
   modules: [
     '@pinia/nuxt',
@@ -18,7 +18,7 @@ export default defineNuxtConfig({
     // module options
     sockets: [{
       name: 'main',
-      url: 'http://localhost:3000'
+      url:  process.env.SOCKET_URL ? process.env.SOCKET_URL : "http://localhost:3000"
     }]
   },
   build:{
@@ -40,6 +40,9 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
+      PORT: '8000',
+      SOCKET_PORT: process.env.SOCKET_PORT ? process.env.SOCKET_PORT : '3000',
+      bdUrl: process.env.DATABASE_URL,
       projectName: process.env.projectName,
       yandexToken: process.env.yandexToken,
       yandexClientId: process.env.yandexClientId,

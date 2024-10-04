@@ -525,6 +525,7 @@ if (nuxtConfig.dev) {
 app.use(nuxt.render);
 
 // Listen the server
+console.log('config',config)
 var server = app.listen(config.port, config.host);
 server.timeout = 600 * 1000;
 //server.setTimeout(500000);

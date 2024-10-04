@@ -41,10 +41,6 @@ function initializeApplication() {
   });
   io.on('connection', async (socket) => {
     console.log('conn',  socket.id)
-    socket.on('qwe', async () => {
-      console.log('qwe',  socket.id)
-      
-    });
     socket.on('disconnect', async () => {
       console.log('disconnect',  socket.id)
       let result = await removeFromRoom({ socket_id: socket.id}, io)
@@ -110,8 +106,8 @@ function initializeApplication() {
     
     
   });
-  server.listen(3000, () => {
-    console.log('server running at http://localhost:3000');
+  server.listen(process.env.SOCKET_PORT ? process.env.SOCKET_PORT : 3000, () => {
+    console.log('server running at http://localhost:' + (process.env.SOCKET_PORT ? process.env.SOCKET_PORT : 3000));
   });
 
 
