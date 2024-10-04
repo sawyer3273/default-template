@@ -42,6 +42,7 @@ export default defineNuxtConfig({
     public: {
       PORT: '8000',
       SOCKET_PORT: process.env.SOCKET_PORT ? process.env.SOCKET_PORT : '3000',
+      SOCKET_URL: process.env.SOCKET_URL ? process.env.SOCKET_URL : "http://localhost:3000",
       bdUrl: process.env.DATABASE_URL,
       projectName: process.env.projectName,
       yandexToken: process.env.yandexToken,
