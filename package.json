@@ -5,7 +5,7 @@
   "author": "OlegZernov",
   "private": true,
   "scripts": {
-    "build": "nuxt build && cp -R node_modules/geoip-lite/data .output/server/node_modules/geoip-lite/data/ && cp .env .output/server/.env",
+    "build": "nuxt build && cp -R node_modules/geoip-lite/data .output/server/node_modules/geoip-lite/data/ && cp .env .output/server/.env && tar -czvf archive.tar.gz .output/",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
