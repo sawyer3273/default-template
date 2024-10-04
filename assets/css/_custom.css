@@ -146,3 +146,6 @@ label {
 .notclickable {
     pointer-events: none;
 }
+.w-inherit {
+	width: inherit;
+}

@@ -12,7 +12,7 @@ interface Props {
   size?: Number
   storeModel?: String
   openLink?: String
-  openFunc: String
+  openFunc?: String
 }
 
 const props = withDefaults(defineProps<Props>(), {

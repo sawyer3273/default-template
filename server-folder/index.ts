@@ -40,14 +40,24 @@ function initializeApplication() {
     connectionStateRecovery: {}
   });
   io.on('connection', async (socket) => {
+    console.log('conn',  socket.id)
+    socket.on('qwe', async () => {
+      console.log('qwe',  socket.id)
+      
+    });
     socket.on('disconnect', async () => {
+      console.log('disconnect',  socket.id)
       let result = await removeFromRoom({ socket_id: socket.id}, io)
-      io.to(result.room).emit('roomChange', result.data);
+      if (result.success && result.room) {
+        io.to(result.room).emit('roomChange', result.data);
+      }
     });
 
 
     socket.on('connectToRoom', async (room, userToken) => {
+      console.log('connectToRoom',  socket.id)
       socket.join(room);
+      //@ts-ignore
       var clients_in_the_room = Array.from(io.sockets.adapter.rooms.get(room));
       let result = await addToRoom({room_token: room, user_token: userToken, socket_id: socket.id, clients: clients_in_the_room},io)
       io.to(room).emit('roomChange', result.data);

@@ -8,11 +8,13 @@ definePageMeta({
   middleware: 'auth' 
 })
 
+const { socket } = useSocketIO()
 const mainStore = useMainStore()
 
 
 onMounted(async () => {
   
+    socket.emit('qwe', 'quizeslist');
 })
 
 async function getData(payload) {

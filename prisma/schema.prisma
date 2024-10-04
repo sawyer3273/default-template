@@ -205,6 +205,7 @@ model Room {
   id        Int      @id @default(autoincrement())
   token     String   @unique
   name      String?
+  info      String?
   entity_id Int
   type      String @default("user")
   @@unique([ entity_id, type])
@@ -227,6 +228,10 @@ model RoomUsers {
   isActive  Boolean  @default(false)
   isReady   Boolean  @default(false)
   isAdmin   Boolean  @default(false)
+
+  score     Float    @default(0)
+  data      String?
+
   room      Room     @relation(fields: [room_id], references: [id])
   user      User     @relation(fields: [user_id], references: [id])
 }

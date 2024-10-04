@@ -205,14 +205,16 @@ export async function getRoom(req: any, res: Response, _next: NextFunction) {
         where: {
           entity_id: res.locals.auth.id,
           type: type
-        }
+        },
+        include: {pack: true}
       })
       if (!room) {
         room = await prisma.Room.create({
           data: {
             entity_id: res.locals.auth.id,
             type: type,
-            token: req.query.id ? req.query.id : generateUniqueString()
+            token: req.query.id ? req.query.id : generateUniqueString(),
+            info: JSON.stringify({user_id: res.locals.auth.id, username: res.locals.auth.username})
           }
         })
       }
@@ -233,16 +235,27 @@ export async function getRoom(req: any, res: Response, _next: NextFunction) {
 export async function getRooms(req: any, res: Response, _next: NextFunction) {
   try {
     let cond: any = {type: 'user'}
+    let roomsActive = []
     if (req.query.available) {
       cond.isActive = false
+      let activeRoom = await prisma.RoomUsers.findMany({
+        where: {user_id: res.locals.auth.id}
+      })
+      let ids = activeRoom.map((one: any) => one.room_id)
+      if (ids.length) {
+        roomsActive = await prisma.Room.findMany({
+          where: {id: { in:ids }}, include: {pack: true, RoomUser: true}
+        })
+      }
     }
     let room = await prisma.Room.findMany({
-      where: cond
+      where: cond, include: {pack: true, RoomUser: true}
     })
     
     return res.json({
       success: true,
-      data: room
+      data: room,
+      roomsActive
     });
     
   } catch (err) {

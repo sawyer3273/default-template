@@ -32,7 +32,7 @@ export const addToRoom = async (payload: any = {}, io: any) => {
         let result = await prisma.roomUsers.findFirst({
           where: whereData,
         })
-        console.log('room,room',room.isActive)
+        io.to('quizeslist').emit('updateQuizlist');
         if (!room.isActive) {
           if (!result) {
               result = await prisma.roomUsers.create({
@@ -45,7 +45,6 @@ export const addToRoom = async (payload: any = {}, io: any) => {
               })
           }
         } else {
-          console.log('data',data)
           await prisma.roomUsers.updateMany({
             where: whereData,
             data,
@@ -58,9 +57,9 @@ export const addToRoom = async (payload: any = {}, io: any) => {
         inRoom = inRoom.filter((obj1: any, i: any, arr: any) => 
           arr.findIndex((obj2: any) => (obj2.user_id === obj1.user_id)) === i
         )
-        if (inRoom.length == 1) {
-          io.to('quizeslist').emit('updateQuizlist');
-        }
+        
+        
+        
         return {
           success: true, 
           data: inRoom
@@ -193,11 +192,12 @@ export const deleteOldInRoom = async (inRoom: any, clients: any) => {
   try {
     let result = []
     for (let index in inRoom) {
-      let find = clients.includes(inRoom[index].socket_id)
+      let find = clients.includes(inRoom[index].socket_id) || inRoom[index].isActive
       if (!find) {
-        await prisma.roomUsers.delete({
+        await prisma.roomUsers.deleteMany({
           where:  {
-            id: inRoom[index].id
+            id: inRoom[index].id,
+            isActive: false
           }
         })
       } else {
@@ -266,7 +266,7 @@ export const roomStatusQuiz = async (room: any) => {
       where:  {
         id: room.id
       }, 
-      data: {isActive: true}
+      data: {isActive: true, question: 1}
     })
     
     return {

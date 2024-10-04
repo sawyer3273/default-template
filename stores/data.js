@@ -22,6 +22,7 @@ export const useDataStore = defineStore('data', () => {
   const searchData_count = ref(0)
 
   const rooms = ref([])
+  const roomsActive = ref([])
 
   function setActors(payload) {
     if (payload.data) {
@@ -81,6 +82,7 @@ export const useDataStore = defineStore('data', () => {
   function setRooms(payload) {
     if (payload.data) {
       rooms.value = payload.data
+      roomsActive.value = payload.roomsActive
     }
   }
   return {
@@ -97,6 +99,7 @@ export const useDataStore = defineStore('data', () => {
     searchData,
     searchData_count,
     rooms,
+    roomsActive,
     setActors,
     setMovies,
     setPacksIntuition,

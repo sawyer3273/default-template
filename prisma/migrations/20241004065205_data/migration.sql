@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "RoomUsers" ADD COLUMN     "data" TEXT,
+ADD COLUMN     "score" DOUBLE PRECISION NOT NULL DEFAULT 0;

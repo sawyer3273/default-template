@@ -5,6 +5,7 @@ import { dataService } from '~/utils/services/data.service'
 import { containerMaxW } from '@/configs/config'
 import { useToast } from "vue-toastification";
 import { mdiCircleDouble } from '@mdi/js'
+import QuizGame from '@/components/Quiz/Game'
 import  { debounce} from 'lodash'
 
 definePageMeta({
@@ -56,7 +57,7 @@ onMounted(async () => {
   if (roomData.data) {
       room.value = roomData.data
   }
-  let isInRoom = roomData.data.RoomUser.find(one => one.user_id == userStore.user.id)
+  let isInRoom = roomData.data.RoomUser ? roomData.data.RoomUser.find(one => one.user_id == userStore.user.id): false
   if (isInRoom || !room.value.isActive) {
     if (room.value.pack_id) {
       let packData = await dataService.getPacksQuiz({id: room.value.pack_id})
@@ -120,7 +121,7 @@ function start() {
 <template>
   <div>
     <NuxtLayout name="auth">
-      <SectionMain class='' v-if='!loader'>
+      <SectionMain :isFull='true' class='' v-if='!loader'>
         <template v-if='forbidden'>
            <CardBox>
               <div class='text-center f-full'>
@@ -182,26 +183,8 @@ function start() {
 
 
         <template v-else>
-          <div class='row'> 
-            <div class='col-md-3'>
-              <div>Игроки</div>
-              <div class='border-green-500 border-2 mb-2 min-h-12'>
-                <CardBox :smallPadding='true' class='!bg-blue-300 m-1 ' v-for='user in quizUsers'>
-                  <div class='flex items-center justify-between'>
-                    <div>{{user.user.username}}</div><BaseButton @click='changeUserStatus(user.user.id, true)' v-if='me.isAdmin' :small='true' label='Добавить' />   
-                  </div>
-                </CardBox>
-              </div>
-
-
-            </div>
-            <div class='col-md-9'>
-
-
-
-            </div>
-          </div>
-
+          
+          <QuizGame :quizUsers='quizUsers' :me='me' />
 
 
 
