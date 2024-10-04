@@ -10,10 +10,6 @@ module.exports = {
         watch: false,
         time: true,
         log_date_format : "YYYY-MM-DD HH:mm Z",
-        env_local : {
-          "PORT": 8000,
-          "NODE_ENV": "local"
-        },
         env: {
           "PORT": 8000,
           "NODE_ENV": "production"

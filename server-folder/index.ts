@@ -33,84 +33,86 @@ function initializeApplication() {
   const app = express()
 
   const server = http.createServer(app);
-  
-  const io = new Server(server, {
-    //@ts-ignore
-    cors:true,
-    connectionStateRecovery: {}
-  });
-  io.on('connection', async (socket) => {
-    console.log('conn',  socket.id)
-    socket.on('disconnect', async () => {
-      console.log('disconnect',  socket.id)
-      let result = await removeFromRoom({ socket_id: socket.id}, io)
-      if (result.success && result.room) {
-        io.to(result.room).emit('roomChange', result.data);
-      }
-    });
-
-
-    socket.on('connectToRoom', async (room, userToken) => {
-      console.log('connectToRoom',  socket.id)
-      socket.join(room);
+  const instanceId = process.env['INSTANCE_ID'];
+ 
+  if (instanceId == '0') {
+    const io = new Server(server, {
       //@ts-ignore
-      var clients_in_the_room = Array.from(io.sockets.adapter.rooms.get(room));
-      let result = await addToRoom({room_token: room, user_token: userToken, socket_id: socket.id, clients: clients_in_the_room},io)
-      io.to(room).emit('roomChange', result.data);
+      cors:true,
+      connectionStateRecovery: {}
     });
+    io.on('connection', async (socket) => {
+      console.log('conn',  socket.id)
+      socket.on('disconnect', async () => {
+        console.log('disconnect',  socket.id)
+        let result = await removeFromRoom({ socket_id: socket.id}, io)
+        if (result.success && result.room) {
+          io.to(result.room).emit('roomChange', result.data);
+        }
+      });
 
 
-    socket.on('disconnectFromRoom', async (room, userToken) => {
-      socket.leave(room);
-      let result = await removeFromRoom({socket_id: socket.id}, io)
-      io.to(room).emit('roomChange', result.data);
-    });
-
-    
-    socket.on('choosePack', async (id, room_id, room_token) => {
-      let result = await roomChoosePack(id, room_id)
-      if (result.success) {
-        io.to(room_token).emit('updatePack', result.data);
-      }
-    });
+      socket.on('connectToRoom', async (room, userToken) => {
+        console.log('connectToRoom',  socket.id)
+        socket.join(room);
+        //@ts-ignore
+        var clients_in_the_room = Array.from(io.sockets.adapter.rooms.get(room));
+        let result = await addToRoom({room_token: room, user_token: userToken, socket_id: socket.id, clients: clients_in_the_room},io)
+        io.to(room).emit('roomChange', result.data);
+      });
 
 
-    socket.on('statusQuiz', async (room) => {
-      let result = await roomStatusQuiz(room)
-      if (result.success) {
-        io.to(room.token).emit('statusQuizSuccess');
-        io.to('quizeslist').emit('updateQuizlist');
-      }
-    });
-    
-    socket.on('changeRoomName', async (room, name) => {
-      let result = await changeRoomName(room, name)
-      if (result.success) {
-        room.name = name 
-        io.to(room.token).emit('changeRoomNameSuccess', room);
-      }
-    });
-    
-    socket.on('joinRoom', async (room) => {
-      socket.join(room);
-    });
+      socket.on('disconnectFromRoom', async (room, userToken) => {
+        socket.leave(room);
+        let result = await removeFromRoom({socket_id: socket.id}, io)
+        io.to(room).emit('roomChange', result.data);
+      });
 
-    socket.on('leaveRoom', async (room) => {
-      socket.leave(room);
-    });
-    
-    socket.on('changeUserStatusInRoom', async (room, user_id, status, field) => {
-      let result = await changeUserStatusInRoom(room.id, user_id, status, field);
-      io.to(room.token).emit('roomChange', result.data);
-    });
-    
-    
-  });
-  server.listen(process.env.SOCKET_PORT ? process.env.SOCKET_PORT : 3000, () => {
-    console.log('server running at http://localhost:' + (process.env.SOCKET_PORT ? process.env.SOCKET_PORT : 3000));
-  });
+      
+      socket.on('choosePack', async (id, room_id, room_token) => {
+        let result = await roomChoosePack(id, room_id)
+        if (result.success) {
+          io.to(room_token).emit('updatePack', result.data);
+        }
+      });
 
 
+      socket.on('statusQuiz', async (room) => {
+        let result = await roomStatusQuiz(room)
+        if (result.success) {
+          io.to(room.token).emit('statusQuizSuccess');
+          io.to('quizeslist').emit('updateQuizlist');
+        }
+      });
+      
+      socket.on('changeRoomName', async (room, name) => {
+        let result = await changeRoomName(room, name)
+        if (result.success) {
+          room.name = name 
+          io.to(room.token).emit('changeRoomNameSuccess', room);
+        }
+      });
+      
+      socket.on('joinRoom', async (room) => {
+        socket.join(room);
+      });
+
+      socket.on('leaveRoom', async (room) => {
+        socket.leave(room);
+      });
+      
+      socket.on('changeUserStatusInRoom', async (room, user_id, status, field) => {
+        let result = await changeUserStatusInRoom(room.id, user_id, status, field);
+        io.to(room.token).emit('roomChange', result.data);
+      });
+      
+      
+    });
+    server.listen(process.env.SOCKET_PORT ? process.env.SOCKET_PORT : 3000, () => {
+      console.log('instanceId!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',instanceId)
+      console.log('server running at http://localhost:' + (process.env.SOCKET_PORT ? process.env.SOCKET_PORT : 3000));
+    });
+  }
   app.disable('x-powered-by')
   app.use(i18nextMiddleware.handle(i18next));
 
