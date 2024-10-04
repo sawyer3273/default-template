@@ -6,7 +6,11 @@ import {
 
 export default [
   {
-    label: 'Угадай по касту ',
+    label: 'Паки',
+    to: '/quiz-packs',
+  },
+  {
+    label: 'Угадай по касту',
     to: '/cast',
   },
   {

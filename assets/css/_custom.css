@@ -143,3 +143,6 @@ width: 100%;
 label {
 	font-weight: bold;
 }
+.notclickable {
+    pointer-events: none;
+}

@@ -195,7 +195,8 @@ export async function getRoom(req: any, res: Response, _next: NextFunction) {
       room = await prisma.Room.findFirst({
         where: {
           token: req.query.id,
-        }
+        },
+        include: {RoomUser: true}
       })
     } 
     if (!room) {
@@ -231,10 +232,12 @@ export async function getRoom(req: any, res: Response, _next: NextFunction) {
 
 export async function getRooms(req: any, res: Response, _next: NextFunction) {
   try {
+    let cond: any = {type: 'user'}
+    if (req.query.available) {
+      cond.isActive = false
+    }
     let room = await prisma.Room.findMany({
-      where: {
-        type: 'user'
-      }
+      where: cond
     })
     
     return res.json({

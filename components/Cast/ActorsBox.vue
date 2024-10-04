@@ -144,9 +144,7 @@ defineExpose({
 }
 
 
-.notclickable {
-    pointer-events: none;
-}
+
 
 .col-custom {
     flex: 0 0 auto;

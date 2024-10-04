@@ -208,8 +208,13 @@ model Room {
   entity_id Int
   type      String @default("user")
   @@unique([ entity_id, type])
+  pack_id   Int?
+  question  Int     @default(0)
+  time      Int     @default(0)
+  isActive   Boolean @default(false)
 
   RoomUser        RoomUsers[]
+  pack      QuizPack? @relation(fields: [pack_id], references: [id])
 
   createdAt DateTime @default(now())
 }
@@ -239,6 +244,7 @@ model QuizPack {
 
   QuizPackRound QuizPackRound[]
   QuizResult      QuizResult[]
+  Rooms      Room[]
 
   createdAt DateTime @default(now())
 }
@@ -262,10 +268,13 @@ model QuizPackRound {
 }
 
 model QuizResult {
-  id    Int     @id @default(autoincrement())
-  value Float
-  log   String?
-  time  Int?
+  id      Int     @id @default(autoincrement())
+  points   Float
+  log     String?
+  time    Int?
+  question  Int
+  answer  String?
+  type    String   @default("question")
 
   user_id   Int
   user      User     @relation(fields: [user_id], references: [id])

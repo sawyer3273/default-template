@@ -12,6 +12,7 @@ interface Props {
   size?: Number
   storeModel?: String
   openLink?: String
+  openFunc: String
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -20,7 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
   storeModel: '',
 })
 
-const emit = defineEmits(['load-data', 'delete-data'])
+const emit = defineEmits(['load-data', 'delete-data', 'onChoosePack'])
 
 
 onMounted(async () => {
@@ -49,6 +50,9 @@ function openPage(page) {
 function showItem(id) {
   if (props.openLink) {
     router.push(props.openLink.replace('{id}', id));
+  } else {
+    let item = items.value.find(one => one.id == id)
+    emit('onChoosePack', item)
   }
 }
 

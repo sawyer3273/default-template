@@ -17,27 +17,41 @@ export const addToRoom = async (payload: any = {}, io: any) => {
           user_id: userToken.user_id,
           room_id: room.id,
           socket_id: payload.socket_id,
-          isAdmin: room.entity_id == userToken.user_id
+          isAdmin: room.entity_id == userToken.user_id,
+          isActive: room.isActive ? true: false,
+          isReady: room.isActive ? true: false,
         }
-        let whereData = {
+        let whereData: any = {
           user_id: userToken.user_id,
-          room_id: room.id,
-          socket_id: payload.socket_id
+          room_id: room.id
+        }
+
+        if (!room.isActive) {
+          whereData.socket_id = payload.socket_id
         }
         let result = await prisma.roomUsers.findFirst({
           where: whereData,
         })
-        if (!result) {
-            result = await prisma.roomUsers.create({
-              data,
-            })
+        console.log('room,room',room.isActive)
+        if (!room.isActive) {
+          if (!result) {
+              result = await prisma.roomUsers.create({
+                data,
+              })
+          } else {
+              await prisma.roomUsers.updateMany({
+                where: whereData,
+                data,
+              })
+          }
         } else {
-            result = await prisma.roomUsers.updateMany({
-              where: whereData,
-              data,
-            })
+          console.log('data',data)
+          await prisma.roomUsers.updateMany({
+            where: whereData,
+            data,
+          })
         }
-        let inRoom = await getRoom(result.room_id)
+        let inRoom = await getRoom(room.id)
         if (inRoom.length !== payload.clients.length) {
           inRoom = await deleteOldInRoom(inRoom, payload.clients)
         }
@@ -75,27 +89,43 @@ export const removeFromRoom = async (payload: any = {}, io: any) => {
         })
        
       if (roomUser) {
-        await prisma.roomUsers.delete({
-          where:  {
-            id: roomUser.id
-          }
-        })
         let room = await prisma.room.findFirst({
           where:  {
             id: roomUser.room_id,
           }
         })
+        if (!roomUser.isActive) {
+          await prisma.roomUsers.delete({
+            where:  {
+              id: roomUser.id
+            }
+          })
+        } else if (room.isActive) {
+          await prisma.roomUsers.update({
+            where:  {
+              id: roomUser.id
+            }, data: {isReady: false}
+          })
+        } else {
+          await prisma.roomUsers.delete({
+            where:  {
+              id: roomUser.id
+            }
+          })
+        }
         let inRoom = await getRoom(roomUser.room_id)
         inRoom = inRoom.filter((obj1: any, i: any, arr: any) => 
           arr.findIndex((obj2: any) => (obj2.user_id === obj1.user_id)) === i
         )
         if (!inRoom.length) {
-          await prisma.room.delete({
-            where:  {
-              id: roomUser.room_id
-            }
-          })
-          io.to('quizeslist').emit('updateQuizlist');
+          if (!room.isActive) {
+            await prisma.room.delete({
+              where:  {
+                id: roomUser.room_id
+              }
+            })
+            io.to('quizeslist').emit('updateQuizlist');
+          }
         } else {
           if (roomUser.isAdmin) {
             await prisma.roomUsers.update({
@@ -193,6 +223,74 @@ export const changeUserStatusInRoom = async (room_id: any, user_id: any, status:
     return {
       success: false,
       data: await getRoom(room_id, true)
+    }
+  } catch (err) {
+    console.log('err',err)
+    return  {
+      success: false,
+      data: []
+    }
+  }
+};
+
+export const roomChoosePack = async (id: any, room_id: any) => {
+  try {
+    await prisma.room.update({
+      where:  {
+        id: room_id
+      }, 
+      data: {pack_id: id}
+    })
+    let quiz = await prisma.quizPack.findFirst({
+      where:  {
+        id: id,
+      },
+      include: {QuizPackRound: true },
+    })
+    console.log('quiz',quiz)
+    return {
+      success: true,
+      data: quiz
+    }
+  } catch (err) {
+    console.log('err',err)
+    return  {
+      success: false,
+      data: []
+    }
+  }
+};
+export const roomStatusQuiz = async (room: any) => {
+  try {
+    await prisma.room.update({
+      where:  {
+        id: room.id
+      }, 
+      data: {isActive: true}
+    })
+    
+    return {
+      success: true,
+    }
+  } catch (err) {
+    console.log('err',err)
+    return  {
+      success: false,
+      data: []
+    }
+  }
+};
+export const changeRoomName = async (room: any, name: string) => {
+  try {
+    await prisma.room.update({
+      where:  {
+        id: room.id
+      }, 
+      data: {name}
+    })
+    
+    return {
+      success: true,
     }
   } catch (err) {
     console.log('err',err)

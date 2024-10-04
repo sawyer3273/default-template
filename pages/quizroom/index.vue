@@ -7,11 +7,12 @@ definePageMeta({
   middleware: 'auth' 
 })
 const router = useRouter()
+const route = useRoute()
 
 onMounted(async () => {
     let roomData = await dataService.getRoom()
     if (roomData.data) {
-        router.push(`/quizroom/${roomData.data.token}`);
+        router.push(`/quizroom/${roomData.data.token}${route.query.id ? '?id=' + route.query.id : ''}`);
     } else {
         toast.error('Can`t find room')
     }

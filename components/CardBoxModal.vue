@@ -70,6 +70,9 @@ const getSizeClasses = () => {
   if (props.size == 'lg') {
     return 'w-11/12 md:w-4/5 lg:w-4/5 xl:w-6/12 '
   }
+  if (props.size == 'xl') {
+    return 'w-11/12 md:w-4/5 lg:w-4/5 xl:w-10/12 '
+  }
 }
 
 </script>
