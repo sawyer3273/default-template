@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "build": "nuxt build && cp -R node_modules/geoip-lite/data .output/server/node_modules/geoip-lite/data/ && cp .env .output/server/.env && tar -czvf archive.tar.gz .output/",
-    "unpack": "rm -rf .output/ && tar -xvf archive.tar.gz",
+    "unpack": "rm -rf .output/ && cp .env .output/server/.env && tar -xvf archive.tar.gz",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
