@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 const useSocketIO = () => {
     const config = useRuntimeConfig()
-    const socket = io('ws://localhost:' + (config.public.SOCKET_PORT), {
+    const socket = io( config.public.SOCKET_URL ? (config.public.SOCKET_URL.replace('http', 'ws')) : "ws://localhost:3000" , {
        
     })
     return {
