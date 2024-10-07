@@ -192,24 +192,24 @@ export async function getRoom(req: any, res: Response, _next: NextFunction) {
   try {
     let room
     if (req.query.id) {
-      room = await prisma.Room.findFirst({
+      room = await prisma.room.findFirst({
         where: {
           token: req.query.id,
         },
-        include: {RoomUser: true}
+        include: {RoomUser: true, pack: true}
       })
     } 
     if (!room) {
       let type = req.query.type ? req.query.type : 'user' 
-      room = await prisma.Room.findFirst({
+      room = await prisma.room.findFirst({
         where: {
           entity_id: res.locals.auth.id,
           type: type
         },
-        include: {pack: true}
+        include: {RoomUser: true, pack: true}
       })
       if (!room) {
-        room = await prisma.Room.create({
+        room = await prisma.room.create({
           data: {
             entity_id: res.locals.auth.id,
             type: type,
@@ -219,10 +219,12 @@ export async function getRoom(req: any, res: Response, _next: NextFunction) {
         })
       }
     }
-    
+    let answer: any = await prisma.quizPackAnswer.findMany({where : {room_id: room.id, number: room.question, user_id: res.locals.auth.id}, include: {answer: true}})
     return res.json({
       success: true,
-      data: room
+      data: room,
+      answer: answer ? answer[0]: null,
+      currentTime: parseInt((new Date().getTime() / 1000).toString())
     });
     
   } catch (err) {
@@ -235,20 +237,20 @@ export async function getRoom(req: any, res: Response, _next: NextFunction) {
 export async function getRooms(req: any, res: Response, _next: NextFunction) {
   try {
     let cond: any = {type: 'user'}
-    let roomsActive = []
+    let roomsActive: any = []
     if (req.query.available) {
       cond.isActive = false
-      let activeRoom = await prisma.RoomUsers.findMany({
+      let activeRoom = await prisma.roomUsers.findMany({
         where: {user_id: res.locals.auth.id}
       })
       let ids = activeRoom.map((one: any) => one.room_id)
       if (ids.length) {
-        roomsActive = await prisma.Room.findMany({
+        roomsActive = await prisma.room.findMany({
           where: {id: { in:ids }}, include: {pack: true, RoomUser: true}
         })
       }
     }
-    let room = await prisma.Room.findMany({
+    let room = await prisma.room.findMany({
       where: cond, include: {pack: true, RoomUser: true}
     })
     

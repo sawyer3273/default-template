@@ -131,7 +131,7 @@ function handleScroll() {
 <template>
 <div class='relative'>
   <label v-if='label' :for="id" class="form-label">{{label}}</label>
-  <div v-if='mode=="top" && componentStore.autofillData.length' class='shadow-md rounded-md absolute z-30 bg-white bottom-0 mb-14 autofill-content' v-outside="hide" >
+  <div v-if='mode=="top" && componentStore.autofillData.length && isFocused' class='shadow-md rounded-md absolute z-30 bg-white bottom-0 mb-14 autofill-content' v-outside="hide" >
     <div class='p-2 hover:bg-gray-100 border-b first:rounded-t-md autofill-odd cursor-pointer' :key='suggest.id' v-for='suggest in componentStore.autofillData' @click='()=>choose(suggest)'> 
       <span v-if='suggest.name'>{{suggest.name}}</span> 
       <template v-else-if='suggest.word'>
@@ -142,9 +142,9 @@ function handleScroll() {
       
     </div>
   </div>
-  <FormControl class='mb-2' v-model="inputValue" @focus='isFocused=true' @blur='onBLur' :placeholder="placeholder" :id="id"/>
+  <FormControl v-model="inputValue" @focus='isFocused=true' @blur='onBLur' :placeholder="placeholder" :id="id"/>
   
-  <div v-if='mode=="bottom" && componentStore.autofillData.length' class='shadow-md rounded-md absolute z-30 bg-white autofill-content' v-outside="hide" >
+  <div v-if='mode=="bottom" && componentStore.autofillData.length && isFocused' class='shadow-md rounded-md absolute z-30 bg-white autofill-content' v-outside="hide" >
     <div class='p-2 hover:bg-gray-100  border-b cursor-pointer first:rounded-t-md autofill-odd cursor-pointer' v-for='suggest in componentStore.autofillData' @click='()=>choose(suggest)'> 
     
       <span v-if='suggest.name'>{{suggest.name}}</span> 

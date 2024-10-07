@@ -1,3 +1,4 @@
+import type { Server } from "socket.io";
 import prisma from "~/tools/prisma";
 
 export const addToRoom = async (payload: any = {}, io: any) => {
@@ -78,7 +79,7 @@ export const addToRoom = async (payload: any = {}, io: any) => {
 };
 
 
-export const removeFromRoom = async (payload: any = {}, io: any) => {
+export const removeFromRoom = async (payload: any = {}, io: Server) => {
   try {
     if (payload.socket_id) {
       let roomUser = await prisma.roomUsers.findFirst({
@@ -94,18 +95,20 @@ export const removeFromRoom = async (payload: any = {}, io: any) => {
           }
         })
         if (!roomUser.isActive) {
+          io.to('quizeslist').emit('updateQuizlist');
           await prisma.roomUsers.delete({
             where:  {
               id: roomUser.id
             }
           })
-        } else if (room.isActive) {
+        } else if (room && room.isActive) {
           await prisma.roomUsers.update({
             where:  {
               id: roomUser.id
             }, data: {isReady: false}
           })
         } else {
+          io.to('quizeslist').emit('updateQuizlist');
           await prisma.roomUsers.delete({
             where:  {
               id: roomUser.id
@@ -117,7 +120,7 @@ export const removeFromRoom = async (payload: any = {}, io: any) => {
           arr.findIndex((obj2: any) => (obj2.user_id === obj1.user_id)) === i
         )
         if (!inRoom.length) {
-          if (!room.isActive) {
+          if (room && !room.isActive) {
             await prisma.room.delete({
               where:  {
                 id: roomUser.room_id
@@ -139,7 +142,7 @@ export const removeFromRoom = async (payload: any = {}, io: any) => {
         return {
           success: true,
           data: inRoom,
-          room: room.token
+          room: room ? room.token : ''
         }
       }
       
@@ -260,14 +263,68 @@ export const roomChoosePack = async (id: any, room_id: any) => {
     }
   }
 };
-export const roomStatusQuiz = async (room: any) => {
+export const changeRoomName = async (room: any, name: string) => {
   try {
     await prisma.room.update({
       where:  {
         id: room.id
       }, 
-      data: {isActive: true, question: 1}
+      data: {name}
     })
+    return {
+      success: true,
+    }
+  } catch (err) {
+    console.log('err',err)
+    return  {
+      success: false,
+      data: []
+    }
+  }
+};
+
+export const roomStatusQuiz = async (io: Server, room: any) => {
+  try {
+    setQuestion(io, room, 1)
+    return {
+      success: true,
+    }
+  } catch (err) {
+    console.log('err',err)
+    return  {
+      success: false,
+      data: []
+    }
+  }
+};
+
+const setQuestion = async (io: Server, roomData: any, questionNumber: any) => {
+  try {
+    let room: any = await prisma.room.findFirst({where : {id: roomData.id}})
+    if (!room) {
+      return {success: false}
+    }
+
+
+    let questions = await prisma.quizPackRound.findMany({where: {pack_id: room.pack_id}})
+    let question = questions[questionNumber - 1]
+    if  (question) {
+      await prisma.room.update({
+        where:  { id: room.id },    data: {isFinished: false, isActive: true, question: questionNumber, timeStarted: new Date().getTime()/1000}
+      })
+      io.to(room.token).emit('setQuestion', questionNumber, question);
+      setTimeout(async () => {
+        let roomUsers = await updateTable(room)
+        io.to(room.token).emit('finishQuestion', roomUsers);
+        setQuestion(io, room, questionNumber + 1)
+      }, question.time * 1000)
+    } else {
+      await prisma.room.update({
+        where:  { id: room.id },    data: {isFinished: true, timeStarted: 0}
+      })
+      io.to(room.token).emit('finishAll', room);
+    }
+    
     
     return {
       success: true,
@@ -280,15 +337,53 @@ export const roomStatusQuiz = async (room: any) => {
     }
   }
 };
-export const changeRoomName = async (room: any, name: string) => {
+
+export const updateTable = async (room: any) => {
+  let roomUsers: any = await prisma.roomUsers.findMany({where : {room_id: room.room_id}, orderBy: [{score: 'desc'}], include: {user: true}})
+  for (let i = 0; i < roomUsers.length; i++) {
+    let user = roomUsers[i]
+    let scores = await prisma.quizPackAnswer.findMany({where : {room_id: room.room_id, user_id: user.user_id, isCorrect: true}, orderBy: [{score: 'desc'}], include: {user: true}})
+    let result = 0
+    scores.map(one => result = result + one.score)
+    await prisma.roomUsers.update({where: {id: user.id}, data: {score: result, answerType: 0}})
+  }
+  roomUsers = await prisma.roomUsers.findMany({where : {room_id: room.room_id}, orderBy: [{score: 'desc'}], include: {user: true}})
+  return roomUsers
+}
+
+export const answerQuiz = async (io: Server, answer: any, room: any, user_id: any, question: any) => {
   try {
-    await prisma.room.update({
-      where:  {
-        id: room.id
-      }, 
-      data: {name}
-    })
-    
+    let roomUser: any = await prisma.roomUsers.findFirst({where : {room_id: room.id, user_id: user_id}})
+    if (roomUser) {
+      let QuizPackAnswer: any = await prisma.quizPackAnswer.findFirst({where : {room_id: room.id, user_id: user_id, number: question.number}})
+      let isExist: any = await prisma.quizPackAnswer.findFirst({where : {room_id: room.id, number: question.number}})
+      console.log({room_id: room.id, number: question.number})
+      console.log('isExist',isExist)
+      let isCorrect = question.answer_id == answer.id 
+      let score = isCorrect ? question.score : 0
+      let total = roomUser.score + score
+      let data = {
+        room_id: room.id, 
+        pack_id: room.pack_id, 
+        user_id: user_id, 
+        number: question.number,
+        answer_id: answer.id,
+        textAnswer: answer.text ? answer.text : '',
+        isCorrect: isCorrect,
+        score: score,
+        total: total,
+        isFirst: isExist ? false: true
+      }
+      if (QuizPackAnswer) {
+        await prisma.quizPackAnswer.update({where: {id: QuizPackAnswer.id}, data})
+      } else {
+        await prisma.quizPackAnswer.create({data})
+      }
+      let answerType = isExist ? 1 : 2
+      await prisma.roomUsers.update({where: {id: roomUser.id}, data: {answerType}})
+      io.to(room.token).emit('userAnswered', roomUser, answerType);
+    } 
+
     return {
       success: true,
     }

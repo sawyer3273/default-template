@@ -330,7 +330,7 @@ export async function createQuizPack(req: Request, res: Response, _next: NextFun
         text: pack[i].text,
         number: pack[i].number,
         score: pack[i].score,
-        time: pack[i].time,
+        time: parseInt(pack[i].time),
         image: pack[i].image,
         video: pack[i].video,
         audio: pack[i].audio,

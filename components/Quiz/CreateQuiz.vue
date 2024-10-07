@@ -164,12 +164,12 @@ async function save() {
                     <FormControl type="textarea" v-model='data.text' placeholder="Введите текст вопроса" />
                   </template>
 
-
+                  <FormControl type="number" v-model='data.time' placeholder="Длительность" />
 
                   <template v-if='data.type && ["text"].includes(data.type.id)'>
                     <label class='mt-4'>Ответ</label>
                     <FormControl v-model="data.libraryType" :options="libraryOptions"  />
-                    <AutoSelect v-if='packRounds[i].answer_id.id' v-model="packRounds[i].answer_id" :searchF='"librarySearch"' :library='data.libraryType.id' placeholder="Ответ"  class='mt-2'/>
+                    <AutoSelect  v-model="packRounds[i].answer_id" :searchF='"librarySearch"' :library='data.libraryType.id' placeholder="Ответ"  class='mt-2'/>
                   </template>
                 </div>
               </div>

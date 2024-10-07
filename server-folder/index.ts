@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 import bodyParser from 'body-parser'
 import http from 'http';
 import { Server } from "socket.io";
-import { addToRoom, removeFromRoom, changeUserStatusInRoom, roomChoosePack, roomStatusQuiz, changeRoomName } from './lib/socketFunctions'
+import { addToRoom, removeFromRoom, changeUserStatusInRoom, roomChoosePack, roomStatusQuiz, changeRoomName, answerQuiz } from './lib/socketFunctions'
 
 import routes from './routes'
 import i18next from 'i18next'
@@ -77,12 +77,21 @@ function initializeApplication() {
 
 
       socket.on('statusQuiz', async (room) => {
-        let result = await roomStatusQuiz(room)
+        let result = await roomStatusQuiz(io, room)
         if (result.success) {
           io.to(room.token).emit('statusQuizSuccess');
           io.to('quizeslist').emit('updateQuizlist');
         }
       });
+
+      socket.on('answerQuiz', async (answer, room, user_id, question) => {
+        let result = await answerQuiz(io, answer, room, user_id, question)
+        if (result.success) {
+          //io.to(room.token).emit('statusQuizSuccess');
+          //io.to('quizeslist').emit('updateQuizlist');
+        }
+      });
+      
       
       socket.on('changeRoomName', async (room, name) => {
         let result = await changeRoomName(room, name)

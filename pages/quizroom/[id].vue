@@ -23,6 +23,9 @@ let pack = ref({})
 let loader = ref(true)
 let forbidden = ref(false)
 
+let currentQuestion = ref({})
+let timer = ref(30)
+let answer = ref('')
 
 function choosePack(item) {
   socket.emit('choosePack', item.id, room.value.id, room.value.token);
@@ -54,13 +57,18 @@ onMounted(async () => {
     if (val !== null) socket.emit('changeRoomName',room.value, val);
   }, 500);
   let roomData = await dataService.getRoom({id: route.params.id})
+  let currentTime = 0
   if (roomData.data) {
       room.value = roomData.data
+      currentTime = roomData.currentTime
+      if (roomData.answer) {
+        answer.value = roomData.answer.answer ? roomData.answer.answer.word : roomData.answer.answerText
+      }
+      
   }
   let isInRoom = roomData.data.RoomUser ? roomData.data.RoomUser.find(one => one.user_id == userStore.user.id): false
-  console.log('isInRoom,isInRoom',isInRoom)
-  console.log('isInRoom,oom.value',room.value)
   if (isInRoom || !room.value.isActive) {
+    
     if (room.value.pack_id) {
       let packData = await dataService.getPacksQuiz({id: room.value.pack_id})
       if (packData.success) {
@@ -70,6 +78,13 @@ onMounted(async () => {
       let packData = await dataService.getPacksQuiz({id: route.query.id})
       if (packData.success) {
         pack.value = packData.data[0]
+      }
+    }
+    currentQuestion.value = pack.value.QuizPackRound[room.value.question - 1]
+    if (room.value.isActive) {
+      timer.value = currentQuestion.value.time
+      if (room.value.timeStarted) {
+        timer.value = currentQuestion.value.time - (currentTime - room.value.timeStarted)
       }
     }
     socket.emit('connectToRoom', route.params.id, userStore.user.token);
@@ -85,23 +100,55 @@ onMounted(async () => {
     })
     socket.on('statusQuizSuccess', () => { 
       let isQuiz = quizUsers.value.find(one => one.id == me.value.id)
-      console.log('isQuiz',isQuiz)
       if (!isQuiz) {
         forbidden.value = true
       }
+      currentQuestion.value = pack.value.QuizPackRound[0]
+      timer.value = currentQuestion.value.time
       room.value.isActive = true
+      room.value.isFinished = false
     })
     socket.on('changeRoomNameSuccess', (roomData) => { 
       console.log('roomData',roomData)
       room.value.name = roomData.name
     })
     
+
+    socket.on('setQuestion', (questionNumber, question) => { 
+      console.log('setQuestion, ',questionNumber, question)
+      room.value.question = questionNumber
+      currentQuestion.value = question
+      timer.value = question.time
+      answer.value = ''
+    })
+    
+    socket.on('finishQuestion', (roomUsers) => { 
+      quizUsers.value = roomUsers
+    })
+
+    socket.on('finishAll', (data) => { 
+      console.log('finishAll, ', data)
+      room.value.isFinished = true
+    })
+
+    socket.on('userAnswered', (user, type) => { 
+      quizUsers.value.map((one, i) => {
+        console.log('type',type)
+        if (one.user_id == user.user_id) {
+          quizUsers.value[i].answerType = type
+        }
+      })
+    })
+    
+
   } else {
     forbidden.value = true
   }
   
   loader.value = false
 })
+
+
 
 onUnmounted(async () => {
   socket.emit('disconnectFromRoom', route.params.id);
@@ -118,6 +165,9 @@ function start() {
   socket.emit('statusQuiz', room.value);
 }
 
+function onAnswer(data) {
+  socket.emit('answerQuiz', data, room.value, userStore.user.id, currentQuestion.value);
+}
 </script>
 
 <template>
@@ -185,20 +235,26 @@ function start() {
 
 
         <template v-else>
-          
-          <QuizGame :quizUsers='quizUsers' :me='me' />
+          <QuizGame :quizUsers='quizUsers' :me='me' :question='currentQuestion' :room='room' @onAnswer='onAnswer' :timer='timer' :answerInit='answer'/>
 
 
 
 
         </template> 
 
-     
+   
+            <BaseButton color='info'  label='Начать' @click='start'/>
 
+room
+<div>{{room}}</div>
+pack
+     <div> {{pack}}</div>
+currentQuestion
 
-{{room}}
-      {{pack}}
-{{quizUsers}}
+     <div> {{currentQuestion}}</div>
+
+users
+<div>{{quizUsers}}</div>
       </SectionMain>
     </NuxtLayout>
   </div>

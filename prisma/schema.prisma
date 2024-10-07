@@ -42,6 +42,7 @@ model User {
   RoomUser        RoomUsers[]
   QuizPack        QuizPack[]
   QuizResult      QuizResult[]
+  QuizPackAnwsers QuizPackAnswer[]
 }
 
 model userAuthTokens {
@@ -105,6 +106,7 @@ model Library {
   movie  Movie?  @relation(fields: [movie_id], references: [id])
   person Person? @relation(fields: [person_id], references: [id])
   QuizPackRounds              QuizPackRound[]
+  QuizPackAnwsers             QuizPackAnswer[]
 }
 
 model Link {
@@ -212,9 +214,13 @@ model Room {
   pack_id   Int?
   question  Int     @default(0)
   time      Int     @default(0)
+  timeStarted  Int?
   isActive   Boolean @default(false)
+  isFinished   Boolean @default(false)
 
   RoomUser        RoomUsers[]
+  QuizResult      QuizResult[]
+  QuizPackAnswers  QuizPackAnswer[]
   pack      QuizPack? @relation(fields: [pack_id], references: [id])
 
   createdAt DateTime @default(now())
@@ -228,6 +234,7 @@ model RoomUsers {
   isActive  Boolean  @default(false)
   isReady   Boolean  @default(false)
   isAdmin   Boolean  @default(false)
+  answerType   Int     @default(0)
 
   score     Float    @default(0)
   data      String?
@@ -250,6 +257,7 @@ model QuizPack {
   QuizPackRound QuizPackRound[]
   QuizResult      QuizResult[]
   Rooms      Room[]
+  QuizPackAnwsers QuizPackAnswer[]
 
   createdAt DateTime @default(now())
 }
@@ -257,7 +265,7 @@ model QuizPack {
 model QuizPackRound {
   id        Int     @id @default(autoincrement())
   number    Int
-  score     Int
+  score     Float
   time      Int
   text      String?
   image     String?
@@ -272,17 +280,36 @@ model QuizPackRound {
   pack        QuizPack @relation(fields: [pack_id], references: [id])
 }
 
+model QuizPackAnswer {
+  id          Int     @id @default(autoincrement())
+  isCorrect   Boolean
+  time        Int?
+  number      Int
+  score       Float
+  total       Int
+  textAnswer  String?
+  isFirst     Boolean   @default(false)
+
+  user_id     Int
+  answer_id   Int?
+  pack_id     Int
+  room_id     Int
+  answer      Library?   @relation(fields: [answer_id], references: [id])
+  pack        QuizPack @relation(fields: [pack_id], references: [id])
+  room        Room @relation(fields: [room_id], references: [id])
+  user        User @relation(fields: [user_id], references: [id])
+}
+
 model QuizResult {
   id      Int     @id @default(autoincrement())
   points   Float
   log     String?
   time    Int?
-  question  Int
-  answer  String?
-  type    String   @default("question")
 
   user_id   Int
   user      User     @relation(fields: [user_id], references: [id])
+  room_id   Int
+  room      Room     @relation(fields: [room_id], references: [id])
   pack_id   Int
   pack      QuizPack @relation(fields: [pack_id], references: [id])
   createdAt DateTime @default(now())
