@@ -58,6 +58,8 @@ onMounted(async () => {
       room.value = roomData.data
   }
   let isInRoom = roomData.data.RoomUser ? roomData.data.RoomUser.find(one => one.user_id == userStore.user.id): false
+  console.log('isInRoom,isInRoom',isInRoom)
+  console.log('isInRoom,oom.value',room.value)
   if (isInRoom || !room.value.isActive) {
     if (room.value.pack_id) {
       let packData = await dataService.getPacksQuiz({id: room.value.pack_id})

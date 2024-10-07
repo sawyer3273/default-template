@@ -34,8 +34,7 @@ function initializeApplication() {
 
   const server = http.createServer(app);
   const instanceId = process.env['INSTANCE_ID'];
- 
-  if (instanceId == '0') {
+  if (instanceId == '0' || instanceId == undefined) {
     const io = new Server(server, {
       //@ts-ignore
       cors:true,
