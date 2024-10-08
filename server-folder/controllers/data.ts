@@ -219,12 +219,23 @@ export async function getRoom(req: any, res: Response, _next: NextFunction) {
         })
       }
     }
+    let currentTime = parseInt((new Date().getTime() / 1000).toString())
+   
     let answer: any = await prisma.quizPackAnswer.findMany({where : {room_id: room.id, number: room.question, user_id: res.locals.auth.id}, include: {answer: true}})
+    let correctAnswer: any = null
+    if (room.pack_id) {
+      correctAnswer = await prisma.quizPackRound.findMany({where : {number: room.question, pack_id: room.pack_id}, include: {answer: true}})
+      if (correctAnswer) {
+        let left = (room.timeStarted + correctAnswer[0].time) - currentTime 
+        correctAnswer = left <= 0 ? correctAnswer[0] : null
+      }
+    }
     return res.json({
       success: true,
       data: room,
+      correctAnswer,
       answer: answer ? answer[0]: null,
-      currentTime: parseInt((new Date().getTime() / 1000).toString())
+      currentTime
     });
     
   } catch (err) {
@@ -236,7 +247,7 @@ export async function getRoom(req: any, res: Response, _next: NextFunction) {
 
 export async function getRooms(req: any, res: Response, _next: NextFunction) {
   try {
-    let cond: any = {type: 'user'}
+    let cond: any = {type: 'user', isFinished: false}
     let roomsActive: any = []
     if (req.query.available) {
       cond.isActive = false
@@ -246,7 +257,7 @@ export async function getRooms(req: any, res: Response, _next: NextFunction) {
       let ids = activeRoom.map((one: any) => one.room_id)
       if (ids.length) {
         roomsActive = await prisma.room.findMany({
-          where: {id: { in:ids }}, include: {pack: true, RoomUser: true}
+          where: {id: { in:ids }, isFinished: false}, include: {pack: true, RoomUser: true}
         })
       }
     }

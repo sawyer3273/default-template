@@ -9,7 +9,8 @@ const props = defineProps({
   me: Object,
   question: Object,
   timer: Number,
-  answerInit: String
+  answerInit: String,
+  correctAnswer: Object
 })
 
 const emit = defineEmits(['onAnswer'])
@@ -26,6 +27,8 @@ function trySubmit() {
   emit('onAnswer', answer.value)
   answer.value = ''
 } 
+
+
 </script>
 
 <template>
@@ -61,13 +64,19 @@ function trySubmit() {
               <div class='absolute left-0 bg-blue-500 w-8 h-8 items-center text-center flex justify-center text-white rounded-lg'>
               #{{question.number}}
               </div>
-              <Timer :value='timer' :round='question.number' :isStarted='question.number ? true : false' />
+              <Timer v-if='timer' :value='timer' :round='question.number' :isStarted='question.number ? true : false' @onEnd='onTimerStop' />
             </div>
-            <div class='p-10 text-center'>
-              {{question.text}}
-            </div>
+            <template v-if='!Object.keys(correctAnswer).length'>
+              <div class='p-10 text-center'>
+                {{question.text}}
+              </div>
+            </template>
+            <template v-else>
+              <div class='p-10 text-center'>
+                {{correctAnswer.answer.word}}
+              </div>
+            </template>
           </template>
-          
         </div>
         <div class='absolute bottom-0 w-full p-2'>
           <div v-if='submited.word || answerInit'>Ваш ответ: {{submited.word || answerInit}}</div>

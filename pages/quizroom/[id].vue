@@ -26,6 +26,7 @@ let forbidden = ref(false)
 let currentQuestion = ref({})
 let timer = ref(30)
 let answer = ref('')
+let correctAnswer = ref({})
 
 function choosePack(item) {
   socket.emit('choosePack', item.id, room.value.id, room.value.token);
@@ -64,6 +65,9 @@ onMounted(async () => {
       if (roomData.answer) {
         answer.value = roomData.answer.answer ? roomData.answer.answer.word : roomData.answer.answerText
       }
+      if (roomData.correctAnswer) {
+        correctAnswer.value = roomData.correctAnswer
+      }
       
   }
   let isInRoom = roomData.data.RoomUser ? roomData.data.RoomUser.find(one => one.user_id == userStore.user.id): false
@@ -80,7 +84,9 @@ onMounted(async () => {
         pack.value = packData.data[0]
       }
     }
-    currentQuestion.value = pack.value.QuizPackRound[room.value.question - 1]
+    if (pack.value.QuizPackRound) {
+      currentQuestion.value = pack.value.QuizPackRound[room.value.question - 1]
+    }
     if (room.value.isActive) {
       timer.value = currentQuestion.value.time
       if (room.value.timeStarted) {
@@ -115,16 +121,21 @@ onMounted(async () => {
     
 
     socket.on('setQuestion', (questionNumber, question) => { 
-      console.log('setQuestion, ',questionNumber, question)
       room.value.question = questionNumber
       currentQuestion.value = question
       timer.value = question.time
       answer.value = ''
+      correctAnswer.value = {}
     })
     
     socket.on('finishQuestion', (roomUsers) => { 
       quizUsers.value = roomUsers
     })
+
+    socket.on('showAnswer', (question) => { 
+     correctAnswer.value = question
+    })
+    
 
     socket.on('finishAll', (data) => { 
       console.log('finishAll, ', data)
@@ -235,7 +246,7 @@ function onAnswer(data) {
 
 
         <template v-else>
-          <QuizGame :quizUsers='quizUsers' :me='me' :question='currentQuestion' :room='room' @onAnswer='onAnswer' :timer='timer' :answerInit='answer'/>
+          <QuizGame :quizUsers='quizUsers' :me='me' :question='currentQuestion' :room='room' @onAnswer='onAnswer' :timer='timer' :answerInit='answer' :correctAnswer='correctAnswer'/>
 
 
 

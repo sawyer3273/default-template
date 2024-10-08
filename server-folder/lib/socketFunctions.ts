@@ -306,7 +306,7 @@ const setQuestion = async (io: Server, roomData: any, questionNumber: any) => {
     }
 
 
-    let questions = await prisma.quizPackRound.findMany({where: {pack_id: room.pack_id}})
+    let questions = await prisma.quizPackRound.findMany({where: {pack_id: room.pack_id}, include: {answer: true}})
     let question = questions[questionNumber - 1]
     if  (question) {
       await prisma.room.update({
@@ -316,7 +316,7 @@ const setQuestion = async (io: Server, roomData: any, questionNumber: any) => {
       setTimeout(async () => {
         let roomUsers = await updateTable(room)
         io.to(room.token).emit('finishQuestion', roomUsers);
-        setQuestion(io, room, questionNumber + 1)
+        setQuestionAnswer(io, room, question)
       }, question.time * 1000)
     } else {
       await prisma.room.update({
@@ -338,6 +338,26 @@ const setQuestion = async (io: Server, roomData: any, questionNumber: any) => {
   }
 };
 
+const setQuestionAnswer = async (io: Server, room: any, question: any) => {
+  try {
+    io.to(room.token).emit('showAnswer', question);
+    setTimeout(async () => {
+      setQuestion(io, room, question.number + 1)
+    }, 5000)
+    return {
+      success: true,
+    }
+  } catch (err) {
+    console.log('err',err)
+    return  {
+      success: false,
+      data: []
+    }
+  }
+};
+
+
+
 export const updateTable = async (room: any) => {
   let roomUsers: any = await prisma.roomUsers.findMany({where : {room_id: room.room_id}, orderBy: [{score: 'desc'}], include: {user: true}})
   for (let i = 0; i < roomUsers.length; i++) {
@@ -357,8 +377,6 @@ export const answerQuiz = async (io: Server, answer: any, room: any, user_id: an
     if (roomUser) {
       let QuizPackAnswer: any = await prisma.quizPackAnswer.findFirst({where : {room_id: room.id, user_id: user_id, number: question.number}})
       let isExist: any = await prisma.quizPackAnswer.findFirst({where : {room_id: room.id, number: question.number}})
-      console.log({room_id: room.id, number: question.number})
-      console.log('isExist',isExist)
       let isCorrect = question.answer_id == answer.id 
       let score = isCorrect ? question.score : 0
       let total = roomUser.score + score

@@ -47,7 +47,9 @@ onBeforeMount(async () => {
         data.data[0].QuizPackRound.map(one => {
           one.type = quizTypeOptions.find(l => l.id ==  one.type)
           one.libraryType = libraryOptions.find(l => l.id ==  one.libraryType)
-          one.answer_id = {id: one.answer_id, name: one.answer.word ? one.answer.word : (one.answer.title ? one.answer.title : one.answer.name)}
+          if (one.answer) {
+            one.answer_id = {id: one.answer_id, name: one.answer.word ? one.answer.word : (one.answer.title ? one.answer.title : one.answer.name)}
+          }
           packRounds.value.push(one)
         })
       }
@@ -169,7 +171,7 @@ async function save() {
                   <template v-if='data.type && ["text"].includes(data.type.id)'>
                     <label class='mt-4'>Ответ</label>
                     <FormControl v-model="data.libraryType" :options="libraryOptions"  />
-                    <AutoSelect  v-model="packRounds[i].answer_id" :searchF='"librarySearch"' :library='data.libraryType.id' placeholder="Ответ"  class='mt-2'/>
+                    <AutoSelect :key='packRounds[i].answer_id+"auto"+i' v-model="packRounds[i].answer_id" :searchF='"librarySearch"' :library='data.libraryType.id' placeholder="Ответ"  class='mt-2'/>
                   </template>
                 </div>
               </div>
