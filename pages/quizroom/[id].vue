@@ -188,7 +188,7 @@ function onAnswer(data) {
 <template>
   <div>
     <NuxtLayout name="auth">
-      <SectionMain :isFull='true' class='' v-if='!loader'>
+      <SectionMain :isFull='room.isActive' class='' v-if='!loader'>
         <template v-if='forbidden'>
            <CardBox>
               <div class='text-center f-full'>
@@ -198,17 +198,15 @@ function onAnswer(data) {
         </template>
         <template v-else-if='!room.isActive'>
           <div class='row'> 
-            <div class='col-md-3'>
-              <div>Пользователи</div>
-              <div class='border-green-500 border-2 mb-2 min-h-12'>
-                <CardBox :smallPadding='true' class='!bg-blue-300 m-1 '  v-for='user in waitUsers'>
-                  <div class='flex items-center justify-between'>
-                    <div>{{user.user.username}} <span v-if='user.isAlreadyPassed' class='text-gray-500'>(Вне зачета)</span></div><BaseButton @click='changeUserStatus(user.user.id, true)' v-if='me.isAdmin' :small='true' label='Добавить' />   
-                  </div>
-                </CardBox>
+            <div class='col-md-6'>
+              <div class='text-lg font-bold mb-2'>Состав на игру</div>
+              <div class=' mb-2 min-h-12'>
+                <List :data='quizUsers' @onClick='(id) => changeUserStatus(id, false)' @onClickSecond='(status) => setReady(status)' :me='me' :buttonText='me.isAdmin ? "Удалить": ""' :buttonTextSecond='"Готов"'/>
               </div>
+              <div class='text-lg font-bold mb-2' v-if='waitUsers.length'>В ожидании</div>
+               <List v-if='waitUsers.length' :data='waitUsers' @onClick='(id) => changeUserStatus(id, true)' :me='me' :buttonText='me.isAdmin ? "Добавить" : ""'/>
             </div>
-            <div class='col-md-9'>
+            <div class='col-md-6'>
               <div>Выбрать пак</div>
               <div class='border-green-500 border-2 mb-2 min-h-12' title="Создатель комнаты может выбрать пак">
                 <div :class='me.isAdmin ? "" : "notclickable"'>
@@ -224,26 +222,10 @@ function onAnswer(data) {
                  {{room.name}} 
                 </div>
               </div>
-              <div>Игроки</div>
-              <div class='border-green-500 border-2 mb-2 min-h-12'>
-                <CardBox :smallPadding='true' class='!bg-blue-300 m-1'  v-for='user in quizUsers'>
-                  <div class='flex items-center justify-between'>
-                    <div>{{user.user.username}}<span v-if='user.isAlreadyPassed' class='text-gray-500'>(Вне зачета)</span></div>
-                    <div class='flex items-center'>
-                      <BaseButton @click='changeUserStatus(user.user.id, false)' v-if='me.isAdmin' :small='true' label='Удалить' />   
-                      <div class='ml-2 flex items-center'>
-                        
-                        <div v-if='user.user.id == userStore.user.id' @click='setReady(!user.isReady)' class=' text-blue-600 underline cursor-pointer'> {{user.isReady ? "Готов" : "Не готов" }} </div>
-                        <div v-else> {{user.isReady ? "Готов" : "Не готов" }}</div>
-                        <BaseIcon :class='user.isReady ? "text-green-500" : "text-red-500"' :path='mdiCircleDouble' />
-                      </div>
-                    </div>
-                  </div>
-                </CardBox>
-              </div>
+              
             </div>
           </div>
-          <div class='row'> 
+          <div class='row mt-2'> 
             <div v-if='me.isAdmin' class='flex justify-center'><BaseButton color='info' :disabled='!allReady' label='Начать' @click='start'/> </div>
           </div>
         </template> 
@@ -258,7 +240,7 @@ function onAnswer(data) {
         </template> 
 
    
-            <BaseButton color='info'  label='Начать' @click='start'/>
+            <BaseButton color='info' class='mt-4' label='Начать' @click='start'/>
 
 room
 <div>{{room}}</div>

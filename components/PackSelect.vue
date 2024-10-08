@@ -45,11 +45,14 @@ async function choosePack(pack) {
   <CardBoxModal size='xl' v-model="isModalActive"  title='Выберите пак'>
     <ContentGrid @load-data='getData' @onChoosePack='choosePack' storeModel='packs_quiz'/>
   </CardBoxModal>
-  <div v-if='props.pack.id' class='rounded-lg max-w-52 overflow-hidden shadow-lg cursor-pointer relative' @click='() => showItem()'>
+  <div v-if='pack.id' class='rounded-lg max-w-52 overflow-hidden shadow-lg cursor-pointer relative' @click='() => showItem()'>
     <img :src='pack.logo'/>
+    <div class='p-1 absolute top-0 text-white'>
+      <QuizType :rounds='pack.QuizPackRound' />
+    </div>
     <div class='p-1 absolute bottom-0'>
-      <div class='font-medium text-lg textWithShadow text-white'>{{props.pack.name}}</div>
-      <div class='text-xs text-gray-300 text-capitalize textWithShadow'>{{ dayjs(props.pack.createdAt).locale(locale).format('MMMM D, YYYY') }}</div>
+      <div class='font-medium text-lg textWithShadow text-white'>{{pack.name}}</div>
+      <div class='text-xs text-gray-300 text-capitalize textWithShadow'>{{ dayjs(pack.createdAt).locale(locale).format('MMMM D, YYYY') }}</div>
     </div>
   </div>
   <div v-else class='rounded-lg max-w-52 overflow-hidden shadow-lg cursor-pointer relative'  @click='() => showItem()'>
