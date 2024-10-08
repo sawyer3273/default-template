@@ -210,7 +210,6 @@ model Room {
   info      String?
   entity_id Int
   type      String @default("user")
-  @@unique([ entity_id, type])
   pack_id   Int?
   question  Int     @default(0)
   time      Int     @default(0)
@@ -230,15 +229,21 @@ model RoomUsers {
   id        Int      @id @default(autoincrement())
   user_id   Int
   room_id   Int
+  pack_id   Int?
   socket_id String
   isActive  Boolean  @default(false)
   isReady   Boolean  @default(false)
   isAdmin   Boolean  @default(false)
   answerType   Int     @default(0)
-
+  isFinished Boolean  @default(false)
   score     Float    @default(0)
   data      String?
+  isAlreadyPassed  Boolean  @default(false)
+  alreadyScore     Float    @default(0)
 
+
+  
+  QuizPack  QuizPack?     @relation(fields: [pack_id], references: [id])
   room      Room     @relation(fields: [room_id], references: [id])
   user      User     @relation(fields: [user_id], references: [id])
 }
@@ -256,6 +261,7 @@ model QuizPack {
 
   QuizPackRound QuizPackRound[]
   QuizResult      QuizResult[]
+  RoomUsers      RoomUsers[]
   Rooms      Room[]
   QuizPackAnwsers QuizPackAnswer[]
 

@@ -57,7 +57,7 @@ onMounted(async () => {
   handleDebounce = debounce(async function (val) {
     if (val !== null) socket.emit('changeRoomName',room.value, val);
   }, 500);
-  let roomData = await dataService.getRoom({id: route.params.id})
+  let roomData = await dataService.getRoom({id: route.params.id, pack_id: route.query.id})
   let currentTime = 0
   if (roomData.data) {
       room.value = roomData.data
@@ -101,8 +101,13 @@ onMounted(async () => {
         me.value = data.find(one => one.user_id == userStore.user.id)
       }
     })
-    socket.on('updatePack', (data) => { 
+    socket.on('updatePack', (data, roomUsers) => { 
       if (data) { pack.value = data }
+      if (roomUsers) {
+        waitUsers.value = roomUsers.filter(one => !one.isActive)
+        quizUsers.value = roomUsers.filter(one => one.isActive)
+        me.value = roomUsers.find(one => one.user_id == userStore.user.id)
+      }
     })
     socket.on('statusQuizSuccess', () => { 
       let isQuiz = quizUsers.value.find(one => one.id == me.value.id)
@@ -115,7 +120,6 @@ onMounted(async () => {
       room.value.isFinished = false
     })
     socket.on('changeRoomNameSuccess', (roomData) => { 
-      console.log('roomData',roomData)
       room.value.name = roomData.name
     })
     
@@ -199,7 +203,7 @@ function onAnswer(data) {
               <div class='border-green-500 border-2 mb-2 min-h-12'>
                 <CardBox :smallPadding='true' class='!bg-blue-300 m-1 '  v-for='user in waitUsers'>
                   <div class='flex items-center justify-between'>
-                    <div>{{user.user.username}}</div><BaseButton @click='changeUserStatus(user.user.id, true)' v-if='me.isAdmin' :small='true' label='Добавить' />   
+                    <div>{{user.user.username}} <span v-if='user.isAlreadyPassed' class='text-gray-500'>(Вне зачета)</span></div><BaseButton @click='changeUserStatus(user.user.id, true)' v-if='me.isAdmin' :small='true' label='Добавить' />   
                   </div>
                 </CardBox>
               </div>
@@ -224,7 +228,7 @@ function onAnswer(data) {
               <div class='border-green-500 border-2 mb-2 min-h-12'>
                 <CardBox :smallPadding='true' class='!bg-blue-300 m-1'  v-for='user in quizUsers'>
                   <div class='flex items-center justify-between'>
-                    <div>{{user.user.username}}</div>
+                    <div>{{user.user.username}}<span v-if='user.isAlreadyPassed' class='text-gray-500'>(Вне зачета)</span></div>
                     <div class='flex items-center'>
                       <BaseButton @click='changeUserStatus(user.user.id, false)' v-if='me.isAdmin' :small='true' label='Удалить' />   
                       <div class='ml-2 flex items-center'>
@@ -266,6 +270,10 @@ currentQuestion
 
 users
 <div>{{quizUsers}}</div>
+waitUsers
+<div>{{waitUsers}}</div>
+
+
       </SectionMain>
     </NuxtLayout>
   </div>

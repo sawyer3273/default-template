@@ -71,7 +71,7 @@ function initializeApplication() {
       socket.on('choosePack', async (id, room_id, room_token) => {
         let result = await roomChoosePack(id, room_id)
         if (result.success) {
-          io.to(room_token).emit('updatePack', result.data);
+          io.to(room_token).emit('updatePack', result.data, result.roomUsers);
         }
       });
 

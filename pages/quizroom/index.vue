@@ -10,7 +10,7 @@ const router = useRouter()
 const route = useRoute()
 
 onMounted(async () => {
-    let roomData = await dataService.getRoom()
+    let roomData = await dataService.getRoom(route.query.id ? {pack_id: route.query.id}: {})
     if (roomData.data) {
         router.push(`/quizroom/${roomData.data.token}${route.query.id ? '?id=' + route.query.id : ''}`);
     } else {

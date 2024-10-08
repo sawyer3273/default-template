@@ -140,6 +140,9 @@ width: 100%;
 .textWithShadow {
     text-shadow: #080807 3px 0 2px;
 }
+.boxWithShadow {
+    box-shadow: #080807 3px 0 2px;
+}
 label {
 	font-weight: bold;
 }

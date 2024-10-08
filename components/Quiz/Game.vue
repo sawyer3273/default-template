@@ -28,16 +28,37 @@ function trySubmit() {
   answer.value = ''
 } 
 
+const legalUsers = computed(() => {
+  return props.quizUsers.filter(one => !one.isAlreadyPassed)
+})
 
+
+const vzUsers = computed(() => {
+  return props.quizUsers.filter(one => one.isAlreadyPassed)
+})
 </script>
 
 <template>
   <div class='row'> 
     <div class='col-md-3'>
       <div class='mb-2 min-h-12'>
-        <div class='bg-black overflow-hidden rounded-full m-1 text-white p-1 text-xl flex justify-between' v-for='(user, i) in quizUsers'>
+      
+        <div class='bg-black overflow-hidden rounded-full m-1 text-white p-1 text-xl flex justify-between' v-for='(user, i) in legalUsers'>
           <div class='flex items-center w-4/5'>
             <div class='rounded-full bg-blue-500 min-w-7 text-center mr-2'>{{i+1}}</div>
+            <UserAvatar class="min-w-7 w-7 h-7 mr-2" :username="user.user.username" />
+            <div class='w-inherit'>
+              <div class='userName' :class='!user.isReady ? "text-gray-400": (me.id == user.id ? "text-green-600" : "")'>
+                {{user.user.username}} <BaseIcon v-if='user.answerType' class='text-green-600' :path='user.answerType == 2 ? mdiChatAlertOutline : mdiChatOutline' /> 
+              </div>
+            </div>
+          </div>
+          <div class='rounded-full bg-blue-500 w-12 text-center right-0'>{{user.score}}</div>
+        </div>
+
+        <div class='bg-black overflow-hidden rounded-full m-1 text-white p-1 text-xl flex justify-between' v-for='(user, i) in vzUsers'>
+          <div class='flex items-center w-4/5'>
+            <div class='rounded-full bg-blue-500 min-w-7 min-h-7 text-center text-sm pt-1 mr-2'>в/з</div>
             <UserAvatar class="min-w-7 w-7 h-7 mr-2" :username="user.user.username" />
             <div class='w-inherit'>
               <div class='userName' :class='!user.isReady ? "text-gray-400": (me.id == user.id ? "text-green-600" : "")'>

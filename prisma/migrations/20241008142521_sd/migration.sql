@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "RoomUsers" ADD COLUMN     "alreadyScore" DOUBLE PRECISION NOT NULL DEFAULT 0,
+ADD COLUMN     "isAlreadyPassed" BOOLEAN NOT NULL DEFAULT false;

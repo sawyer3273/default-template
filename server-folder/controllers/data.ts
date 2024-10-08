@@ -163,19 +163,27 @@ export async function getPacksQuiz(req: any, res: Response, _next: NextFunction)
     if (req.query.id) {
       cond.id = parseInt(req.query.id)
     }
-    let options: any = {include: {QuizPackRound: { include: {answer: true}} }}
+    let options: any = {include: {QuizPackRound: { include: {answer: true}}, RoomUsers: {where: {user_id: res.locals.auth.id, isFinished: true}} }}
     
     if (res.locals.auth.userRole == 'USER') {
-      options.include.QuizResult = {
-        where: {
-          user_id: res.locals.auth.id
-        }
-      }
       cond.enable = true
     }
-    let data = await findMany(req, 'quizPack', cond, options)
-    let count = await getCount('quizPack', cond)
     
+    let data: any = await findMany(req, 'quizPack', cond, options)
+    let count = await getCount('quizPack', cond)
+    for (let i = 0; i < data.length; i++) {
+      data[i].RoomUser = data[i].RoomUsers.find((one:any) => one.user_id == res.locals.auth.id)
+     /* let users = []
+      for (let j = 0; j < data[i].RoomUsers.length; j++) {
+        let isFinished = await prisma.room.findFirst({
+          where: { id: data[i].RoomUsers[j].room_id, isFinished: true},
+        })
+        if (isFinished) {
+          users.push(data[i].RoomUsers[j])
+        }
+      }
+      data[i].RoomUsers = users*/
+    }
     return res.json({
       success: true,
       data: data,
@@ -204,18 +212,23 @@ export async function getRoom(req: any, res: Response, _next: NextFunction) {
       room = await prisma.room.findFirst({
         where: {
           entity_id: res.locals.auth.id,
-          type: type
+          type: type,
+          isFinished: false
         },
         include: {RoomUser: true, pack: true}
       })
       if (!room) {
+        let createRoomData: any = {
+          entity_id: res.locals.auth.id,
+          type: type,
+          token: req.query.id ? req.query.id : generateUniqueString(),
+          info: JSON.stringify({user_id: res.locals.auth.id, username: res.locals.auth.username})
+        }
+        if (req.query.pack_id) {
+          createRoomData.pack_id = parseInt(req.query.pack_id)
+        }
         room = await prisma.room.create({
-          data: {
-            entity_id: res.locals.auth.id,
-            type: type,
-            token: req.query.id ? req.query.id : generateUniqueString(),
-            info: JSON.stringify({user_id: res.locals.auth.id, username: res.locals.auth.username})
-          }
+          data: createRoomData
         })
       }
     }
@@ -225,7 +238,7 @@ export async function getRoom(req: any, res: Response, _next: NextFunction) {
     let correctAnswer: any = null
     if (room.pack_id) {
       correctAnswer = await prisma.quizPackRound.findMany({where : {number: room.question, pack_id: room.pack_id}, include: {answer: true}})
-      if (correctAnswer) {
+      if (correctAnswer && correctAnswer.length) {
         let left = (room.timeStarted + correctAnswer[0].time) - currentTime 
         correctAnswer = left <= 0 ? correctAnswer[0] : null
       }

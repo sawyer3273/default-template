@@ -56,22 +56,40 @@ function showItem(id) {
   }
 }
 
+function getTotal(pack) {
+  let sum = 0
+  if (pack.QuizPackRound ) {
+    pack.QuizPackRound.map(one => {sum = sum + one.score})
+  }
+  return sum
+}
+
 </script>
 
 <template>
   <div class='row'>
     <div v-for="pack in items" :key="pack.id" class='col-md-3 mb-3 '>
       <div class='rounded-lg overflow-hidden shadow-lg cursor-pointer relative' @click='() => showItem(pack.id)'>
-        <img :src='pack.logo' :class='pack.IntuitionResult && pack.IntuitionResult.length || pack.CastResult && pack.CastResult.length ? "opacity-65": ""'/>
+        <img :src='pack.logo' :class='pack.IntuitionResult && pack.IntuitionResult.length || pack.CastResult && pack.CastResult.length || pack.RoomUser ? "opacity-80": ""'/>
+        <div class='p-1 absolute top-0 text-white'>
+          <QuizType :rounds='pack.QuizPackRound' />
+        </div>
         <div class='p-1 absolute bottom-0'>
-          <div class='font-medium text-lg textWithShadow text-white'>{{pack.name}}</div>
+          <div class='font-medium text-lg textWithShadow text-white'>{{pack.name}}</div> 
           <div class='text-xs text-gray-300 text-capitalize textWithShadow'>{{ dayjs(pack.createdAt).locale(locale).format('MMMM D, YYYY') }}</div>
         </div>
+        
         <div v-if='pack.IntuitionResult && pack.IntuitionResult.length' class='bg-gradient-to-r from-blue-start to-blue-end absolute top-0 left-0 w-full flex justify-center'>
           <Stars :value='pack.IntuitionResult[0].value'/>
         </div>
         <div v-if='pack.CastResult && pack.CastResult.length' class='bg-gradient-to-r from-blue-start to-blue-end absolute top-0 left-0 w-full flex justify-center text-white'>
           {{pack.CastResult[0].value}}
+        </div>
+        <div v-if='pack.RoomUser' class='absolute top-1 right-1 text-yellow-400 textWithShadow'>
+          <div class='relative flex items-center'>
+            <StarsGold :value='pack.RoomUser.score/getTotal(pack)*10' />
+           <div class=''> {{pack.RoomUser.score}}/{{getTotal(pack)}} </div>
+          </div>
         </div>
       </div>
     </div>
