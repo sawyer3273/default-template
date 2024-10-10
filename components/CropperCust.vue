@@ -14,6 +14,14 @@ const props = defineProps({
     type: [String],
     default: ''
   },
+  showImage: {
+    type: Boolean,
+    default: true
+  },
+  buttonTitle:  {
+    type: String,
+    default: 'Сохранить'
+  },
   width: {
     type: String,
     default: '166'
@@ -115,12 +123,12 @@ async function cropSave() {
 
 <template>
 <div :key='componentKey' :class='classProp'>
-  <img class='mb-1' :src="modelValue ? modelValue : (placeholder == 'main' ? '/img/card_placeholder.png' : '/img/card_placeholder_horizon.jpg')" :width='width'/>
+  <img v-if='showImage' class='mb-1' :src="modelValue ? modelValue : (placeholder == 'main' ? '/img/card_placeholder.png' : '/img/card_placeholder_horizon.jpg')" :width='width'/>
   <BaseButton
     :disabled='!showbtn'
     @click='isModalActive = true'
     :icon="mdiUploadCircle"
-    label="Загрузить"
+    :label="buttonTitle"
     color="contrast"
     rounded-full
     small

@@ -15,7 +15,9 @@ export const adminService = {
     addQuizPack,
     deleteQuizPack,
     deleteQuizItemPack,
-    updateMovie
+    updateMovie,
+    addImage,
+    deleteImage
 };
 
 async function deleteActor(payload) {
@@ -199,6 +201,33 @@ async function deleteQuizItemPack(payload) {
         .then(handleResponse)
         .then(resp => {
             dataStore.setPacksQuiz(resp)
+            return resp;
+        });
+}
+
+
+
+async function addImage(payload) {
+    const requestOptions = {
+        method: 'POST',
+        headers: await authHeader(true),
+        body: JSON.stringify(payload)
+    };
+    return fetch(`/api/admin/image`, requestOptions)
+        .then(handleResponse)
+        .then(resp => {
+            return resp;
+        });
+}
+async function deleteImage(payload) {
+    const requestOptions = {
+        method: 'DELETE',
+        headers: await authHeader(true),
+        body: JSON.stringify(payload)
+    };
+    return fetch(`/api/admin/image`, requestOptions)
+        .then(handleResponse)
+        .then(resp => {
             return resp;
         });
 }

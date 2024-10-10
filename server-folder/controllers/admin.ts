@@ -410,7 +410,6 @@ export async function uploadImage(req: Request, ress: Response, _next: NextFunct
     if (req.file) {
       let name = generateUniqueString() + '.' + req.file.originalname.split('.')[1]
       let upload = await timewebService.uploadFile(req.file, req.body.type, name)
-      console.log('upload',upload)
       return ress.json({
         success: true,
         data: upload
@@ -427,6 +426,36 @@ export async function uploadImage(req: Request, ress: Response, _next: NextFunct
 }
 
 
+export async function addImage(req: Request, ress: Response, _next: NextFunction) {
+  try {
+    await prisma.libraryImage.create({
+      data: {link: req.body.image, library_id: req.body.id},
+    });
+    return ress.json({
+      success: true,
+    });
+  } catch (err) {
+    console.log('err',err)
+    return errorHandler(createError.InternalServerError(), req, ress)
+  }
+}
+
+
+
+export async function deleteImage(req: Request, ress: Response, _next: NextFunction) {
+  try {
+   await prisma.libraryImage.deleteMany({
+      where: {library_id: req.body.id, link: req.body.image},
+    });
+    await timewebService.removeFile(req.body.image, req.body.folder)
+    return ress.json({
+      success: true,
+    });
+  } catch (err) {
+    console.log('err',err)
+    return errorHandler(createError.InternalServerError(), req, ress)
+  }
+}
 
 
 
@@ -452,6 +481,8 @@ export const routes: RouteConfig = {
     { method: 'delete', path: '/quiz', handler: [afterSignupAuth, isAdmin, deleteQuizPack] },
     { method: 'delete', path: '/quizItem', handler: [afterSignupAuth, isAdmin, deleteQuizItemPack] },
     { method: 'post', path: '/upload', handler: [afterSignupAuth, isAdmin, upload.single('file'), uploadImage] },
+    { method: 'post', path: '/image', handler: [afterSignupAuth, isAdmin, addImage] },
+    { method: 'delete', path: '/image', handler: [afterSignupAuth, isAdmin, deleteImage] },
 
     
   ],

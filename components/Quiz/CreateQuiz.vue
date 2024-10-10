@@ -48,8 +48,9 @@ onBeforeMount(async () => {
           one.type = quizTypeOptions.find(l => l.id ==  one.type)
           one.libraryType = libraryOptions.find(l => l.id ==  one.libraryType)
           if (one.answer) {
-            one.answer_id = {id: one.answer_id, name: one.answer.word ? one.answer.word : (one.answer.title ? one.answer.title : one.answer.name)}
+            one.answer_id = {id: one.answer_id, LibraryImages: one.answer.LibraryImages, name: one.answer.word ? one.answer.word : (one.answer.title ? one.answer.title : one.answer.name)}
           }
+          console.log('one',one)
           packRounds.value.push(one)
         })
       }
@@ -172,6 +173,8 @@ async function save() {
                     <label class='mt-4'>Ответ</label>
                     <FormControl v-model="data.libraryType" :options="libraryOptions"  />
                     <AutoSelect :key='packRounds[i].answer_id+"auto"+i' v-model="packRounds[i].answer_id" :searchF='"librarySearch"' :library='data.libraryType.id' placeholder="Ответ"  class='mt-2'/>
+                
+                    <ImagesUpload :key='packRounds[i].answer_id.id+i' class='mt-2' v-model='packRounds[i].image' :imagesToSelect='packRounds[i].answer_id.LibraryImages' :folder='data.libraryType.id' :libraryId='packRounds[i].answer_id.id'  />
                   </template>
                 </div>
               </div>

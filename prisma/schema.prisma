@@ -107,6 +107,15 @@ model Library {
   person Person? @relation(fields: [person_id], references: [id])
   QuizPackRounds              QuizPackRound[]
   QuizPackAnwsers             QuizPackAnswer[]
+  LibraryImages               LibraryImage[]
+}
+
+model LibraryImage {
+  id       Int     @id @default(autoincrement())
+  link     String
+  library_id     Int
+
+  Library  Library  @relation(fields: [library_id], references: [id])
 }
 
 model Link {

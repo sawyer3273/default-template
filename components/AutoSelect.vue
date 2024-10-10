@@ -110,7 +110,7 @@ function choose(data) {
 }
 
 function onBLur(data) {
-  setTimeout(() => isFocused.value = false, 1000)
+  setTimeout(() => isFocused.value = false, 500)
 }
 
 let mode = ref('bottom')

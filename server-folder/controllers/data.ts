@@ -30,7 +30,7 @@ export async function find(req: Request, res: Response, _next: NextFunction) {
     if (req.query.type) {
       cond.type = req.query.type
     }
-    let actors = await findMany(req, 'library', cond, {limit: 50})
+    let actors = await findMany(req, 'library', cond, {limit: 50, include: { LibraryImages: true}})
     let count = await getCount('library', cond)
     
     return res.json({
@@ -163,7 +163,10 @@ export async function getPacksQuiz(req: any, res: Response, _next: NextFunction)
     if (req.query.id) {
       cond.id = parseInt(req.query.id)
     }
-    let options: any = {include: {QuizPackRound: { include: {answer: true}}, RoomUsers: {where: {user_id: res.locals.auth.id, isFinished: true}} }}
+    let options: any = {include: {
+      QuizPackRound: { orderBy: {number: 'asc'}, include: {answer: res.locals.auth.userRole == 'USER' ? true : {include: {LibraryImages: true}}}}, 
+      RoomUsers: {where: {user_id: res.locals.auth.id, isFinished: true}} 
+    }}
     
     if (res.locals.auth.userRole == 'USER') {
       cond.enable = true
