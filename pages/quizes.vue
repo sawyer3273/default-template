@@ -51,7 +51,7 @@ async function getRooms() {
               <div class='flex justify-between items-center'>
                 <div class='flex items-center'>
                   <img width='60' class='rounded-lg' :src='room.pack && room.pack.logo ? room.pack.logo  : "/img/choose.jpg"' />
-                  <div class='mx-3'> {{room.name ? room.name : "Игра #" + room.id}} ({{JSON.parse(room.info).username}})</div>
+                  <div class='mx-3'> {{room.name ? room.name : "Игра #" + room.id}} </div>
                 </div>
                 <div class='mx-3'> Игроки: {{ room.RoomUser.length}} </div>
               </div>

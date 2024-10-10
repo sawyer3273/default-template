@@ -230,6 +230,12 @@ export async function getRoom(req: any, res: Response, _next: NextFunction) {
         room = await prisma.room.create({
           data: createRoomData
         })
+        if (room) {
+          room = await prisma.room.update({
+            where: {id: room.id},
+            data: {name: 'Игра #' + room.id + ' (' + res.locals.auth.username + ')'}
+          })
+        }
       }
     }
     let currentTime = parseInt((new Date().getTime() / 1000).toString())

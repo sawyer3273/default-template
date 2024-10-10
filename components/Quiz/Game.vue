@@ -45,7 +45,7 @@ const vzUsers = computed(() => {
       
         <div class='bg-black overflow-hidden rounded-full m-1 text-white p-1 text-xl flex justify-between' v-for='(user, i) in legalUsers'>
           <div class='flex items-center w-4/5'>
-            <div class='rounded-full bg-blue-500 min-w-7 text-center mr-2'>{{i+1}}</div>
+            <div class='rounded-full bg-blue-500 min-w-7 text-center mr-2'> {{i+1}}</div>
             <UserAvatar class="min-w-7 w-7 h-7 mr-2" :username="user.user.username" />
             <div class='w-inherit'>
               <div class='userName' :class='!user.isReady ? "text-gray-400": (me.id == user.id ? "text-green-600" : "")'>
@@ -82,8 +82,8 @@ const vzUsers = computed(() => {
           </template>
           <template v-else>
             <div class='w-full flex justify-center relative'>
-              <div class='absolute left-0 bg-blue-500 w-8 h-8 items-center text-center flex justify-center text-white rounded-lg'>
-              #{{question.number}}
+              <div class='absolute left-0 bg-blue-500 px-2 h-8 items-center text-center flex justify-center text-white rounded-lg'>
+              Вопрос #{{question.number}}
               </div>
               <Timer v-if='timer' :value='timer' :round='question.number' :isStarted='question.number ? true : false' @onEnd='onTimerStop' />
             </div>

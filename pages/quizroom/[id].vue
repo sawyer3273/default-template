@@ -207,19 +207,18 @@ function onAnswer(data) {
                <List v-if='waitUsers.length' :data='waitUsers' @onClick='(id) => changeUserStatus(id, true)' :me='me' :buttonText='me.isAdmin ? "Добавить" : ""'/>
             </div>
             <div class='col-md-6'>
-              <div>Выбрать пак</div>
-              <div class='border-green-500 border-2 mb-2 min-h-12' title="Создатель комнаты может выбрать пак">
-                <div :class='me.isAdmin ? "" : "notclickable"'>
-                  <PackSelect @onChoosePack='choosePack' :pack='pack'/>
-                </div>
-              </div>
-              <div>Описание</div>
-              <div class='border-green-500 border-2 mb-2 min-h-12 ' title="Создатель комнаты может выбрать пак">
+              <div class='text-lg font-bold mb-2'>Описание</div>
+              <div class='mb-2 min-h-12 ' title="Создатель комнаты может выбрать пак">
                 <div v-if='me.isAdmin'>
                   <FormControl v-model='room.name' placeholder='Введите описание'/>
                 </div>
                 <div v-else class='p-2'>
                  {{room.name}} 
+                </div>
+              </div>
+              <div class='mb-2 min-h-12 flex justify-center' title="Создатель комнаты может выбрать пак">
+                <div :class='me.isAdmin ? "" : "notclickable"'>
+                  <PackSelect @onChoosePack='choosePack' :pack='pack'/>
                 </div>
               </div>
               
@@ -230,32 +229,10 @@ function onAnswer(data) {
           </div>
         </template> 
 
-
         <template v-else>
           <QuizGame :quizUsers='quizUsers' :me='me' :question='currentQuestion' :room='room' @onAnswer='onAnswer' :timer='timer' :answerInit='answer' :correctAnswer='correctAnswer'/>
-
-
-
-
         </template> 
-
-   
-            <BaseButton color='info' class='mt-4' label='Начать' @click='start'/>
-
-room
-<div>{{room}}</div>
-pack
-     <div> {{pack}}</div>
-currentQuestion
-
-     <div> {{currentQuestion}}</div>
-
-users
-<div>{{quizUsers}}</div>
-waitUsers
-<div>{{waitUsers}}</div>
-
-
+             <BaseButton color='info' class='mt-4' label='рестарт' @click='start'/>
       </SectionMain>
     </NuxtLayout>
   </div>
