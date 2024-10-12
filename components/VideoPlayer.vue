@@ -11,7 +11,13 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  isAutoStart: {
+    type: Boolean,
+    default: false
+  },
 })
+
+const emit = defineEmits(['onEnd'])
 
 let videoPlayer = ref(null)
 function play() {
@@ -31,25 +37,28 @@ function  setSpeed(speed) {
   videoPlayer.value.playbackRate = speed;
 }
 
+function onEnd() {
+  emit('onEnd')
+}
+
+onMounted(() => {
+  videoPlayer.value.addEventListener('onended', onEnd,false);
+  videoPlayer.value.onended = onEnd
+  if (props.isAutoStart) {
+    play()
+  }
+})
 </script>
 
 <template>
-  <div v-if='url' :class='class'>
-    <video width="320" height="240" ref="videoPlayer">
+
+  <div v-if='url' :class='class' class='relative'>
+    <video controls class='w-full' ref="videoPlayer">
       <source
         :src="url"
         type="video/mp4"
       />
       Your browser does not support the video tag.
     </video>
-    <div>
-      <button @click="play">play</button>
-      <button @click="pause">pause</button>
-      <button @click="stop">stop</button>
-      <button @click="setSpeed(0.5)">0.5x</button>
-      <button @click="setSpeed(1)">1x</button>
-      <button @click="setSpeed(1.5)">1.5x</button>
-      <button @click="setSpeed(2)">2x</button>
-    </div>
   </div>
 </template>

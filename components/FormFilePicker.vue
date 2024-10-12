@@ -29,6 +29,10 @@ const props = defineProps({
     type: String,
     default: 'info'
   },
+  type: {
+    type: String,
+    default: 'video'
+  },
   isRoundIcon: Boolean
 })
 
@@ -61,7 +65,7 @@ const upload = async (event) => {
 
   let formData = new FormData()
   formData.append('file', file.value)
-  formData.append("type", 'video')
+  formData.append("type", props.type)
   if (props.url) {
     formData.append("toDelete", props.url)
   }

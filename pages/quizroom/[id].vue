@@ -232,7 +232,7 @@ function onAnswer(data) {
         <template v-else>
           <QuizGame :quizUsers='quizUsers' :me='me' :question='currentQuestion' :room='room' @onAnswer='onAnswer' :timer='timer' :answerInit='answer' :correctAnswer='correctAnswer'/>
         </template> 
-        <!-- <BaseButton color='info' class='mt-4' label='рестарт' @click='start'/>-->
+        <BaseButton color='info' class='mt-4' label='рестарт' @click='start'/>
       </SectionMain>
     </NuxtLayout>
   </div>

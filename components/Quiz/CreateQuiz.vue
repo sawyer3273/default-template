@@ -140,6 +140,13 @@ function onUploadVideo(data, i) {
     packRounds.value[i].video = data.file
   }, 500) 
 }
+function onUploadAudio(data, i) {
+  packRounds.value[i].audio = ''
+  setTimeout(() => {
+    packRounds.value[i].audio = data.file
+  }, 500) 
+}
+
 </script>
 
 <template>
@@ -179,8 +186,16 @@ function onUploadVideo(data, i) {
                   </template>
                 <!--  Video -->
                   <template v-if='data.type && data.type.id=="video"' >
-                    <VideoPlayer class='mt-2' :url='data.video' />
+                    <FormControl class='mt-2' type="textarea" v-model='data.text' placeholder="Введите oписание" />
+                    <VideoPlayer class='mt-2 max-w-72' :url='data.video' />
                     <FormFilePicker class='mt-2' v-model="videoFile" :url='data.video' accept='video/*' label="Загрузите видео" @onUpload='(file) => onUploadVideo(file, i)' />
+                  </template>
+                <!--  Audio -->
+                  <template v-if='data.type && data.type.id=="audio"' >
+                    <FormControl class='mt-2' type="textarea" v-model='data.text' placeholder="Введите oписание" />
+                  <!--  <audio controls v-if='data.audio' :src="data.audio"></audio>-->
+                    <AudioPlayer class='mt-2 w-72 h-16' :url='data.audio' />
+                    <FormFilePicker class='mt-2' v-model="audioFile" :url='data.audio' accept='audio/*' type='audio' label="Загрузите аудио" @onUpload='(file) => onUploadAudio(file, i)' />
                   </template>
 
 
@@ -227,4 +242,8 @@ function onUploadVideo(data, i) {
           </div>
         </SectionTitleLineWithButton>
       </SectionMain>
+
+     
+
+
 </template>

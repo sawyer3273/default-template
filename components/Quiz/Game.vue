@@ -10,7 +10,7 @@ const props = defineProps({
   question: Object,
   timer: Number,
   answerInit: String,
-  correctAnswer: Object
+  correctAnswer: Object,
 })
 
 const emit = defineEmits(['onAnswer'])
@@ -20,6 +20,9 @@ let submited = ref('')
 
 watch(() => props.question.number, () => {
   submited.value = ''
+  if (props.question.type == 'video') {
+    hideTimer.value = true
+  }
 })
 
 function trySubmit() {
@@ -27,6 +30,12 @@ function trySubmit() {
   emit('onAnswer', answer.value)
   answer.value = ''
 } 
+
+const hideTimer = ref(false)
+function onVideoEnd() {
+  console.log('one end')
+  hideTimer.value = false
+}
 
 const legalUsers = computed(() => {
   return props.quizUsers.filter(one => !one.isAlreadyPassed)
@@ -131,12 +140,25 @@ const vzUsers = computed(() => {
               <div class='absolute left-0 bg-blue-500 px-2 h-8 items-center text-center flex justify-center text-white rounded-lg'>
               Вопрос #{{question.number}}
               </div>
-              <Timer v-if='timer' :value='timer' :round='question.number' :isStarted='question.number ? true : false' @onEnd='onTimerStop' />
+              <Timer v-if='timer' :hide='hideTimer' :value='timer' :round='question.number' :isStarted='question.number ? true : false' @onEnd='onTimerStop' />
             </div>
             <template v-if='!Object.keys(correctAnswer).length'>
-              <div class='h-full-minus-20 p-10 text-center flex justify-center items-center'>
-                {{question.text}}
-              </div>
+              <template v-if='question.type=="text"'>
+                <div class='h-full-minus-20 p-10 text-center flex justify-center items-center'>
+                  {{question.text}}
+                </div>
+              </template>
+              <template v-if='question.type=="video"'>
+                <div class='h-full-minus-20 p-10 text-center flex justify-center items-center'>
+                  <div class='h-full'>
+                    <div class='text-center flex justify-center items-center'>
+                      {{question.text}}
+                    </div>
+                    <VideoPlayer class='flex justify-center h-full rounded-xl overflow-hidden' :url='question.video' :isAutoStart='true' @onEnd='onVideoEnd' />
+                  </div>
+                  
+                </div>
+              </template>
             </template>
             <template v-else>
               <div class='h-full-minus-20 p-10 text-center flex justify-center items-center'>

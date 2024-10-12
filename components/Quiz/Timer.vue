@@ -5,6 +5,7 @@ const props = defineProps({
   value: Number,
   round: {type: Number, default: -1},
   isStarted: Boolean,
+  hide: {type: Boolean, default: false}, 
 })
 
 const timerValue = ref(parseInt(props.value))
@@ -45,8 +46,8 @@ function runTimer() {
 </script>
 
 <template>
-  <div class='text-white bg-blue-500 w-16 h-8 items-center text-center flex justify-center rounded-lg'>
-    {{timerText}} 
+  <div :class='!hide ? "" :"opacity-0"' class='text-white bg-blue-500 w-16 h-8 items-center text-center flex justify-center rounded-lg'>
+    <span>{{timerText}}</span> 
   </div>
 </template>
 <style scoped>

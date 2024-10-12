@@ -380,8 +380,6 @@ const setQuestionAnswer = async (io: Server, room: any, question: any) => {
 
 export const updateTable = async (room: any) => {
   let roomUsers: any = await prisma.roomUsers.findMany({where : {room_id: room.id}, orderBy: [{score: 'desc'}], include: {user: true}})
-  console.log('room.room_id',room.id)
-  console.log('roomUsers',roomUsers)
   for (let i = 0; i < roomUsers.length; i++) {
     let user = roomUsers[i]
     let scores = await prisma.quizPackAnswer.findMany({where : {room_id: room.id, user_id: user.user_id, isCorrect: true}, orderBy: [{score: 'desc'}], include: {user: true}})
