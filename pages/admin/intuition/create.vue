@@ -52,10 +52,6 @@ async function changeActorAvatar(file, id) {
 }
 
 
-async function upload() {
-  let image = await adminService.uploadImage()
-}
-
 async function save() {
   if (computedValue.value.length < 12) {
    // toast.error('Недостаточно актеров'); return
@@ -79,45 +75,13 @@ async function save() {
 
 
 
-let videoPlayer = ref(null)
-function play() {
-  console.log('videoPlayer,videoPlayer',videoPlayer)
-      videoPlayer.value.play();
-    }
-    function pause() {
-      videoPlayer.value.pause();
-    }
-    function stop() {
-      videoPlayer.value.pause();
-      videoPlayer.value.currentTime = 0;
-     }
-  function  setSpeed(speed) {
-      videoPlayer.value.playbackRate = speed;
-    }
+
 </script>
 
 <template>
   <div>
     <NuxtLayout name="admin">
       <SectionMain>
-      <!--
-      <video width="320" height="240" ref="videoPlayer">
-        <source
-          src="https://s3.timeweb.cloud/1d66ad34-320f94d0-cbe7-493f-bce7-bfb114c821bb/sample-5s.mp4"
-          type="video/mp4"
-        />
-        Your browser does not support the video tag.
-      </video>
-      <div>
-        <button @click="play">play</button>
-        <button @click="pause">pause</button>
-        <button @click="stop">stop</button>
-        <button @click="setSpeed(0.5)">0.5x</button>
-        <button @click="setSpeed(1)">1x</button>
-        <button @click="setSpeed(1.5)">1.5x</button>
-        <button @click="setSpeed(2)">2x</button>
-      <div @click='upload'> fff </div>
-      </div>-->
         <SectionTitleLine :icon="mdiNoteEdit" title="Данные пака"> </SectionTitleLine>
         <CardBox class='mb-4 shadow-sm '>
           <div class='row'>

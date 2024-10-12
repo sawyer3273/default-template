@@ -36,6 +36,10 @@ const props = defineProps({
     type: String,
     default: 'white'
   },
+  loader: {
+    type: Boolean,
+    default: false
+  },
   as: {
     type: String,
     default: null
@@ -115,7 +119,8 @@ const componentClass = computed(() => {
     :target="target"
     :disabled="disabled"
   >
-    <BaseIcon v-if="icon" :path="icon" :size="iconSize" />
+    <img v-if='loader' width=20 src='/img/loader.gif' />
+    <BaseIcon v-else-if="icon" :path="icon" :size="iconSize" />
     <span v-if="label" :class="labelClass">{{ label }}</span>
   </component>
 </template>

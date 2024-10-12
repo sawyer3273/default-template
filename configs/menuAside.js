@@ -67,11 +67,6 @@ export default [
     icon: mdiResponsive
   },
   {
-    to: '/ProfileView',
-    label: 'Profile',
-    icon: mdiAccountCircle
-  },
-  {
     to: '/login',
     label: 'Login',
     icon: mdiLock
@@ -92,11 +87,5 @@ export default [
         label: 'Item Two'
       }
     ]
-  },
-  {
-    href: 'https://github.com/sawyer3273/default-template.git',
-    label: 'GitHub',
-    icon: mdiGithub,
-    target: '_blank'
   },
 ]

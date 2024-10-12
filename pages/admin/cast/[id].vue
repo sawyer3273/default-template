@@ -102,10 +102,6 @@ async function changeMovieAvatar(file, id) {
   await adminService.updateMovie({image: file, id})
 }
 
-async function upload() {
-  let image = await adminService.uploadImage()
-}
-
 async function save() {
   let errors = []
   computedValue.value.map((one, i) => {

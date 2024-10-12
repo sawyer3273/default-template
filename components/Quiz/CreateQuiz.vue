@@ -61,7 +61,8 @@ onBeforeMount(async () => {
   }
 
 });
-
+const videoFile = ref('')
+const audioFile = ref('')
 let emptyValue = {
   number: 1,    
   score: 1,     
@@ -113,6 +114,9 @@ async function save() {
         errors.push(i+1)
       }
     }
+    if (!one.answer_id) {
+      errors.push(i+1)
+    }
   })
   if (!packData.value.logo) {
     toast.error('Загрузите главную картинку'); return
@@ -129,6 +133,12 @@ async function save() {
       router.push('/admin/quiz');
     }
   }
+}
+function onUploadVideo(data, i) {
+  packRounds.value[i].video = ''
+  setTimeout(() => {
+    packRounds.value[i].video = data.file
+  }, 500) 
 }
 </script>
 
@@ -162,20 +172,32 @@ async function save() {
                   <FormControl v-model="data.type" :options="quizTypeOptions" />
                 </div>
                 <div class='col-md-12'>
+                <!--  Text -->
                   <template v-if='data.type && data.type.id=="text"' >
                     <label class='mt-2' >Описание вопроса</label>
                     <FormControl type="textarea" v-model='data.text' placeholder="Введите текст вопроса" />
                   </template>
+                <!--  Video -->
+                  <template v-if='data.type && data.type.id=="video"' >
+                    <VideoPlayer class='mt-2' :url='data.video' />
+                    <FormFilePicker class='mt-2' v-model="videoFile" :url='data.video' accept='video/*' label="Загрузите видео" @onUpload='(file) => onUploadVideo(file, i)' />
+                  </template>
 
+
+
+                  <label class='mt-2' >Длительность</label>
                   <FormControl type="number" v-model='data.time' placeholder="Длительность" />
 
-                  <template v-if='data.type && ["text"].includes(data.type.id)'>
+                  <!--<template v-if='data.type && ["text"].includes(data.type.id)'>-->
+                  
                     <label class='mt-4'>Ответ</label>
                     <FormControl v-model="data.libraryType" :options="libraryOptions"  />
                     <AutoSelect :key='packRounds[i].answer_id+"auto"+i' v-model="packRounds[i].answer_id" :searchF='"librarySearch"' :library='data.libraryType.id' placeholder="Ответ"  class='mt-2'/>
-                
-                    <ImagesUpload :key='packRounds[i].answer_id.id+i' class='mt-2' v-model='packRounds[i].image' :imagesToSelect='packRounds[i].answer_id.LibraryImages' :folder='data.libraryType.id' :libraryId='packRounds[i].answer_id.id'  />
-                  </template>
+               
+                    <ImagesUpload :key='packRounds[i].answer_id+"images"+i' class='mt-2' v-model='packRounds[i].image' :imagesToSelect='packRounds[i].answer_id.LibraryImages' :folder='data.libraryType.id' :libraryId='packRounds[i].answer_id.id'  />
+                 
+              
+
                 </div>
               </div>
             </CardBox>

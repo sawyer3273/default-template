@@ -405,11 +405,14 @@ export async function deleteQuizItemPack(req: Request, res: Response, _next: Nex
 
 
 
-export async function uploadImage(req: Request, ress: Response, _next: NextFunction) {
+export async function uploadFile(req: Request, ress: Response, _next: NextFunction) {
   try {
     if (req.file) {
       let name = generateUniqueString() + '.' + req.file.originalname.split('.')[1]
       let upload = await timewebService.uploadFile(req.file, req.body.type, name)
+      if (req.body.toDelete) {
+        await timewebService.removeFile(req.body.toDelete, req.body.type)
+      }
       return ress.json({
         success: true,
         data: upload
@@ -480,7 +483,7 @@ export const routes: RouteConfig = {
     { method: 'post', path: '/quiz', handler: [afterSignupAuth, isAdmin, createQuizPack] },
     { method: 'delete', path: '/quiz', handler: [afterSignupAuth, isAdmin, deleteQuizPack] },
     { method: 'delete', path: '/quizItem', handler: [afterSignupAuth, isAdmin, deleteQuizItemPack] },
-    { method: 'post', path: '/upload', handler: [afterSignupAuth, isAdmin, upload.single('file'), uploadImage] },
+    { method: 'post', path: '/upload', handler: [afterSignupAuth, isAdmin, upload.single('file'), uploadFile] },
     { method: 'post', path: '/image', handler: [afterSignupAuth, isAdmin, addImage] },
     { method: 'delete', path: '/image', handler: [afterSignupAuth, isAdmin, deleteImage] },
 

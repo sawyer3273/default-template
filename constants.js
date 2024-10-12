@@ -11,8 +11,10 @@ export default PROJECT_NAME
 
 export const quizTypeOptions = [
     { id: 'text', label: 'Текстовый вопрос' },
+    { id: 'video', label: 'Видео вопрос' },
+    { id: 'audio', label: 'Аудио вопрос' },
   ]
 export const libraryOptions = [
-    { id: 'movie', label: 'Список фильмов' },
-    { id: 'person', label: 'Список актеров' },
+    { id: 'movie', label: 'Тип ответа: фильм' },
+    { id: 'person', label: 'Тип ответа: актер' },
   ]

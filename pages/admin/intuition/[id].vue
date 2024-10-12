@@ -92,9 +92,6 @@ async function changeActorAvatar(file, id) {
 }
 
 
-async function upload() {
-  let image = await adminService.uploadImage()
-}
 
 async function save() {
   if (computedValue.value.length < 12) {

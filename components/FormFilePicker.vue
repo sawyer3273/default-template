@@ -1,10 +1,16 @@
 <script setup>
 import { mdiUpload } from '@mdi/js'
 import { computed, ref, watch } from 'vue'
+import axios from 'axios'
+import { adminService } from '~/utils/services/admin.service'
 
 const props = defineProps({
   modelValue: {
     type: [Object, File, Array],
+    default: null
+  },
+  url: {
+    type: String,
     default: null
   },
   label: {
@@ -26,11 +32,13 @@ const props = defineProps({
   isRoundIcon: Boolean
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'onUpload'])
 
 const root = ref(null)
 
 const file = ref(props.modelValue)
+
+const loader = ref(false)
 
 const showFilename = computed(() => !props.isRoundIcon && file.value)
 
@@ -44,41 +52,31 @@ watch(modelValueProp, (value) => {
   }
 })
 
-const upload = (event) => {
+const upload = async (event) => {
   const value = event.target.files || event.dataTransfer.files
 
   file.value = value[0]
 
   emit('update:modelValue', file.value)
 
-  // Use this as an example for handling file uploads
-  // let formData = new FormData()
-  // formData.append('file', file.value)
-
-  // const mediaStoreRoute = `/your-route/`
-
-  // axios
-  //   .post(mediaStoreRoute, formData, {
-  //     headers: {
-  //       'Content-Type': 'multipart/form-data'
-  //     },
-  //     onUploadProgress: progressEvent
-  //   })
-  //   .then(r => {
-  //
-  //   })
-  //   .catch(err => {
-  //
-  //   })
+  let formData = new FormData()
+  formData.append('file', file.value)
+  formData.append("type", 'video')
+  if (props.url) {
+    formData.append("toDelete", props.url)
+  }
+  const mediaStoreRoute = `/api/admin/upload`
+  loader.value = true
+  let fileData = await adminService.uploadFile(formData)
+  loader.value = false
+  
+  if (fileData.success) {
+    emit('onUpload', fileData.data)
+  } else {
+  }
 }
 
-// const uploadPercent = ref(0)
-//
-// const progressEvent = progressEvent => {
-//   uploadPercent.value = Math.round(
-//     (progressEvent.loaded * 100) / progressEvent.total
-//   )
-// }
+
 </script>
 
 <template>
@@ -86,6 +84,7 @@ const upload = (event) => {
     <label class="inline-flex">
       <BaseButton
         as="a"
+        :loader='loader'
         :class="{ 'w-12 h-12': isRoundIcon, 'rounded-r-none': showFilename }"
         :icon-size="isRoundIcon ? 24 : undefined"
         :label="isRoundIcon ? null : label"

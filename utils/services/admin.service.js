@@ -4,7 +4,7 @@ import { useDataStore } from '@/stores/data'
 
 export const adminService = {
     deleteActor,
-    uploadImage,
+    uploadFile,
     updateActor,
     addIntuitionPack,
     deleteIntuitionPack,
@@ -62,7 +62,7 @@ async function updateMovie(payload) {
 }
 
 
-async function uploadImage(form) {
+async function uploadFile(form) {
     const requestOptions = {
         method: 'POST',
         headers: await authHeader(true, {}),

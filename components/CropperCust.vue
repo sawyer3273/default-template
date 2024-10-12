@@ -107,7 +107,7 @@ async function cropSave() {
     })
   }
   mainStore.setLoader(true)
-  let image = await adminService.uploadImage(form, props.folder)
+  let image = await adminService.uploadFile(form)
   mainStore.setLoader(false)
   if (image.success) {
     emit('update:modelValue', image.data.file)
