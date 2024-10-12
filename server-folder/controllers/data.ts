@@ -207,7 +207,7 @@ export async function getRoom(req: any, res: Response, _next: NextFunction) {
         where: {
           token: req.query.id,
         },
-        include: {RoomUser: true, pack: true}
+        include: {RoomUser: {orderBy: {score: 'desc'}}, pack: true}
       })
     } 
     if (!room) {
@@ -218,7 +218,7 @@ export async function getRoom(req: any, res: Response, _next: NextFunction) {
           type: type,
           isFinished: false
         },
-        include: {RoomUser: true, pack: true}
+        include: {RoomUser: {orderBy: {score: 'desc'}}, pack: true}
       })
       if (!room) {
         let createRoomData: any = {

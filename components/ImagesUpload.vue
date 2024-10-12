@@ -60,6 +60,6 @@ function deleteImage(file) {
         <div @click='selectImage(image.link)' :class='image.link == imageCrop ? "border-green-600" :"border-white"' class='cursor-pointer rounded-lg border-4'><img class='rounded-sm' :src='image.link' /></div>
       </div>
     </div>
-    <CropperCust :placeholder='"horizon"' :folder='folder' :classProp='"inline-grid"' :ratio='0' v-model='imageCrop' @onUpload='onUpload' :showImage='false' :buttonTitle='"Добавить новую картинку"'/> 
+    <CropperCust :placeholder='"horizon"' :folder='folder' :classProp='"inline-grid"' :ratio='0' v-model='imageCrop' @onUpload='onUpload' :showImage='false' :buttonTitle='"Добавить фото"'/> 
   </div>
 </template>

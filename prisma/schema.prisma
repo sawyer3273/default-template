@@ -252,6 +252,7 @@ model RoomUsers {
 
 
   
+  createdAt DateTime @default(now())
   QuizPack  QuizPack?     @relation(fields: [pack_id], references: [id])
   room      Room     @relation(fields: [room_id], references: [id])
   user      User     @relation(fields: [user_id], references: [id])

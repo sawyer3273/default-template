@@ -20,7 +20,7 @@ const props = defineProps({
   },
   buttonTitle:  {
     type: String,
-    default: 'Сохранить'
+    default: 'Выбрать фото'
   },
   width: {
     type: String,

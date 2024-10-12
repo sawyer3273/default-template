@@ -14,7 +14,7 @@ export const addToRoom = async (payload: any = {}, io: any) => {
         }
       })
       if (room && userToken) {
-        let data = {
+        let data: any = {
           user_id: userToken.user_id,
           room_id: room.id,
           pack_id: room.pack_id,
@@ -24,13 +24,7 @@ export const addToRoom = async (payload: any = {}, io: any) => {
           isReady: room.isActive ? true: false,
         }
         
-          let isExist = await prisma.roomUsers.findFirst({
-            where: {user_id: userToken.user_id, pack_id: room.pack_id, isFinished: true}
-          })
-          if (isExist) {
-            data.isAlreadyPassed = true
-            data.alreadyScore = isExist.score
-          }
+          
         let whereData: any = {
           user_id: userToken.user_id,
           room_id: room.id
@@ -45,6 +39,13 @@ export const addToRoom = async (payload: any = {}, io: any) => {
         io.to('quizeslist').emit('updateQuizlist');
         if (!room.isActive) {
           if (!result) {
+              let isExist = await prisma.roomUsers.findFirst({
+                where: {user_id: userToken.user_id, pack_id: room.pack_id, isFinished: true}
+              })
+              if (isExist) {
+                data.isAlreadyPassed = true
+                data.alreadyScore = isExist.score
+              }
               result = await prisma.roomUsers.create({
                 data,
               })
@@ -185,7 +186,7 @@ export const getRoom = async (id: any, filter = false) => {
         room_id: id,
       },
       orderBy: [{
-        id: 'asc'
+        score: 'desc'
       }]
     })
     if (filter) {
