@@ -180,8 +180,8 @@ function start() {
   socket.emit('statusQuiz', room.value);
 }
 
-function onAnswer(data) {
-  socket.emit('answerQuiz', data, room.value, userStore.user.id, currentQuestion.value);
+function onAnswer(data, score) {
+  socket.emit('answerQuiz', data, room.value, userStore.user.id, currentQuestion.value, score);
 }
 </script>
 

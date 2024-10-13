@@ -84,8 +84,8 @@ function initializeApplication() {
         }
       });
 
-      socket.on('answerQuiz', async (answer, room, user_id, question) => {
-        let result = await answerQuiz(io, answer, room, user_id, question)
+      socket.on('answerQuiz', async (answer, room, user_id, question, score) => {
+        let result = await answerQuiz(io, answer, room, user_id, question, score)
         if (result.success) {
           //io.to(room.token).emit('statusQuizSuccess');
           //io.to('quizeslist').emit('updateQuizlist');

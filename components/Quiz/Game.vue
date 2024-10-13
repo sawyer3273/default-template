@@ -15,25 +15,44 @@ const props = defineProps({
 
 const emit = defineEmits(['onAnswer'])
 
-let answer = ref('')
-let submited = ref('')
+const answer = ref('')
+const submited = ref('')
+const newScore = ref(1)
 
+onMounted(() => {
+  let newScoreStorage = localStorage.getItem('newScore')
+  if (newScoreStorage) {
+    newScore.value = newScoreStorage
+  }
+  checkHide()
+}) 
 watch(() => props.question.number, () => {
   submited.value = ''
-  if (props.question.type == 'video') {
+  localStorage.removeItem('audioPosition')
+  checkHide()
+})
+
+watch(() => props.room.isFinished, () => {
+  localStorage.removeItem('audioPosition')
+})
+
+function checkHide() {
+  if (['video', 'audio'].includes(props.question.type)) {
     hideTimer.value = true
   }
-})
+}
 
 function trySubmit() {
   submited.value = answer.value
-  emit('onAnswer', answer.value)
+  emit('onAnswer', answer.value, newScore.value)
   answer.value = ''
 } 
 
 const hideTimer = ref(false)
 function onVideoEnd() {
-  console.log('one end')
+  hideTimer.value = false
+}
+function onAudioEnd() {
   hideTimer.value = false
 }
 
@@ -45,6 +64,19 @@ const legalUsers = computed(() => {
 const vzUsers = computed(() => {
   return props.quizUsers.filter(one => one.isAlreadyPassed)
 })
+
+function changeAudioScore(value) {
+  let left = 5 - value 
+  if (left > 0) {
+    let perc = 100 / 5 * left
+    newScore.value = parseInt((props.question.score + (props.question.score * 2 * perc / 100)) * 10) / 10
+    if (newScore.value > props.question.score * 3) {
+      newScore.value = props.question.score * 3
+    }
+    localStorage.setItem('newScore', newScore.value)
+  }
+}
+
 </script>
 
 <template>
@@ -140,7 +172,7 @@ const vzUsers = computed(() => {
               <div class='absolute left-0 bg-blue-500 px-2 h-8 items-center text-center flex justify-center text-white rounded-lg'>
               Вопрос #{{question.number}}
               </div>
-              <Timer v-if='timer' :hide='hideTimer' :value='timer' :round='question.number' :isStarted='question.number ? true : false' @onEnd='onTimerStop' />
+              <Timer v-if='timer' :hide='hideTimer' :value='timer' :round='question.number' :isStarted='question.number ? true : false' @onEnd='onTimerStop' @onTimeUrpdate='(time) => timerUpdate(time)' />
             </div>
             <template v-if='!Object.keys(correctAnswer).length'>
               <template v-if='question.type=="text"'>
@@ -156,7 +188,16 @@ const vzUsers = computed(() => {
                     </div>
                     <VideoPlayer class='flex justify-center h-full rounded-xl overflow-hidden' :url='question.video' :isAutoStart='true' @onEnd='onVideoEnd' />
                   </div>
-                  
+                </div>
+              </template>
+              <template v-if='question.type=="audio"'>
+                <div class='h-full-minus-20 p-10 text-center flex justify-center items-center'>
+                  <div class=' w-full'>
+                    <div class='text-center flex justify-center items-center mb-10'>
+                      {{question.text}}
+                    </div>
+                    <AudioPlayer class='w-full h-32 max-h-32' :playText='newScore' :isControl='false' :url='question.audio' :isAutoStart='true' @onEnd='onAudioEnd' @onTimeUpdate='changeAudioScore'/>
+                  </div>
                 </div>
               </template>
             </template>

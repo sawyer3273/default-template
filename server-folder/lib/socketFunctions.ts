@@ -391,14 +391,14 @@ export const updateTable = async (room: any) => {
   return roomUsers
 }
 
-export const answerQuiz = async (io: Server, answer: any, room: any, user_id: any, question: any) => {
+export const answerQuiz = async (io: Server, answer: any, room: any, user_id: any, question: any, newScore: any) => {
   try {
     let roomUser: any = await prisma.roomUsers.findFirst({where : {room_id: room.id, user_id: user_id}})
     if (roomUser) {
       let QuizPackAnswer: any = await prisma.quizPackAnswer.findFirst({where : {room_id: room.id, user_id: user_id, number: question.number}})
       let isExist: any = await prisma.quizPackAnswer.findFirst({where : {room_id: room.id, number: question.number}})
       let isCorrect = question.answer_id == answer.id 
-      let score = isCorrect ? question.score : 0
+      let score = isCorrect ? (newScore ? newScore : question.score) : 0
       let total = roomUser.score + score
       let data = {
         room_id: room.id, 
