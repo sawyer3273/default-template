@@ -19,7 +19,7 @@ const props = defineProps({
     type: Boolean,
     default: true
   }, 
-  isTimer: {
+  isPlayMode: {
     type: Boolean,
     default: true
   }, 
@@ -62,7 +62,7 @@ onMounted(() => {
   if (props.isControl) {
     playerButton.value.addEventListener('click', toggleAudio);
   }
-  if (props.isTimer) {
+  if (props.isPlayMode) {
     playerButton2.value.addEventListener('click', toggleAudio);
   }
   audio.value.ontimeupdate = changeTimelinePosition;
@@ -171,7 +171,7 @@ function normalizeData(filteredData) {
 
     <div class='audio-text flex flex-wrap justify-center mt-2'>
     
-    <button v-if='isTimer' class='relative flex flex-wrap justify-center' ref="playerButton2">
+    <button v-if='isPlayMode' class='relative flex flex-wrap justify-center' ref="playerButton2">
         <span class='w-full text-2xl text-center mb -2'> Баллы: {{playText}} </span>
         <img class='w-12 ' :src='playerIcon' />
     </button>

@@ -205,7 +205,7 @@ function changeAudioScore(value) {
               <div class='h-full-minus-20 p-10 text-center flex justify-center items-center'>
                 <div class='h-full'>
                   <div class='flex justify-center h-full'><img v-if='correctAnswer.image'  :src='correctAnswer.image' /></div>
-                  <div class='text-2xl'>{{correctAnswer.answer.word}}</div>
+                  <div class='text-2xl' :class='answerInit == correctAnswer.answer.word ? "text-green-500": "text-red-500"' >{{correctAnswer.answer.word}}</div>
                 </div>
               </div>
             </template>

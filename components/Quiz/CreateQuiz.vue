@@ -75,12 +75,17 @@ let emptyValue = {
   libraryType: libraryOptions[0],  
   answer_id: "",
   pack_id: "",
+  slide: "",
 }
 let packRounds = ref([cloneDeep(emptyValue)])
 let packData = ref({
   logo: '',
   text: '',
 })
+
+function addSlide(i) {
+  packRounds.value[i].slide = 'Введите текст слайда'
+}
 
 function addNew() {
   packRounds.value.push(cloneDeep(emptyValue))
@@ -174,8 +179,22 @@ function onUploadAudio(data, i) {
               <div class='top-0 left-0 ml-6 mt-1 absolute font-bold'>#{{data.number}}</div>
               <BaseIcon class='cursor-pointer text-red-500 absolute top-1 right-5' :path="mdiDeleteCircleOutline"  @click="() => {toDeleteId = i; isModalDangerActive = true}" />
               <div class='row'>
+                <div v-if='data.slide' class='col-md-12 mt-1'>
+                  <label>Слайд</label>
+                  <FormControl type="textarea" v-model='data.slide' />
+                </div>
                 <div class='col-md-12'>
-                  <label>Тип вопроса</label>
+                  <div class='flex justify-between my-1'>
+                    <label>Тип вопроса</label>
+                    <BaseButton
+                      @click='addSlide(i)'
+                      :icon="mdiPlusBoxMultiple"
+                      label="Добавить слайд"
+                      color="contrast"
+                      rounded-full
+                      small
+                    />
+                  </div>
                   <FormControl v-model="data.type" :options="quizTypeOptions" />
                 </div>
                 <div class='col-md-12'>
@@ -194,7 +213,7 @@ function onUploadAudio(data, i) {
                   <template v-if='data.type && data.type.id=="audio"' >
                     <FormControl class='mt-2' type="textarea" v-model='data.text' placeholder="Введите oписание" />
                   <!--  <audio controls v-if='data.audio' :src="data.audio"></audio>-->
-                    <AudioPlayer class='mt-2 w-72 h-16' :url='data.audio' />
+                    <AudioPlayer class='mt-2 w-72 h-16' :url='data.audio' :isPlayMode='false'/>
                     <FormFilePicker class='mt-2' v-model="audioFile" :url='data.audio' accept='audio/*' type='audio' label="Загрузите аудио" @onUpload='(file) => onUploadAudio(file, i)' />
                   </template>
 
