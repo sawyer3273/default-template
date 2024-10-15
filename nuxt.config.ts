@@ -14,6 +14,8 @@ export default defineNuxtConfig({
     'nuxt-socket-io',
     //'vue3-carousel-nuxt',
   ],
+
+
   io: {
     // module options
     sockets: [{

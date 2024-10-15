@@ -335,6 +335,7 @@ export async function createQuizPack(req: Request, res: Response, _next: NextFun
         video: pack[i].video,
         audio: pack[i].audio,
         slide: pack[i].slide,
+        slideTime: pack[i].slideTime,
         type: pack[i].type.id,
         libraryType: pack[i].libraryType.id,
         answer_id: pack[i].answer_id.id,
@@ -461,8 +462,66 @@ export async function deleteImage(req: Request, ress: Response, _next: NextFunct
   }
 }
 
+export async function addSlide(req: Request, ress: Response, _next: NextFunction) {
+  try {
+    if (req.body.id) {
+      await prisma.slides.update({
+        where: {id: req.body.id},
+        data: {content: req.body.content, name: req.body.name},
+      });
+    } else {
+      await prisma.slides.create({
+        data: {content: req.body.content, name: req.body.name},
+      });
+    }
+    let data = await prisma.slides.findMany({
+      where: {},
+    });
+   
+    return ress.json({
+      success: true,
+      data
+    });
+  } catch (err) {
+    console.log('err',err)
+    return errorHandler(createError.InternalServerError(), req, ress)
+  }
+}
 
+export async function getSlides(req: Request, ress: Response, _next: NextFunction) {
+  try {
+   let data = await prisma.slides.findMany({
+      where: {},
+    });
+   
+    return ress.json({
+      success: true,
+      data
+    });
+  } catch (err) {
+    console.log('err',err)
+    return errorHandler(createError.InternalServerError(), req, ress)
+  }
+}
 
+export async function deleteSlide(req: Request, ress: Response, _next: NextFunction) {
+  try {
+    await prisma.slides.delete({
+      where: {id: req.body.id},
+    });
+  
+    let data = await prisma.slides.findMany({
+      where: {},
+    });
+    return ress.json({
+      success: true,
+      data
+    });
+  } catch (err) {
+    console.log('err',err)
+    return errorHandler(createError.InternalServerError(), req, ress)
+  }
+}
 
 
 
@@ -487,6 +546,9 @@ export const routes: RouteConfig = {
     { method: 'post', path: '/upload', handler: [afterSignupAuth, isAdmin, upload.single('file'), uploadFile] },
     { method: 'post', path: '/image', handler: [afterSignupAuth, isAdmin, addImage] },
     { method: 'delete', path: '/image', handler: [afterSignupAuth, isAdmin, deleteImage] },
+    { method: 'get', path: '/slide', handler: [afterSignupAuth, isAdmin, getSlides] },
+    { method: 'post', path: '/slide', handler: [afterSignupAuth, isAdmin, addSlide] },
+    { method: 'delete', path: '/slide', handler: [afterSignupAuth, isAdmin, deleteSlide] },
 
     
   ],

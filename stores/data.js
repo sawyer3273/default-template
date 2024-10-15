@@ -3,6 +3,8 @@ import { ref } from 'vue'
 
 export const useDataStore = defineStore('data', () => {
 
+  const slides = ref([])
+
   const actors = ref([])
   const actors_count = ref(0)
 
@@ -85,7 +87,16 @@ export const useDataStore = defineStore('data', () => {
       roomsActive.value = payload.roomsActive
     }
   }
+
+  function setSlides(payload) {
+    console.log('payload',payload)
+    if (payload.data) {
+      slides.value = payload.data
+    }
+  }
+  
   return {
+    slides,
     actors,
     actors_count,
     movies,
@@ -106,6 +117,7 @@ export const useDataStore = defineStore('data', () => {
     setPacksCast,
     setPacksQuiz,
     setSearchData,
-    setRooms
+    setRooms,
+    setSlides
   }
 })

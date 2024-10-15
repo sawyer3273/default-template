@@ -290,6 +290,7 @@ model QuizPackRound {
   type      String  @default("text")
   libraryType  String  @default("movie")
   slide     String?
+  slideTime     Int?
 
   answer_id   Int?
   pack_id     Int
@@ -330,4 +331,11 @@ model QuizResult {
   pack_id   Int
   pack      QuizPack @relation(fields: [pack_id], references: [id])
   createdAt DateTime @default(now())
+}
+
+model Slides {
+  id          Int     @id @default(autoincrement())
+  content     String
+  name     String
+  createdAt   DateTime @default(now())
 }

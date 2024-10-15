@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue'
 import { useMainStore } from '@/stores/main'
+import { useDataStore } from '@/stores/data'
 import {
   mdiNoteEdit,
   mdiPlusBoxMultiple, mdiAccountPlusOutline, mdiDeleteCircleOutline
@@ -13,9 +14,11 @@ import { dataService } from '~/utils/services/data.service'
 import { cloneDeep } from 'lodash'
 import { useToast } from "vue-toastification";
 import { libraryOptions, quizTypeOptions } from '~/constants'
+import SaveSlide from '~/components/Quiz/SaveSlide'
 const toast = useToast();
 
 const mainStore = useMainStore()
+const dataStore = useDataStore()
 const router = useRouter()
 const route = useRoute()
 
@@ -33,6 +36,7 @@ onMounted(async () => {
 
 onBeforeMount(async () => {
   try {
+    adminService.getSlides()
     if (props.isUpdate) {
 
       let data = await dataService.getPacksQuiz({id: route.params.id})
@@ -85,6 +89,12 @@ let packData = ref({
 
 function addSlide(i) {
   packRounds.value[i].slide = 'Введите текст слайда'
+  packRounds.value[i].slideTime = 10
+}
+
+function removeSlide(i) {
+  packRounds.value[i].slide = ''
+  packRounds.value[i].slideTime = 0
 }
 
 function addNew() {
@@ -155,7 +165,7 @@ function onUploadAudio(data, i) {
 </script>
 
 <template>
- 
+ <ClientOnly fallback-tag="span">
       <CardBoxModal v-model="isModalDangerActive" :title="$t('deleteSure')" button="danger" has-cancel>
         <BaseButton label="Ok" color="contrast" @click="deleteAction" />
       </CardBoxModal>
@@ -180,16 +190,26 @@ function onUploadAudio(data, i) {
               <BaseIcon class='cursor-pointer text-red-500 absolute top-1 right-5' :path="mdiDeleteCircleOutline"  @click="() => {toDeleteId = i; isModalDangerActive = true}" />
               <div class='row'>
                 <div v-if='data.slide' class='col-md-12 mt-1'>
-                  <label>Слайд</label>
-                  <FormControl type="textarea" v-model='data.slide' />
+                  <SaveSlide v-model='data.slide' :slideTime='data.slideTime' :slides='dataStore.slides' :content='data.slide' @changeTime='(v) => data.slideTime = v'/>
+                  <Editor v-model='data.slide' />
                 </div>
                 <div class='col-md-12'>
                   <div class='flex justify-between my-1'>
                     <label>Тип вопроса</label>
                     <BaseButton
+                      v-if='!data.slide'
                       @click='addSlide(i)'
                       :icon="mdiPlusBoxMultiple"
                       label="Добавить слайд"
+                      color="contrast"
+                      rounded-full
+                      small
+                    />
+                    <BaseButton
+                      v-else
+                      @click='removeSlide(i)'
+                      :icon="mdiPlusBoxMultiple"
+                      label="Удалить слайд"
                       color="contrast"
                       rounded-full
                       small
@@ -263,6 +283,6 @@ function onUploadAudio(data, i) {
       </SectionMain>
 
      
-
+</ClientOnly>
 
 </template>

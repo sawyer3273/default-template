@@ -17,7 +17,10 @@ export const adminService = {
     deleteQuizItemPack,
     updateMovie,
     addImage,
-    deleteImage
+    deleteImage,
+    addSlide,
+    deleteSlide,
+    getSlides
 };
 
 async function deleteActor(payload) {
@@ -228,6 +231,52 @@ async function deleteImage(payload) {
     return fetch(`/api/admin/image`, requestOptions)
         .then(handleResponse)
         .then(resp => {
+            return resp;
+        });
+}
+
+
+
+
+async function getSlides(payload) {
+    const requestOptions = {
+        method: 'GET',
+        headers: await authHeader(true),
+        body: JSON.stringify(payload)
+    };
+    const dataStore = useDataStore()
+    return fetch(`/api/admin/slide`, requestOptions)
+        .then(handleResponse)
+        .then(resp => {
+            dataStore.setSlides(resp)
+            return resp;
+        });
+}
+async function addSlide(payload) {
+    const requestOptions = {
+        method: 'POST',
+        headers: await authHeader(true),
+        body: JSON.stringify(payload)
+    };
+    const dataStore = useDataStore()
+    return fetch(`/api/admin/slide`, requestOptions)
+        .then(handleResponse)
+        .then(resp => {
+            dataStore.setSlides(resp)
+            return resp;
+        });
+}
+async function deleteSlide(payload) {
+    const requestOptions = {
+        method: 'DELETE',
+        headers: await authHeader(true),
+        body: JSON.stringify(payload)
+    };
+    const dataStore = useDataStore()
+    return fetch(`/api/admin/slide`, requestOptions)
+        .then(handleResponse)
+        .then(resp => {
+            dataStore.setSlides(resp)
             return resp;
         });
 }
