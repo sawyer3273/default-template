@@ -250,7 +250,11 @@ export async function getRoom(req: any, res: Response, _next: NextFunction) {
       if (correctAnswer && correctAnswer.length) {
         let left = (room.timeStarted + correctAnswer[0].time + correctAnswer[0].slideTime) - currentTime 
         leftSlide = (room.timeStarted + correctAnswer[0].slideTime) - currentTime 
+        if (correctAnswer.abcd) {
+          correctAnswer.answer = {word: correctAnswer.abcd.split(',')[0]}
+        }
         correctAnswer = left <= 0 ? correctAnswer[0] : null
+        
       }
     }
     return res.json({

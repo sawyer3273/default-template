@@ -1,6 +1,7 @@
 <script setup>
 import { computed, useSlots } from 'vue'
-import Timer from '@/components/Quiz/Timer'
+import Timer from '@/components/Quiz/game/Timer'
+import AbcdInput from '@/components/Quiz/game/AbcdInput'
 import { mdiCheck, mdiCheckAll, mdiChatOutline, mdiChatAlertOutline} from '@mdi/js'
 
 const props = defineProps({
@@ -47,6 +48,10 @@ function trySubmit() {
   emit('onAnswer', answer.value, newScore.value)
   answer.value = ''
 } 
+
+function abcdChoose(answer) {
+  emit('onAnswer', {id: null, text: answer}, null, 'abcd')
+}
 
 const hideTimer = ref(false)
 function onVideoEnd() {
@@ -212,18 +217,23 @@ function changeAudioScore(value) {
                 </template>
               </template>
             </template>
+
+            
             <template v-else>
-              <div class='h-full-minus-20 p-10 text-center flex justify-center items-center'>
+              <div :class='question.libraryType == "abcd" ? "h-full-minus-60": "h-full-minus-20"' class=' p-10 text-center flex justify-center items-center'>
                 <div class='h-full'>
-                  <div class='flex justify-center h-full'><img v-if='correctAnswer.image'  :src='correctAnswer.image' /></div>
-                  <div class='text-2xl' :class='answerInit == correctAnswer.answer.word ? "text-green-500": "text-red-500"' >{{correctAnswer.answer.word}}</div>
+                  <div class='flex justify-center h-full'><img v-if='correctAnswer.image'  :src='correctAnswer.image' /><img v-if='correctAnswer.answerImage'  :src='correctAnswer.answerImage' /></div>
+                  <div class='text-2xl' :class='question.libraryType == "abcd" ? "text-black" : (answerInit == correctAnswer.answer.word ? "text-green-500": "text-red-500")' >{{correctAnswer.answer.word}}</div>
                 </div>
               </div>
             </template>
         </div>
         <div class='absolute bottom-0 w-full p-2'>
           <div v-if='submited.word || answerInit'>Ваш ответ: {{submited.word || answerInit}}</div>
-          <div class='flex items-center flex-wrap md:!flex-nowrap'>
+          <div v-if='question.libraryType == "abcd"' class='row'>
+            <AbcdInput :variants='question.abcd' :correct='correctAnswer && correctAnswer.answer &&  correctAnswer.answer.word' @onChoose='(a) => abcdChoose(a)'/>
+          </div>
+          <div v-else class='flex items-center flex-wrap md:!flex-nowrap'>
             <div class='w-full '><AutoSelect  v-model="answer" :searchF='"librarySearch"' :library='question.libraryType' placeholder="Ответ"  /></div> 
             <div class='md:ml-2 w-full md:w-fit'><BaseButton :label="'Подтвердить'"  color="info" @click='trySubmit' class='w-full h-12 md:w-fit ' :class='!answer.id ? "disabled": ""' /></div>
           </div>

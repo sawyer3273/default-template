@@ -14,7 +14,8 @@ import { dataService } from '~/utils/services/data.service'
 import { cloneDeep } from 'lodash'
 import { useToast } from "vue-toastification";
 import { libraryOptions, quizTypeOptions } from '~/constants'
-import SaveSlide from '~/components/Quiz/SaveSlide'
+import SaveSlide from '~/components/Quiz/create/SaveSlide'
+import AbcdEditor from '~/components/Quiz/create/AbcdEditor'
 const toast = useToast();
 
 const mainStore = useMainStore()
@@ -78,6 +79,7 @@ let emptyValue = {
   type: quizTypeOptions[0],      
   libraryType: libraryOptions[0],  
   answer_id: "",
+  answerImage: "",
   pack_id: "",
   slide: "",
 }
@@ -129,9 +131,26 @@ async function save() {
         errors.push(i+1)
       }
     }
-    if (!one.answer_id) {
-      errors.push(i+1)
+    if (one.type == 'audio') {
+      if (!one.type.id || !one.answer.id || !one.audio) {
+        errors.push(i+1)
+      }
     }
+    if (one.type == 'video') {
+      if (!one.type.id || !one.answer.id || !one.video) {
+        errors.push(i+1)
+      }
+    }
+    if (one.libraryType.id == 'abcd') {
+      if (!one.abcd || one.abcd.includes('%%%')) {
+        errors.push(i+1)
+      }
+    } else {
+      if (!one.answer_id ) {
+        errors.push(i+1)
+      }
+    }
+    
   })
   if (!packData.value.logo) {
     toast.error('Загрузите главную картинку'); return
@@ -232,24 +251,32 @@ function onUploadAudio(data, i) {
                 <!--  Audio -->
                   <template v-if='data.type && data.type.id=="audio"' >
                     <FormControl class='mt-2' type="textarea" v-model='data.text' placeholder="Введите oписание" />
-                  <!--  <audio controls v-if='data.audio' :src="data.audio"></audio>-->
                     <AudioPlayer class='mt-2 w-72 h-16' :url='data.audio' :isPlayMode='false'/>
                     <FormFilePicker class='mt-2' v-model="audioFile" :url='data.audio' accept='audio/*' type='audio' label="Загрузите аудио" @onUpload='(file) => onUploadAudio(file, i)' />
                   </template>
 
-
-
+                <!--  Longintude -->
                   <label class='mt-2' >Длительность</label>
                   <FormControl type="number" v-model='data.time' placeholder="Длительность" />
 
-                  <!--<template v-if='data.type && ["text"].includes(data.type.id)'>-->
-                  
-                    <label class='mt-4'>Ответ</label>
-                    <FormControl v-model="data.libraryType" :options="libraryOptions"  />
+                <!--  Answer -->
+                  <label class='mt-4'>Ответ</label>
+                  <FormControl v-model="data.libraryType" :options="libraryOptions"  />
+                  <template v-if='data.libraryType.id == "abcd"'>
+                    <div class='row'>
+                      <div class='col-md-6'>
+                        <AbcdEditor v-model='packRounds[i].abcd' />
+                      </div>
+                      <div class='col-md-6'>
+                        <CropperCust :placeholder='"horizon"' :classProp='"mt-4"' :ratio='0' folder='answer' v-model='packRounds[i].answerImage' /> 
+                      </div>
+                    </div>
+                  </template>
+                  <template v-else>
                     <AutoSelect :key='packRounds[i].answer_id+"auto"+i' v-model="packRounds[i].answer_id" :searchF='"librarySearch"' :library='data.libraryType.id' placeholder="Ответ"  class='mt-2'/>
-               
                     <ImagesUpload :key='packRounds[i].answer_id+"images"+i' class='mt-2' v-model='packRounds[i].image' :imagesToSelect='packRounds[i].answer_id.LibraryImages' :folder='data.libraryType.id' :libraryId='packRounds[i].answer_id.id'  />
-                 
+                  </template>
+                  
               
 
                 </div>

@@ -291,7 +291,10 @@ model QuizPackRound {
   libraryType  String  @default("movie")
   slide     String?
   slideTime     Int?
+  abcd  String?
 
+  textAnswer  String?
+  answerImage  String?
   answer_id   Int?
   pack_id     Int
   answer      Library?   @relation(fields: [answer_id], references: [id])

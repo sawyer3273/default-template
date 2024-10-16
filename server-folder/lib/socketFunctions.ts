@@ -363,6 +363,9 @@ const setQuestion = async (io: Server, roomData: any, questionNumber: any) => {
 
 const setQuestionAnswer = async (io: Server, room: any, question: any) => {
   try {
+    if (question.abcd) {
+      question.answer = {word: question.abcd.split(',')[0]}
+    }
     io.to(room.token).emit('showAnswer', question);
     setTimeout(async () => {
       setQuestion(io, room, question.number + 1)
@@ -394,26 +397,35 @@ export const updateTable = async (room: any) => {
   return roomUsers
 }
 
-export const answerQuiz = async (io: Server, answer: any, room: any, user_id: any, question: any, newScore: any) => {
+export const answerQuiz = async (io: Server, answer: any, room: any, user_id: any, question: any, newScore: any, type: any) => {
   try {
     let roomUser: any = await prisma.roomUsers.findFirst({where : {room_id: room.id, user_id: user_id}})
     if (roomUser) {
       let QuizPackAnswer: any = await prisma.quizPackAnswer.findFirst({where : {room_id: room.id, user_id: user_id, number: question.number}})
       let isExist: any = await prisma.quizPackAnswer.findFirst({where : {room_id: room.id, number: question.number}})
       let isCorrect = question.answer_id == answer.id 
+      if (type == 'abcd') {
+        let correct = question.abcd.split(',')[0]
+        console.log('correct',correct)
+        console.log('answer',answer)
+        console.log('room',room)
+        isCorrect = correct == answer.text
+      }
       let score = isCorrect ? (newScore ? newScore : question.score) : 0
       let total = roomUser.score + score
-      let data = {
+      let data: any = {
         room_id: room.id, 
         pack_id: room.pack_id, 
         user_id: user_id, 
         number: question.number,
-        answer_id: answer.id,
         textAnswer: answer.text ? answer.text : '',
         isCorrect: isCorrect,
         score: score,
         total: total,
         isFirst: isExist ? false: true
+      }
+      if (answer.id) {
+        data.answer_id = answer.id
       }
       if (QuizPackAnswer) {
         await prisma.quizPackAnswer.update({where: {id: QuizPackAnswer.id}, data})

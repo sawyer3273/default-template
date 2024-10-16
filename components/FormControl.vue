@@ -130,7 +130,7 @@ if (props.ctrlKFocus) {
 </script>
 
 <template>
-  <div class="relative min-w-48">
+  <div :class="computedType === 'select' ? 'min-w-48': ''" class="relative ">
     <select
       v-if="computedType === 'select'"
       :id="id"
