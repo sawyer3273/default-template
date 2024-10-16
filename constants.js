@@ -18,4 +18,5 @@ export const libraryOptions = [
     { id: 'movie', label: 'Тип ответа: фильм' },
     { id: 'person', label: 'Тип ответа: актер' },
     { id: 'abcd', label: 'Тип ответа: абвг' },
+    { id: 'comparison', label: 'Тип ответа: сопоставление' },
   ]

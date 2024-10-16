@@ -292,6 +292,8 @@ model QuizPackRound {
   slide     String?
   slideTime     Int?
   abcd  String?
+  comparison  String?
+  isComparisonImage  Boolean?
 
   textAnswer  String?
   answerImage  String?

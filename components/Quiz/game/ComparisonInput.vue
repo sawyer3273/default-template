@@ -9,11 +9,21 @@ const props = defineProps({
 
 const emit = defineEmits(['onChoose'])
 
-const data = ref([])
+const data1 = ref([])
+
+const data2 = ref([])
 onMounted(() => {
     let res = props.variants.split(',')
-    res = shuffle(res)
-    data.value = res
+    console.log('res',res)
+    res.map((one, i) => {
+        if (i % 2 == 0) {
+            data1.value.push(one)
+        } else {
+            data2.value.push(one)
+        }
+    })
+    data1.value = shuffle(data1.value)
+    data2.value = shuffle(data2.value)
 })
 
 const choosen = ref('')
@@ -25,8 +35,10 @@ function choose(i) {
 </script>
 
 <template>
-{{data}}
-    <div v-for='(one, i) in data' :class='data.length <= 2 ? "col-md-12": ( data.length <= 4  ? "col-md-6" : (data.length <= 6 ? "col-md-4": "col-md-3"))' @click='choose(one)'>
+    <div v-for='(one, i) in data1' :class='data1.length <= 2 ? "col-md-12": ( data1.length <= 4  ? "col-md-6" : (data1.length <= 6 ? "col-md-4": "col-md-3"))' @click='choose(one)'>
+        <div class='p-1 text-center btn-grad rounded-lg mt-1 cursor-pointer' :class='choosen == one ? (correct == one ? "correct" : (correct ? "false" : "choosen")): ""'>{{one}}</div>
+    </div>
+    <div v-for='(one, i) in data2' :class='data2.length <= 2 ? "col-md-12": ( data2.length <= 4  ? "col-md-6" : (data2.length <= 6 ? "col-md-4": "col-md-3"))' @click='choose(one)'>
         <div class='p-1 text-center btn-grad rounded-lg mt-1 cursor-pointer' :class='choosen == one ? (correct == one ? "correct" : (correct ? "false" : "choosen")): ""'>{{one}}</div>
     </div>
 </template>

@@ -2,6 +2,7 @@
 import { computed, useSlots } from 'vue'
 import Timer from '@/components/Quiz/game/Timer'
 import AbcdInput from '@/components/Quiz/game/AbcdInput'
+import ComparisonInput from '@/components/Quiz/game/ComparisonInput'
 import { mdiCheck, mdiCheckAll, mdiChatOutline, mdiChatAlertOutline} from '@mdi/js'
 
 const props = defineProps({
@@ -50,6 +51,10 @@ function trySubmit() {
 } 
 
 function abcdChoose(answer) {
+  emit('onAnswer', {id: null, text: answer}, null, 'abcd')
+}
+
+function comparisonChoose(answer) {
   emit('onAnswer', {id: null, text: answer}, null, 'abcd')
 }
 
@@ -221,7 +226,7 @@ function changeAudioScore(value) {
             
             <template v-else>
               <div :class='question.libraryType == "abcd" ? "h-full-minus-60": "h-full-minus-20"' class=' p-10 text-center flex justify-center items-center'>
-                <div class='h-full'>
+                <div class='h-full' v-if='correctAnswer && correctAnswer.answer'>
                   <div class='flex justify-center h-full'><img v-if='correctAnswer.image'  :src='correctAnswer.image' /><img v-if='correctAnswer.answerImage'  :src='correctAnswer.answerImage' /></div>
                   <div class='text-2xl' :class='question.libraryType == "abcd" ? "text-black" : (answerInit == correctAnswer.answer.word ? "text-green-500": "text-red-500")' >{{correctAnswer.answer.word}}</div>
                 </div>
@@ -232,6 +237,9 @@ function changeAudioScore(value) {
           <div v-if='submited.word || answerInit'>Ваш ответ: {{submited.word || answerInit}}</div>
           <div v-if='question.libraryType == "abcd"' class='row'>
             <AbcdInput :variants='question.abcd' :correct='correctAnswer && correctAnswer.answer &&  correctAnswer.answer.word' @onChoose='(a) => abcdChoose(a)'/>
+          </div>
+          <div v-if='question.libraryType == "comparison"' class='row'>
+            <ComparisonInput :variants='question.comparison' :correct='correctAnswer && correctAnswer.answer &&  correctAnswer.answer.word' @onChoose='(a) => comparisonChoose(a)'/>
           </div>
           <div v-else class='flex items-center flex-wrap md:!flex-nowrap'>
             <div class='w-full '><AutoSelect  v-model="answer" :searchF='"librarySearch"' :library='question.libraryType' placeholder="Ответ"  /></div> 

@@ -326,7 +326,7 @@ export async function createQuizPack(req: Request, res: Response, _next: NextFun
       });
     }
     for (let i = 0; i < pack.length; i++) {
-      let data =  {
+      let data: any =  {
         text: pack[i].text,
         number: pack[i].number,
         score: pack[i].score,
@@ -336,12 +336,16 @@ export async function createQuizPack(req: Request, res: Response, _next: NextFun
         video: pack[i].video,
         audio: pack[i].audio,
         abcd: pack[i].abcd,
+        comparison: pack[i].comparison,
+        isComparisonImage: pack[i].isComparisonImage,
         slide: pack[i].slide,
         slideTime: parseInt(pack[i].slideTime),
         type: pack[i].type.id,
         libraryType: pack[i].libraryType.id,
-        answer_id: pack[i].answer_id.id,
         pack_id: result.id
+      }
+      if (pack[i].answer_id) {
+        data.answer_id = pack[i].answer_id.id
       }
       if (pack[i].id) {
         await prisma.quizPackRound.update({

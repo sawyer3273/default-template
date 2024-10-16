@@ -16,6 +16,7 @@ import { useToast } from "vue-toastification";
 import { libraryOptions, quizTypeOptions } from '~/constants'
 import SaveSlide from '~/components/Quiz/create/SaveSlide'
 import AbcdEditor from '~/components/Quiz/create/AbcdEditor'
+import ComparisonEditor from '~/components/Quiz/create/ComparisonEditor'
 const toast = useToast();
 
 const mainStore = useMainStore()
@@ -145,6 +146,10 @@ async function save() {
       if (!one.abcd || one.abcd.includes('%%%')) {
         errors.push(i+1)
       }
+    } else if (one.libraryType.id == 'comparison') {
+      if (!one.comparison || one.comparison.includes('%%%')) {
+        errors.push(i+1)
+      }
     } else {
       if (!one.answer_id ) {
         errors.push(i+1)
@@ -261,7 +266,20 @@ function onUploadAudio(data, i) {
 
                 <!--  Answer -->
                   <label class='mt-4'>Ответ</label>
-                  <FormControl v-model="data.libraryType" :options="libraryOptions"  />
+                  <div class='row'>
+                    <div :class='data.libraryType.id == "comparison" ? "col-md-6": "col-md-12"'>
+                      <FormControl v-model="data.libraryType" :options="libraryOptions"  />
+                    </div>
+                    <div v-if='data.libraryType.id == "comparison"' :class='"col-md-6"'>
+                      <FormCheckRadio
+                        v-model="data.isComparisonImage"
+                        name="isComparisonImageh"
+                        :label="'Картинка - Текст'"
+                        :input-value="true"
+                      />
+                    </div>
+                  </div>
+                  
                   <template v-if='data.libraryType.id == "abcd"'>
                     <div class='row'>
                       <div class='col-md-6'>
@@ -271,6 +289,9 @@ function onUploadAudio(data, i) {
                         <CropperCust :placeholder='"horizon"' :classProp='"mt-4"' :ratio='0' folder='answer' v-model='packRounds[i].answerImage' /> 
                       </div>
                     </div>
+                  </template>
+                  <template v-if='data.libraryType.id == "comparison"'>
+                    <ComparisonEditor v-model='packRounds[i].comparison' :isComparisonImage='data.isComparisonImage'/>
                   </template>
                   <template v-else>
                     <AutoSelect :key='packRounds[i].answer_id+"auto"+i' v-model="packRounds[i].answer_id" :searchF='"librarySearch"' :library='data.libraryType.id' placeholder="Ответ"  class='mt-2'/>
