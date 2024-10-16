@@ -57,6 +57,7 @@ onMounted(async () => {
   handleDebounce = debounce(async function (val) {
     if (val !== null) socket.emit('changeRoomName',room.value, val);
   }, 500);
+  let leftSlide = 0
   let roomData = await dataService.getRoom({id: route.params.id, pack_id: route.query.id})
   let currentTime = 0
   if (roomData.data) {
@@ -68,7 +69,7 @@ onMounted(async () => {
       if (roomData.correctAnswer) {
         correctAnswer.value = roomData.correctAnswer
       }
-      
+      leftSlide = roomData.leftSlide
   }
   let isInRoom = roomData.data.RoomUser ? roomData.data.RoomUser.find(one => one.user_id == userStore.user.id): false
   if (isInRoom || !room.value.isActive) {
@@ -86,6 +87,9 @@ onMounted(async () => {
     }
     if (pack.value.QuizPackRound) {
       currentQuestion.value = pack.value.QuizPackRound[room.value.question - 1]
+      if (leftSlide <= 0) {
+        currentQuestion.value.slide = ''
+      }
     }
     if (room.value.isActive) {
       timer.value = currentQuestion.value.time
@@ -131,7 +135,11 @@ onMounted(async () => {
       answer.value = ''
       correctAnswer.value = {}
     })
-    
+
+    socket.on('finishSlide', (questionNumber, question) => { 
+      currentQuestion.value.slide = ''
+    })
+
     socket.on('finishQuestion', (roomUsers) => { 
       quizUsers.value = roomUsers
     })
@@ -142,13 +150,11 @@ onMounted(async () => {
     
 
     socket.on('finishAll', (data) => { 
-      console.log('finishAll, ', data)
       room.value.isFinished = true
     })
 
     socket.on('userAnswered', (user, type) => { 
       quizUsers.value.map((one, i) => {
-        console.log('type',type)
         if (one.user_id == user.user_id) {
           quizUsers.value[i].answerType = type
         }

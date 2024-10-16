@@ -172,33 +172,44 @@ function changeAudioScore(value) {
               <div class='absolute left-0 bg-blue-500 px-2 h-8 items-center text-center flex justify-center text-white rounded-lg'>
               Вопрос #{{question.number}}
               </div>
-              <Timer v-if='timer' :hide='hideTimer' :value='timer' :round='question.number' :isStarted='question.number ? true : false' @onEnd='onTimerStop' @onTimeUrpdate='(time) => timerUpdate(time)' />
+              <Timer v-if='timer && !!!question.slide' :hide='hideTimer' :value='timer' :round='question.number' :isStarted='question.number ? true : false' @onEnd='onTimerStop' @onTimeUrpdate='(time) => timerUpdate(time)' />
             </div>
             <template v-if='!Object.keys(correctAnswer).length'>
-              <template v-if='question.type=="text"'>
-                <div class='h-full-minus-20 p-10 text-center flex justify-center items-center'>
-                  {{question.text}}
+           
+              <template v-if='question.slide'>
+              <div class='ql-snow h-full-minus-20 text-center flex justify-center items-center'>
+                <div class='ql-editor'>
+                  <div v-html='question.slide' > </div>
                 </div>
+              </div>
+             
               </template>
-              <template v-if='question.type=="video"'>
-                <div class='h-full-minus-20 p-10 text-center flex justify-center items-center'>
-                  <div class='h-full'>
-                    <div class='text-center flex justify-center items-center'>
-                      {{question.text}}
-                    </div>
-                    <VideoPlayer class='flex justify-center h-full rounded-xl overflow-hidden' :url='question.video' :isAutoStart='true' @onEnd='onVideoEnd' />
+              <template v-else>
+                <template v-if='question.type=="text"'>
+                  <div class='h-full-minus-20 p-10 text-center flex justify-center items-center'>
+                    {{question.text}}
                   </div>
-                </div>
-              </template>
-              <template v-if='question.type=="audio"'>
-                <div class='h-full-minus-20 p-10 text-center flex justify-center items-center'>
-                  <div class=' w-full'>
-                    <div class='text-center flex justify-center items-center mb-10'>
-                      {{question.text}}
+                </template>
+                <template v-if='question.type=="video"'>
+                  <div class='h-full-minus-20 p-10 text-center flex justify-center items-center'>
+                    <div class='h-full'>
+                      <div class='text-center flex justify-center items-center'>
+                        {{question.text}}
+                      </div>
+                      <VideoPlayer class='flex justify-center h-full rounded-xl overflow-hidden' :url='question.video' :isAutoStart='true' @onEnd='onVideoEnd' />
                     </div>
-                    <AudioPlayer class='w-full h-32 max-h-32' :playText='newScore' :isControl='false' :url='question.audio' :isAutoStart='true' @onEnd='onAudioEnd' @onTimeUpdate='changeAudioScore'/>
                   </div>
-                </div>
+                </template>
+                <template v-if='question.type=="audio"'>
+                  <div class='h-full-minus-20 p-10 text-center flex justify-center items-center'>
+                    <div class=' w-full'>
+                      <div class='text-center flex justify-center items-center mb-10'>
+                        {{question.text}}
+                      </div>
+                      <AudioPlayer class='w-full h-32 max-h-32' :playText='newScore' :isControl='false' :url='question.audio' :isAutoStart='true' @onEnd='onAudioEnd' @onTimeUpdate='changeAudioScore'/>
+                    </div>
+                  </div>
+                </template>
               </template>
             </template>
             <template v-else>

@@ -335,7 +335,7 @@ export async function createQuizPack(req: Request, res: Response, _next: NextFun
         video: pack[i].video,
         audio: pack[i].audio,
         slide: pack[i].slide,
-        slideTime: pack[i].slideTime,
+        slideTime: parseInt(pack[i].slideTime),
         type: pack[i].type.id,
         libraryType: pack[i].libraryType.id,
         answer_id: pack[i].answer_id.id,

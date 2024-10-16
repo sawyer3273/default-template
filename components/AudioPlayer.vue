@@ -58,7 +58,9 @@ function toggleAudio () {
 const audioContext = ref(null)
 
 let timout = ref(null)
+let ended = ref(false)
 onMounted(() => {
+  document.addEventListener('keydown', onKeyDown);
   if (props.isControl) {
     playerButton.value.addEventListener('click', toggleAudio);
   }
@@ -98,7 +100,15 @@ function changeTimelinePosition () {
 }
 
 function audioEnded () {
+  ended.value = true
   emit('onEnd')
+}
+
+function onKeyDown(key) {
+  console.log('key.code',key.code)
+  if ((key.code == 'ControlLeft' || key.code == 'ControlRight') && !ended.value) {
+    toggleAudio()
+  }
 }
 
 function moveTo (i) {
@@ -171,9 +181,9 @@ function normalizeData(filteredData) {
 
     <div class='audio-text flex flex-wrap justify-center mt-2'>
     
-    <button v-if='isPlayMode' class='relative flex flex-wrap justify-center' ref="playerButton2">
+    <button v-if='isPlayMode' class='relative flex flex-wrap justify-center' >
         <span class='w-full text-2xl text-center mb -2'> Баллы: {{playText}} </span>
-        <img class='w-12 ' :src='playerIcon' />
+        <img :class='!ended ? "": "opacity-0 disabled"' class='w-12 ' :src='playerIcon' ref="playerButton2"/>
     </button>
 
     </div>

@@ -331,10 +331,13 @@ const setQuestion = async (io: Server, roomData: any, questionNumber: any) => {
       })
       io.to(room.token).emit('setQuestion', questionNumber, question);
       setTimeout(async () => {
+        io.to(room.token).emit('finishSlide');
+      }, (question.slideTime) * 1000)
+      setTimeout(async () => {
         let roomUsers = await updateTable(room)
         io.to(room.token).emit('finishQuestion', roomUsers);
         setQuestionAnswer(io, room, question)
-      }, question.time * 1000)
+      }, (question.time + question.slideTime) * 1000)
     } else {
       await prisma.room.update({
         where:  { id: room.id },    data: {isFinished: true, timeStarted: 0}

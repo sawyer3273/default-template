@@ -242,13 +242,14 @@ export async function getRoom(req: any, res: Response, _next: NextFunction) {
       }
     }
     let currentTime = parseInt((new Date().getTime() / 1000).toString())
-   
+    let leftSlide = 0
     let answer: any = await prisma.quizPackAnswer.findMany({where : {room_id: room.id, number: room.question, user_id: res.locals.auth.id}, include: {answer: true}})
     let correctAnswer: any = null
     if (room.pack_id) {
       correctAnswer = await prisma.quizPackRound.findMany({where : {number: room.question, pack_id: room.pack_id}, include: {answer: true}})
       if (correctAnswer && correctAnswer.length) {
-        let left = (room.timeStarted + correctAnswer[0].time) - currentTime 
+        let left = (room.timeStarted + correctAnswer[0].time + correctAnswer[0].slideTime) - currentTime 
+        leftSlide = (room.timeStarted + correctAnswer[0].slideTime) - currentTime 
         correctAnswer = left <= 0 ? correctAnswer[0] : null
       }
     }
@@ -257,7 +258,8 @@ export async function getRoom(req: any, res: Response, _next: NextFunction) {
       data: room,
       correctAnswer,
       answer: answer ? answer[0]: null,
-      currentTime
+      currentTime,
+      leftSlide
     });
     
   } catch (err) {
