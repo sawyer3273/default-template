@@ -1,10 +1,12 @@
 <script setup>
 import { computed, useSlots } from 'vue'
 import { shuffle } from '~/utils/common'
+import { mdiDragVertical, mdiDragHorizontal } from '@mdi/js'
 
 const props = defineProps({
     variants: String,
-    correct: String
+    correct: String,
+    isImage: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['onChoose'])
@@ -13,8 +15,13 @@ const data1 = ref([])
 
 const data2 = ref([])
 onMounted(() => {
+    init()
+})
+
+function init() {
+    data1.value = []
+    data2.value = []
     let res = props.variants.split(',')
-    console.log('res',res)
     res.map((one, i) => {
         if (i % 2 == 0) {
             data1.value.push(one)
@@ -24,7 +31,11 @@ onMounted(() => {
     })
     data1.value = shuffle(data1.value)
     data2.value = shuffle(data2.value)
-})
+}
+
+watch(() => props.variants, () => {
+    init()
+}) 
 
 const choosen = ref('')
 
@@ -35,14 +46,50 @@ function choose(i) {
 </script>
 
 <template>
-    <div v-for='(one, i) in data1' :class='data1.length <= 2 ? "col-md-12": ( data1.length <= 4  ? "col-md-6" : (data1.length <= 6 ? "col-md-4": "col-md-3"))' @click='choose(one)'>
-        <div class='p-1 text-center btn-grad rounded-lg mt-1 cursor-pointer' :class='choosen == one ? (correct == one ? "correct" : (correct ? "false" : "choosen")): ""'>{{one}}</div>
+<div class='text-center w-full text-gray-500 text-xs mb-2'>Перетащите <span class='border-dashed rounded-lg border-2 p-1 border-gray-400'>блоки</span> на соответсвующие места</div>
+    <div v-if='isImage'>
+        <div class='row px-6'>
+            <div v-for='(one, i) in data1' class="col-md-3 flex justify-center">
+                <img :src='one' class='rounded-lg images' />
+            </div>
+
+        </div>
+        <draggable v-model="data2" class='row' handle=".handle">
+            <template #item="{element: item}">
+                <div class='col-md-3'>
+                    <div class='p-1 handle text-center border-dashed  border-2 border-gray-400 rounded-lg mt-1 cursor-move'> {{item}}</div>
+                </div>
+            </template>
+        </draggable>
     </div>
-    <div v-for='(one, i) in data2' :class='data2.length <= 2 ? "col-md-12": ( data2.length <= 4  ? "col-md-6" : (data2.length <= 6 ? "col-md-4": "col-md-3"))' @click='choose(one)'>
-        <div class='p-1 text-center btn-grad rounded-lg mt-1 cursor-pointer' :class='choosen == one ? (correct == one ? "correct" : (correct ? "false" : "choosen")): ""'>{{one}}</div>
+    <div class='row px-6' v-else>
+        <div class="col-md-6">
+            <div v-for='(one, i) in data1'>
+                <div class='p-1 text-center border-2 border-gray-400 rounded-lg mt-1  '>{{i+1}}. {{one}}</div>
+            </div>
+        </div>
+   <!--     <draggable v-model="data2" handle=".handle">
+        <template #item="{element: item}">
+        <div class="item">
+            <div class="title">{{item}}</div>
+            <div class="handle">Sort</div>
+        </div>
+        </template>
+        </draggable>
+
+        -->
+        <draggable v-model="data2" class='col-md-6' handle=".handle">
+            <template #item="{element: item}">
+                <div class='p-1 handle text-center border-dashed  border-2 border-gray-400 rounded-lg mt-1 cursor-move'> {{item}}</div>
+            </template>
+        </draggable>
+
     </div>
 </template>
 <style scoped>
+.images {
+    max-height: calc(40vh - 50px);
+}
 .btn-grad {
     background-image: linear-gradient(to right, #3b82f6 0%, #485279  51%, #3b82f6  100%);
     margin: 10px;

@@ -196,7 +196,7 @@ function changeAudioScore(value) {
               </template>
               <template v-else>
                 <template v-if='question.type=="text"'>
-                  <div class='h-full-minus-20 p-10 text-center flex justify-center items-center'>
+                  <div class='p-10 text-center flex flex-wrap justify-center items-center' :class='question.libraryType == "comparison" ? "" :"h-full-minus-20"'>
                     {{question.text}}
                   </div>
                 </template>
@@ -238,8 +238,8 @@ function changeAudioScore(value) {
           <div v-if='question.libraryType == "abcd"' class='row'>
             <AbcdInput :variants='question.abcd' :correct='correctAnswer && correctAnswer.answer &&  correctAnswer.answer.word' @onChoose='(a) => abcdChoose(a)'/>
           </div>
-          <div v-if='question.libraryType == "comparison"' class='row'>
-            <ComparisonInput :variants='question.comparison' :correct='correctAnswer && correctAnswer.answer &&  correctAnswer.answer.word' @onChoose='(a) => comparisonChoose(a)'/>
+          <div v-if='question.libraryType == "comparison"'>
+            <ComparisonInput :variants='question.comparison' :isImage='question.isComparisonImage' :correct='correctAnswer && correctAnswer.answer &&  correctAnswer.answer.word' @onChoose='(a) => comparisonChoose(a)'/>
           </div>
           <div v-else class='flex items-center flex-wrap md:!flex-nowrap'>
             <div class='w-full '><AutoSelect  v-model="answer" :searchF='"librarySearch"' :library='question.libraryType' placeholder="Ответ"  /></div> 
