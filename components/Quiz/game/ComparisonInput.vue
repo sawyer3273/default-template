@@ -41,6 +41,9 @@ watch(() => props.variants, () => {
 }) 
 
 const choosen = ref(false)
+const isExtended = computed(() => {
+    return data1.value.length > 4 
+})
 
 function choose() {
     let answer = ''
@@ -55,6 +58,7 @@ function choose() {
 
 <template>
 <div v-if='!choosen' class='text-center w-full text-gray-500 text-xs mb-2'>Перетащите <span class='border-dashed rounded-lg border-2 p-1 border-gray-400 bg-gray-100'>блоки</span> на соответсвующие места</div>
+<div v-if='isExtended' class='text-center w-full text-gray-500 text-xs mb-2'>Каждая правильная пара стоит 0.25 баллов</div>
     <div v-if='isImage'>
         <div class='row px-6'>
             <div v-for='(one, i) in data1' class="col-md-3 flex flex-wrap justify-center">
@@ -80,19 +84,19 @@ function choose() {
     <div class='row px-6' v-else>
         <div class="col-md-6">
             <div v-for='(one, i) in data1'>
-                <div class='p-1 text-center border-2 border-gray-400 bg-gray-100 rounded-lg mt-1' >
+                <div :class='isExtended ? "text-xs": ""' class='p-1 text-center border-2 border-gray-400 bg-gray-100 rounded-lg mt-1' >
                     {{one}} <span v-if='correct'> ({{correctData[i]}}) </span>
                 </div>
             </div>
         </div>
         <div v-if='choosen' class="col-md-6">
             <div v-for='(one, i) in data2'>
-                <div class='p-1 text-center border-2 border-gray-400 bg-gray-100 rounded-lg mt-1' :class='choosen && correct ? (correctData[i] == data2[i] ? "bg-green-400 border-white text-white"  : "bg-red-400 border-white text-white") : ""'>{{one}}</div>
+                <div class='p-1 text-center border-2 border-gray-400 bg-gray-100 rounded-lg mt-1' :class='isExtended ? "text-xs": "", choosen && correct ? (correctData[i] == data2[i] ? "bg-green-400 border-white text-white"  : "bg-red-400 border-white text-white") : ""'>{{one}}</div>
             </div>
         </div>
         <draggable v-else v-model="data2" class='col-md-6' handle=".handle">
             <template #item="{element: item}">
-                <div :class='choosen ? "notclickable": "border-dashed"' class='p-1 handle text-center border-2 border-gray-400 bg-gray-100 rounded-lg mt-1 cursor-move'> {{item}}</div>
+                <div :class='isExtended ? "text-xs": "", choosen ? "notclickable": "border-dashed"' class='p-1 handle text-center border-2 border-gray-400 bg-gray-100 rounded-lg mt-1 cursor-move'> {{item}}</div>
             </template>
         </draggable>
     </div>

@@ -106,7 +106,7 @@ onMounted(async () => {
       }
     })
     socket.on('updatePack', (data, roomUsers) => { 
-      if (data) { pack.value = data }
+      if (data) { pack.value = data, room.value.pack_id = data.id }
       if (roomUsers) {
         waitUsers.value = roomUsers.filter(one => !one.isActive)
         quizUsers.value = roomUsers.filter(one => one.isActive)
