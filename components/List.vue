@@ -33,7 +33,7 @@ function onClickSecond(id) {
     <img class='w-18' src='/img/empty.gif' />
   </div> 
   <article v-else class="leaderboard__profile" v-for='user in data'>
-    <UserAvatar :username='user.user.username' class="leaderboard__picture" />
+    <UserAvatar :username='user.user.username' :avatar='user.user.avatar' class="leaderboard__picture" />
     <span class="leaderboard__name">{{user.user.username}}<span v-if='user.isAlreadyPassed' class='text-gray-500 text-sm'> (Вне зачета)</span></span>
     <div class='flex'>
       <div v-if='buttonTextSecond' class='whitespace-nowrap flex items-center ml-1'>

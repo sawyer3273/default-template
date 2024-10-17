@@ -102,6 +102,7 @@ async function cropSave() {
       canvas.toBlob((blob) => {
         form.append("file", blob, imageData.value.name)
         form.append("type", props.folder)
+        form.append("toDelete", props.modelValue)
         resolve()
       }, imageData.value.type)
     })

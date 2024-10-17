@@ -180,7 +180,7 @@ export const getRoom = async (id: any, filter = false) => {
   try {
     let result =  await prisma.roomUsers.findMany({
       include: {user: {select: {
-        id: true, email: true, username: true
+        id: true, email: true, username: true, avatar: true
       }}},
       where:  {
         room_id: id,

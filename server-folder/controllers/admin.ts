@@ -549,7 +549,7 @@ export const routes: RouteConfig = {
     { method: 'post', path: '/quiz', handler: [afterSignupAuth, isAdmin, createQuizPack] },
     { method: 'delete', path: '/quiz', handler: [afterSignupAuth, isAdmin, deleteQuizPack] },
     { method: 'delete', path: '/quizItem', handler: [afterSignupAuth, isAdmin, deleteQuizItemPack] },
-    { method: 'post', path: '/upload', handler: [afterSignupAuth, isAdmin, upload.single('file'), uploadFile] },
+    { method: 'post', path: '/upload', handler: [afterSignupAuth, upload.single('file'), uploadFile] },
     { method: 'post', path: '/image', handler: [afterSignupAuth, isAdmin, addImage] },
     { method: 'delete', path: '/image', handler: [afterSignupAuth, isAdmin, deleteImage] },
     { method: 'get', path: '/slide', handler: [afterSignupAuth, isAdmin, getSlides] },

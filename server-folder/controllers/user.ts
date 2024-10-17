@@ -98,6 +98,7 @@ export const login = async (req: Request, res: Response, next: Function) => {
             rate: user.rate, 
             role: user.role, 
             username: user.username, 
+            avatar: user.avatar, 
             token
           }
         })
@@ -310,6 +311,48 @@ export const updatePassword = async (req: any, res: Response, next: Function) =>
   }
 };
 
+export const updateUser = async (req: any, res: Response, next: Function) => {
+  try {
+    const { email, username, avatar } = req.body;
+    let payload: any = {}
+    if (avatar) {
+      payload.avatar = avatar
+    }
+    if (email) {
+      payload.email = email
+      let user = await prisma.user.findFirst({
+        where: {
+          email: email,
+          id: {not: { equals: res.locals.auth.id  }}
+        },
+      });
+      if (user) {
+        throw createError.BadRequest("Емайл уже существует")
+      }
+    }
+    if (username) {
+      payload.username = username
+      let user = await prisma.user.findFirst({
+        where: {
+          username: username,
+          id: {not: { equals: res.locals.auth.id  }}
+        },
+      });
+      if (user) {
+        throw createError.BadRequest("Имя уже существует")
+      }
+    }
+    await prisma.user.update({
+      where: { id: res.locals.auth.id },
+      data: payload,
+    });
+    return res.status(200).json({
+      success: true,
+    })
+  } catch (error) {
+    return errorHandler(error, req, res)
+  }
+};
 export const getUser = async (req: any, res: Response, next: Function) => {
   try {
       return res.status(200).json({
@@ -354,8 +397,9 @@ export const routes: RouteConfig = {
     { method: 'post', path: '/updatePassword', handler: [passwordlValid, tokenValidBody, updatePassword] },
     { method: 'get', path: '/', handler: getUser },
     { method: 'post', path: '/customRoute', handler: [afterSignupAuth, upload.single('file'), customRoute] },
+    { method: 'post', path: '/', handler: [afterSignupAuth, updateUser] },
 
-
+    
 
   ],
 }

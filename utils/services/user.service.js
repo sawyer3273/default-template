@@ -14,7 +14,8 @@ export const userService = {
     customRoute,
     forgot,
     checkForgotToken,
-    updatePassword
+    updatePassword,
+    updateUser
 };
 
 async function login(user) {
@@ -88,6 +89,24 @@ async function updatePassword(data) {
     return fetch(`/api/user/updatePassword`, requestOptions).then(handleResponse);
 }
 
+async function updateUser(payload) {
+    const requestOptions = {
+        method: 'POST',
+        headers: await authHeader(false),
+        body: JSON.stringify(payload)
+    };
+    const userStore = useUserStore()
+    return fetch(`/api/user`, requestOptions).then(handleResponse).then(data => {
+        if (data.success) {
+            console.log('data,data',payload)
+            let newUser = {...userStore.user, ...payload }
+            console.log('newUser',newUser)
+            parseUserObject(newUser);
+        }
+        return data;
+    });
+}
+
 async function checkForgotToken(token) {
     const requestOptions = {
         method: 'GET',
@@ -143,7 +162,6 @@ async function customRoute(payload) {
 
 
 export function parseUserObject(user) {
-    console.log('user',user)
     let userData = user ? {
         id: user.id,
         email: user.email,
@@ -151,6 +169,7 @@ export function parseUserObject(user) {
         rate: user.rate,
         role: user.role,
         token: user.token,
+        avatar: user.avatar,
     } : {}
     const userStore = useUserStore()
     userStore.setUser(userData)

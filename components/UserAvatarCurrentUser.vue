@@ -3,8 +3,7 @@ let userStore = useUserStore()
 </script>
 
 <template>
-<!--
-  <UserAvatar :username="userStore.userName" :avatar="userStore.userAvatar">
+  <UserAvatar :username="userStore.user.username" :avatar="userStore.user.avatar">
     <slot />
-  </UserAvatar>-->
+  </UserAvatar>
 </template>

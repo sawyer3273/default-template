@@ -95,17 +95,17 @@ function changeAudioScore(value) {
         <div class='max-w-80 rounded-lg overflow-hidden' style='background-color: #FFE306'>
           <div class='max-w-80 relative'>
             <div v-if='legalUsers[0]' class='absolute first-image winner flex-wrap'>
-              <UserAvatar class="min-w-14 w-14 h-14 " :username="legalUsers[0].user.username" />
+              <UserAvatar class="min-w-14 w-14 h-14 " :username="legalUsers[0].user.username" :avatar="legalUsers[0].user.avatar" />
               <div class='w-full font-bold'>{{legalUsers[0].user.username}}</div>
               <div class='w-full text-white font-bold'>{{legalUsers[0].score}}</div>
             </div>
             <div v-if='legalUsers[1]' class='absolute second-image winner flex-wrap'>
-              <UserAvatar class="min-w-14 w-14 h-14 " :username="legalUsers[1].user.username" />
+              <UserAvatar class="min-w-14 w-14 h-14 " :username="legalUsers[1].user.username" :avatar="legalUsers[1].user.avatar" />
               <div class='w-full font-bold'>{{legalUsers[1].user.username}}</div>
               <div class='w-full text-white font-bold'>{{legalUsers[1].score}}</div>
             </div>
             <div v-if='legalUsers[2]' class='absolute third-image winner flex-wrap'>
-              <UserAvatar class="min-w-14 w-14 h-14 " :username="legalUsers[2].user.username" />
+              <UserAvatar class="min-w-14 w-14 h-14 " :username="legalUsers[2].user.username" :avatar="legalUsers[2].user.avatar" />
               <div class='w-full font-bold'>{{legalUsers[2].user.username}}</div>
               <div class='w-full text-white font-bold'>{{legalUsers[2].score}}</div>
             </div>
@@ -115,7 +115,7 @@ function changeAudioScore(value) {
             <div class=' bg-black overflow-hidden rounded-full mb-2 mx-1 text-white p-1 text-xl flex justify-between'  v-if='i > 2'>
               <div class='flex items-center w-4/5'>
                 <div class='rounded-full bg-blue-500 min-w-7 text-center mr-2'> {{i+1}}</div>
-                <UserAvatar class="min-w-7 w-7 h-7 mr-2" :username="user.user.username" />
+                <UserAvatar class="min-w-7 w-7 h-7 mr-2" :username="user.user.username" :avatar="user.user.avatar" />
                 <div class='w-inherit'>
                   <div class='userName' :class='!user.isReady ? "text-gray-400": (me.id == user.id ? "text-green-600" : "")'>
                     {{user.user.username}} <BaseIcon v-if='user.answerType' class='text-green-600' :path='user.answerType == 2 ? mdiChatAlertOutline : mdiChatOutline' /> 
@@ -129,7 +129,7 @@ function changeAudioScore(value) {
           <div class=' bg-black overflow-hidden rounded-full m-1 text-white p-1 text-xl flex justify-between' v-for='(user, i) in vzUsers'>
             <div class='flex items-center w-4/5'>
               <div class='rounded-full bg-blue-500 min-w-7 min-h-7 text-center text-sm pt-1 mr-2'>в/з</div>
-              <UserAvatar class="min-w-7 w-7 h-7 mr-2" :username="user.user.username" />
+              <UserAvatar class="min-w-7 w-7 h-7 mr-2" :username="user.user.username" :avatar="user.user.avatar" />
               <div class='w-inherit'>
                 <div class='userName' :class='!user.isReady ? "text-gray-400": (me.id == user.id ? "text-green-600" : "")'>
                   {{user.user.username}} <BaseIcon v-if='user.answerType' class='text-green-600' :path='user.answerType == 2 ? mdiChatAlertOutline : mdiChatOutline' /> 
@@ -149,7 +149,7 @@ function changeAudioScore(value) {
         <div class='bg-black overflow-hidden rounded-full m-1 text-white p-1 text-xl flex justify-between' v-for='(user, i) in legalUsers'>
           <div class='flex items-center w-4/5'>
             <div class='rounded-full bg-blue-500 min-w-7 text-center mr-2'> {{i+1}}</div>
-            <UserAvatar class="min-w-7 w-7 h-7 mr-2" :username="user.user.username" />
+            <UserAvatar class="min-w-7 w-7 h-7 mr-2" :username="user.user.username" :avatar="user.user.avatar" />
             <div class='w-inherit'>
               <div class='userName' :class='!user.isReady ? "text-gray-400": (me.id == user.id ? "text-green-600" : "")'>
                 {{user.user.username}} <BaseIcon v-if='user.answerType' class='text-green-600' :path='user.answerType == 2 ? mdiChatAlertOutline : mdiChatOutline' /> 
@@ -162,7 +162,7 @@ function changeAudioScore(value) {
         <div class='bg-black overflow-hidden rounded-full m-1 text-white p-1 text-xl flex justify-between' v-for='(user, i) in vzUsers'>
           <div class='flex items-center w-4/5'>
             <div class='rounded-full bg-blue-500 min-w-7 min-h-7 text-center text-sm pt-1 mr-2'>в/з</div>
-            <UserAvatar class="min-w-7 w-7 h-7 mr-2" :username="user.user.username" />
+            <UserAvatar class="min-w-7 w-7 h-7 mr-2" :username="user.user.username" :avatar="user.user.avatar" />
             <div class='w-inherit'>
               <div class='userName' :class='!user.isReady ? "text-gray-400": (me.id == user.id ? "text-green-600" : "")'>
                 {{user.user.username}} <BaseIcon v-if='user.answerType' class='text-green-600' :path='user.answerType == 2 ? mdiChatAlertOutline : mdiChatOutline' /> 

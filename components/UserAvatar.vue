@@ -16,9 +16,9 @@ const props = defineProps({
   }
 })
 
-const avatar = computed(
+const avatar2 = computed(
   () =>
-    props.avatar ??
+    props.avatar ? props.avatar :
     `https://api.dicebear.com/7.x/${props.api}/svg?seed=${props.username.replace(
       /[^a-z0-9]+/gi,
       '-'
@@ -29,9 +29,9 @@ const username = computed(() => props.username)
 </script>
 
 <template>
-  <div>
+  <div v-if='username'>
     <img
-      :src="avatar"
+      :src="avatar2"
       :alt="username"
       class="rounded-full block h-auto w-full max-w-full bg-gray-100 dark:bg-slate-800"
     />
