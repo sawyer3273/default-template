@@ -14,11 +14,14 @@ const emit = defineEmits(['onChoose'])
 const data1 = ref([])
 
 const data2 = ref([])
+const correctData = ref([])
 onMounted(() => {
     init()
 })
 
 function init() {
+    choosen.value = false
+    correctData.value = []
     data1.value = []
     data2.value = []
     let res = props.variants.split(',')
@@ -26,10 +29,10 @@ function init() {
         if (i % 2 == 0) {
             data1.value.push(one)
         } else {
+            correctData.value.push(one)
             data2.value.push(one)
         }
     })
-    data1.value = shuffle(data1.value)
     data2.value = shuffle(data2.value)
 }
 
@@ -37,27 +40,39 @@ watch(() => props.variants, () => {
     init()
 }) 
 
-const choosen = ref('')
+const choosen = ref(false)
 
-function choose(i) {
-    choosen.value = i
-    emit('onChoose', i)
+function choose() {
+    let answer = ''
+    data1.value.map((one, i) => {
+        answer = answer + (answer ? ',' : '') + one 
+        answer = answer + (answer ? ',' : '') + data2.value[i] 
+    })
+    choosen.value = true
+    emit('onChoose', answer)
 }
 </script>
 
 <template>
-<div class='text-center w-full text-gray-500 text-xs mb-2'>Перетащите <span class='border-dashed rounded-lg border-2 p-1 border-gray-400'>блоки</span> на соответсвующие места</div>
+<div v-if='!choosen' class='text-center w-full text-gray-500 text-xs mb-2'>Перетащите <span class='border-dashed rounded-lg border-2 p-1 border-gray-400 bg-gray-100'>блоки</span> на соответсвующие места</div>
     <div v-if='isImage'>
         <div class='row px-6'>
-            <div v-for='(one, i) in data1' class="col-md-3 flex justify-center">
+            <div v-for='(one, i) in data1' class="col-md-3 flex flex-wrap justify-center">
                 <img :src='one' class='rounded-lg images' />
+                <div v-if='correct' class='w-full text-center'> {{correctData[i]}} </div>
             </div>
-
         </div>
-        <draggable v-model="data2" class='row' handle=".handle">
+        <div v-if='choosen' class="row">
+            <div v-for='(one, i) in data2' class='col-md-3'>
+                <div class='p-1 text-center border-2 border-gray-400 bg-gray-100 rounded-lg mt-1' :class='choosen && correct ? (correctData[i] == data2[i] ? "bg-green-400 border-white text-white" : "bg-red-400 border-white text-white") : ""'>
+                    {{one}}
+                </div>
+            </div>
+        </div>
+        <draggable v-else v-model="data2" class='row' handle=".handle">
             <template #item="{element: item}">
                 <div class='col-md-3'>
-                    <div class='p-1 handle text-center border-dashed  border-2 border-gray-400 rounded-lg mt-1 cursor-move'> {{item}}</div>
+                    <div :class='choosen ? "notclickable": "border-dashed"' class='p-1 handle text-center border-2 border-gray-400 bg-gray-100 rounded-lg mt-1 cursor-move'> {{item}}</div>
                 </div>
             </template>
         </draggable>
@@ -65,26 +80,23 @@ function choose(i) {
     <div class='row px-6' v-else>
         <div class="col-md-6">
             <div v-for='(one, i) in data1'>
-                <div class='p-1 text-center border-2 border-gray-400 rounded-lg mt-1  '>{{i+1}}. {{one}}</div>
+                <div class='p-1 text-center border-2 border-gray-400 bg-gray-100 rounded-lg mt-1' >
+                    {{one}} <span v-if='correct'> ({{correctData[i]}}) </span>
+                </div>
             </div>
         </div>
-   <!--     <draggable v-model="data2" handle=".handle">
-        <template #item="{element: item}">
-        <div class="item">
-            <div class="title">{{item}}</div>
-            <div class="handle">Sort</div>
+        <div v-if='choosen' class="col-md-6">
+            <div v-for='(one, i) in data2'>
+                <div class='p-1 text-center border-2 border-gray-400 bg-gray-100 rounded-lg mt-1' :class='choosen && correct ? (correctData[i] == data2[i] ? "bg-green-400 border-white text-white"  : "bg-red-400 border-white text-white") : ""'>{{one}}</div>
+            </div>
         </div>
-        </template>
-        </draggable>
-
-        -->
-        <draggable v-model="data2" class='col-md-6' handle=".handle">
+        <draggable v-else v-model="data2" class='col-md-6' handle=".handle">
             <template #item="{element: item}">
-                <div class='p-1 handle text-center border-dashed  border-2 border-gray-400 rounded-lg mt-1 cursor-move'> {{item}}</div>
+                <div :class='choosen ? "notclickable": "border-dashed"' class='p-1 handle text-center border-2 border-gray-400 bg-gray-100 rounded-lg mt-1 cursor-move'> {{item}}</div>
             </template>
         </draggable>
-
     </div>
+    <div class='flex justify-center mt-2' :class='choosen ? "opacity-0": ""'><BaseButton small @click='choose' color="contrast" label='Ответить'/></div>
 </template>
 <style scoped>
 .images {

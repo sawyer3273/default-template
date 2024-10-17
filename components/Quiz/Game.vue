@@ -55,7 +55,7 @@ function abcdChoose(answer) {
 }
 
 function comparisonChoose(answer) {
-  emit('onAnswer', {id: null, text: answer}, null, 'abcd')
+  emit('onAnswer', {id: null, text: answer}, null, 'comparison')
 }
 
 const hideTimer = ref(false)
@@ -239,7 +239,7 @@ function changeAudioScore(value) {
             <AbcdInput :variants='question.abcd' :correct='correctAnswer && correctAnswer.answer &&  correctAnswer.answer.word' @onChoose='(a) => abcdChoose(a)'/>
           </div>
           <div v-if='question.libraryType == "comparison"'>
-            <ComparisonInput :variants='question.comparison' :isImage='question.isComparisonImage' :correct='correctAnswer && correctAnswer.answer &&  correctAnswer.answer.word' @onChoose='(a) => comparisonChoose(a)'/>
+            <ComparisonInput :variants='question.comparison' :isImage='question.isComparisonImage' :correct='correctAnswer.id' @onChoose='(a) => comparisonChoose(a)'/>
           </div>
           <div v-else class='flex items-center flex-wrap md:!flex-nowrap'>
             <div class='w-full '><AutoSelect  v-model="answer" :searchF='"librarySearch"' :library='question.libraryType' placeholder="Ответ"  /></div> 

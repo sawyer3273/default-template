@@ -406,9 +406,12 @@ export const answerQuiz = async (io: Server, answer: any, room: any, user_id: an
       let isCorrect = question.answer_id == answer.id 
       if (type == 'abcd') {
         let correct = question.abcd.split(',')[0]
+        isCorrect = correct == answer.text
+      }
+      if (type == 'comparison') {
+        let correct = question.comparison
         console.log('correct',correct)
         console.log('answer',answer)
-        console.log('room',room)
         isCorrect = correct == answer.text
       }
       let score = isCorrect ? (newScore ? newScore : question.score) : 0
