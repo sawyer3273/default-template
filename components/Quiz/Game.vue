@@ -3,6 +3,7 @@ import { computed, useSlots } from 'vue'
 import Timer from '@/components/Quiz/game/Timer'
 import AbcdInput from '@/components/Quiz/game/AbcdInput'
 import ComparisonInput from '@/components/Quiz/game/ComparisonInput'
+import OrderInput from '@/components/Quiz/game/OrderInput'
 import { mdiCheck, mdiCheckAll, mdiChatOutline, mdiChatAlertOutline} from '@mdi/js'
 
 const props = defineProps({
@@ -56,6 +57,10 @@ function abcdChoose(answer) {
 
 function comparisonChoose(answer) {
   emit('onAnswer', {id: null, text: answer}, null, 'comparison')
+}
+
+function orderChoose(answer) {
+  emit('onAnswer', {id: null, text: answer}, null, 'order')
 }
 
 const hideTimer = ref(false)
@@ -240,6 +245,9 @@ function changeAudioScore(value) {
           </div>
           <div v-if='question.libraryType == "comparison"'>
             <ComparisonInput :variants='question.comparison' :isImage='question.isComparisonImage' :correct='correctAnswer.id' @onChoose='(a) => comparisonChoose(a)'/>
+          </div>
+          <div v-if='question.libraryType == "order"'>
+            <OrderInput :variants='question.order' :correct='correctAnswer.id' @onChoose='(a) => orderChoose(a)'/>
           </div>
           <div v-else class='flex items-center flex-wrap md:!flex-nowrap'>
             <div class='w-full '><AutoSelect  v-model="answer" :searchF='"librarySearch"' :library='question.libraryType' placeholder="Ответ"  /></div> 

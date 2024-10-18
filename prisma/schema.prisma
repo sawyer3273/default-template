@@ -294,6 +294,7 @@ model QuizPackRound {
   abcd  String?
   comparison  String?
   isComparisonImage  Boolean?
+  order  String?
 
   textAnswer  String?
   answerImage  String?

@@ -19,4 +19,5 @@ export const libraryOptions = [
     { id: 'person', label: 'Тип ответа: актер' },
     { id: 'abcd', label: 'Тип ответа: абвг' },
     { id: 'comparison', label: 'Тип ответа: сопоставление' },
+    { id: 'order', label: 'Тип ответа: порядок' },
   ]
