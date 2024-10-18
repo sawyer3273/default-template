@@ -4,6 +4,7 @@ import Timer from '@/components/Quiz/game/Timer'
 import AbcdInput from '@/components/Quiz/game/AbcdInput'
 import ComparisonInput from '@/components/Quiz/game/ComparisonInput'
 import OrderInput from '@/components/Quiz/game/OrderInput'
+import ManyAnswersInput from '@/components/Quiz/game/ManyAnswersInput'
 import { mdiCheck, mdiCheckAll, mdiChatOutline, mdiChatAlertOutline} from '@mdi/js'
 
 const props = defineProps({
@@ -61,6 +62,11 @@ function comparisonChoose(answer) {
 
 function orderChoose(answer) {
   emit('onAnswer', {id: null, text: answer}, null, 'order')
+}
+
+
+function manyAnswersChoose(answer) {
+  emit('onAnswer', {id: null, text: answer}, null, 'manyAnswersChoose')
 }
 
 const hideTimer = ref(false)
@@ -201,7 +207,7 @@ function changeAudioScore(value) {
               </template>
               <template v-else>
                 <template v-if='question.type=="text"'>
-                  <div class='p-10 text-center flex flex-wrap justify-center items-center' :class='question.libraryType == "comparison" ? "" :"h-full-minus-20"'>
+                  <div class='p-10 text-center flex flex-wrap justify-center items-center' :class='["comparison", "manyAnswers"].includes(question.libraryType) ? "" :"h-full-minus-20"'>
                     {{question.text}}
                   </div>
                 </template>
@@ -248,6 +254,9 @@ function changeAudioScore(value) {
           </div>
           <div v-if='question.libraryType == "order"'>
             <OrderInput :variants='question.order' :correct='correctAnswer.id' @onChoose='(a) => orderChoose(a)'/>
+          </div>
+          <div v-if='question.libraryType == "manyAnswers"'>
+            <ManyAnswersInput :variants='question.manyAnswers' :correct='correctAnswer.id' @onChoose='(a) => manyAnswersChoose(a)'/>
           </div>
           <div v-else class='flex items-center flex-wrap md:!flex-nowrap'>
             <div class='w-full '><AutoSelect  v-model="answer" :searchF='"librarySearch"' :library='question.libraryType' placeholder="Ответ"  /></div> 

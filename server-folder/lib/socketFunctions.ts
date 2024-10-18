@@ -408,6 +408,26 @@ export const answerQuiz = async (io: Server, answer: any, room: any, user_id: an
         let correct = question.abcd.split(',')[0]
         isCorrect = correct == answer.text
       }
+      if (type == 'manyAnswersChoose') {
+        let correct = question.manyAnswers
+        let res = correct.split(',')
+        let res2 = answer.text.split(',')
+        newScore = 0 
+        isCorrect = true
+        question.score = 0
+        res.map((one: any, i: number) => {
+            if (i % 2 == 0) {
+            } else {
+                if (one == 'true' && res2[i] == 'true') {
+                  newScore = newScore + 1
+                }
+                if (one == 'false' && res2[i] == 'true') {
+                  isCorrect = false
+                }
+            }
+        })
+      }
+      
       if (type == 'order') {
         let res = question.order.split(',')
         let correctData: any = []
@@ -454,8 +474,6 @@ export const answerQuiz = async (io: Server, answer: any, room: any, user_id: an
         }
       }
       let score = isCorrect ? (newScore ? newScore : question.score) : 0
-      console.log('isCorrect',isCorrect)
-      console.log('score',score)
       let total = roomUser.score + score
       let data: any = {
         room_id: room.id, 

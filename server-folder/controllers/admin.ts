@@ -338,6 +338,7 @@ export async function createQuizPack(req: Request, res: Response, _next: NextFun
         abcd: pack[i].abcd,
         comparison: pack[i].comparison,
         order: pack[i].order,
+        manyAnswers: pack[i].manyAnswers,
         isComparisonImage: pack[i].isComparisonImage,
         slide: pack[i].slide,
         slideTime: parseInt(pack[i].slideTime),

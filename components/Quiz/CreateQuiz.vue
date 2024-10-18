@@ -18,6 +18,7 @@ import SaveSlide from '~/components/Quiz/create/SaveSlide'
 import AbcdEditor from '~/components/Quiz/create/AbcdEditor'
 import ComparisonEditor from '~/components/Quiz/create/ComparisonEditor'
 import OrderEditor from '~/components/Quiz/create/OrderEditor'
+import ManyAnswersEditor from '~/components/Quiz/create/ManyAnswersEditor'
 const toast = useToast();
 
 const mainStore = useMainStore()
@@ -156,7 +157,11 @@ async function save() {
       if (!one.comparison || one.comparison.includes('%%%')) {
         errors.push(i+1)
       }
-    } else {
+    } else if (one.libraryType.id == 'manyAnswers') {
+      if (!one.manyAnswers || one.manyAnswers.includes('%%%')) {
+        errors.push(i+1)
+      }
+    }  else {
       if (!one.answer_id ) {
         errors.push(i+1)
       }
@@ -301,6 +306,9 @@ function onUploadAudio(data, i) {
                   </template>
                   <template v-if='data.libraryType.id == "order"'>
                     <OrderEditor v-model='packRounds[i].order' />
+                  </template>
+                  <template v-if='data.libraryType.id == "manyAnswers"'>
+                    <ManyAnswersEditor v-model='packRounds[i].manyAnswers' />
                   </template>
                   <template v-else>
                     <AutoSelect :key='packRounds[i].answer_id+"auto"+i' v-model="packRounds[i].answer_id" :searchF='"librarySearch"' :library='data.libraryType.id' placeholder="Ответ"  class='mt-2'/>

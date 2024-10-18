@@ -20,4 +20,5 @@ export const libraryOptions = [
     { id: 'abcd', label: 'Тип ответа: абвг' },
     { id: 'comparison', label: 'Тип ответа: сопоставление' },
     { id: 'order', label: 'Тип ответа: порядок' },
+    { id: 'manyAnswers', label: 'Тип ответа: выбрать правильные' },
   ]
