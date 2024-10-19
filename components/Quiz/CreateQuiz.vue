@@ -71,8 +71,11 @@ onBeforeMount(async () => {
 });
 const videoFile = ref('')
 const audioFile = ref('')
+const isTableView = ref(false)
+
 let emptyValue = {
   number: 1,    
+  position: 1,    
   score: 1,     
   time: 30,      
   text: "",      
@@ -109,13 +112,50 @@ function addNew() {
 }
 
 function updateNumber() {
+  let count = 0
   packRounds.value.map((one, i) => {
-    one.number = (i + 1)
+    if (one.enable) {
+      count++
+      one.number = count
+      one.position = (i + 1)
+    } else {
+      one.number = -1
+    }
+    
   })
+}
+
+const isModalMove = ref(false)
+const toMoveId = ref(0)
+const packs = ref([])
+
+async function openModalMove(i) {
+  toMoveId.value = i
+  isModalMove.value = true
+  let data = await dataService.getPacksQuiz({})
+  if (data.success) {
+    packs.value = data.data
+  }
+}
+
+async function moveQuestion(id) {
+  if (toMoveId.value) {
+    await adminService.moveQuestion({roundId: toMoveId.value, packId: id})  
+    isModalMove.value = false
+    let res = []
+    packRounds.value.map(one => {
+      if (one.id != toMoveId.value) {
+        res.push(one)
+      }
+    })
+    packRounds.value = res
+    updateNumber()
+  }
 }
 
 const toDeleteId = ref(0)
 const isModalDangerActive = ref(false)
+
 async function deleteAction() {
   isModalDangerActive.value = false
   let toDeleteObj = packRounds.value[toDeleteId.value]
@@ -204,8 +244,22 @@ function onUploadAudio(data, i) {
       <CardBoxModal v-model="isModalDangerActive" :title="$t('deleteSure')" button="danger" has-cancel>
         <BaseButton label="Ok" color="contrast" @click="deleteAction" />
       </CardBoxModal>
+      <CardBoxModal v-model="isModalMove" title="Переместить" button="danger" has-cancel>
+        
+        <div class='rounded-lg bg-gray-100 flex row cursor-pointer' v-for='pack in packs' @click='moveQuestion(pack.id)'>
+          <div class='col-md-6'>{{pack.name}}</div><div class='col-md-6'><img class='w-12' :src='pack.logo'/></div>
+        </div>
+      </CardBoxModal>
       <SectionMain>
-        <SectionTitleLine :icon="mdiNoteEdit" title="Данные пака"> </SectionTitleLine>
+        <SectionTitleLineWithButton :icon="mdiNoteEdit" title="Данные пака">
+          <FormCheckRadio
+            label='Таблица' 
+            type="switch"
+            v-model="isTableView"
+            :input-value="true"
+          />
+        </SectionTitleLineWithButton>
+       
         <CardBox class='mb-4 shadow-sm '>
           <div class='row'>
               <div class='col-md-2'>
@@ -213,20 +267,53 @@ function onUploadAudio(data, i) {
               </div>
               <div class='col-md-10'>
                 <FormControl class='mt-1' v-model='packData.text'  placeholder="Введите название пака" />
+                <div class='mt-2'>
+                  <FormCheckRadio
+                    label='Опубликовано'
+                    v-model="packData.enable"
+                    :input-value="true"
+                  />
+                </div>
               </div>
             </div>
         </CardBox>
         <SectionTitleLine :icon="mdiNoteEdit" title="Список вопросов"> </SectionTitleLine>
-        
          <div class='row'>
-          <div class='col-md-12' v-for='(data, i) in packRounds' :key='"auto"+i'>
-            <CardBox class='mb-4 shadow-sm relative'>
-              <div class='top-0 left-0 ml-6 mt-1 absolute font-bold'>#{{data.number}}</div>
+            <!-- TABLE -->
+            <draggable  v-if='isTableView'  v-model="packRounds" class='col-md-12' handle=".handle" @end="updateNumber">
+              <template #item="{element: data}">
+                  <div class='bg-white p-1 mb-2 shadow-sm relative handle'>
+                    <div class='row'>
+                      <div class='col-md-3'>
+                          <label> #{{data.number}} Тип вопроса</label>
+                        <FormControl v-model="data.type" :options="quizTypeOptions" />
+                      </div>
+                      <div class='col-md-9'>
+                        <label >Описание вопроса</label>
+                        <FormControl  v-model='data.text' placeholder="Введите текст вопроса" />
+                      </div>
+                    </div>
+                  </div>
+              </template>
+          </draggable>
+          <!-- EXTENDED -->
+          <div v-else class='col-md-12' v-for='(data, i) in packRounds' :key='"auto"+i'>
+            <CardBox  class='mb-4 shadow-sm relative'>
+              <div class='top-0 left-0 ml-6 mt-1 absolute font-bold'>#{{data.number}} {{data.position}}</div>
+              <BaseIcon class='cursor-pointer text-blue-500 absolute top-1 right-10' :path="mdiNoteEdit"  @click="() => openModalMove(data.id)" />
               <BaseIcon class='cursor-pointer text-red-500 absolute top-1 right-5' :path="mdiDeleteCircleOutline"  @click="() => {toDeleteId = i; isModalDangerActive = true}" />
               <div class='row'>
                 <div v-if='data.slide' class='col-md-12 mt-1'>
                   <SaveSlide v-model='data.slide' :slideTime='data.slideTime' :slides='dataStore.slides' :content='data.slide' @changeTime='(v) => data.slideTime = v'/>
                   <Editor v-model='data.slide' />
+                </div>
+                <div class='mt-2'>
+                  <FormCheckRadio
+                    @onChange='updateNumber'
+                    label='Опубликовано'
+                    v-model="data.enable"
+                    :input-value="true"
+                  />
                 </div>
                 <div class='col-md-12'>
                   <div class='flex justify-between my-1'>
@@ -290,7 +377,6 @@ function onUploadAudio(data, i) {
                       />
                     </div>
                   </div>
-                  
                   <template v-if='data.libraryType.id == "abcd"'>
                     <div class='row'>
                       <div class='col-md-6'>
@@ -310,7 +396,7 @@ function onUploadAudio(data, i) {
                   <template v-if='data.libraryType.id == "manyAnswers"'>
                     <ManyAnswersEditor v-model='packRounds[i].manyAnswers' />
                   </template>
-                  <template v-else>
+                  <template v-if='packRounds[i].answer_id'>
                     <AutoSelect :key='packRounds[i].answer_id+"auto"+i' v-model="packRounds[i].answer_id" :searchF='"librarySearch"' :library='data.libraryType.id' placeholder="Ответ"  class='mt-2'/>
                     <ImagesUpload :key='packRounds[i].answer_id+"images"+i' class='mt-2' v-model='packRounds[i].image' :imagesToSelect='packRounds[i].answer_id.LibraryImages' :folder='data.libraryType.id' :libraryId='packRounds[i].answer_id.id'  />
                   </template>

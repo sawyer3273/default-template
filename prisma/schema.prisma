@@ -281,6 +281,8 @@ model QuizPack {
 model QuizPackRound {
   id        Int     @id @default(autoincrement())
   number    Int
+  position  Int?
+  enable    Boolean? @default(true)
   score     Float
   time      Int
   text      String?

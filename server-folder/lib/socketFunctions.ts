@@ -323,7 +323,7 @@ const setQuestion = async (io: Server, roomData: any, questionNumber: any) => {
     }
 
 
-    let questions = await prisma.quizPackRound.findMany({where: {pack_id: room.pack_id}, include: {answer: true}})
+    let questions = await prisma.quizPackRound.findMany({where: {pack_id: room.pack_id, number: {gt: 0}}, include: {answer: true}, orderBy: [{position: 'asc'}]})
     let question = questions[questionNumber - 1]
     if  (question) {
       await prisma.room.update({
@@ -332,12 +332,12 @@ const setQuestion = async (io: Server, roomData: any, questionNumber: any) => {
       io.to(room.token).emit('setQuestion', questionNumber, question);
       setTimeout(async () => {
         io.to(room.token).emit('finishSlide');
-      }, (question.slideTime) * 1000)
+      }, (question.slideTime ? question.slideTime : 1) * 1000)
       setTimeout(async () => {
         let roomUsers = await updateTable(room)
         io.to(room.token).emit('finishQuestion', roomUsers);
         setQuestionAnswer(io, room, question)
-      }, (question.time + question.slideTime) * 1000)
+      }, (question.time + (question.slideTime ? question.slideTime : 1)) * 1000)
     } else {
       await prisma.room.update({
         where:  { id: room.id },    data: {isFinished: true, timeStarted: 0}

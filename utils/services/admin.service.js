@@ -20,7 +20,8 @@ export const adminService = {
     deleteImage,
     addSlide,
     deleteSlide,
-    getSlides
+    getSlides,
+    moveQuestion
 };
 
 async function deleteActor(payload) {
@@ -277,6 +278,20 @@ async function deleteSlide(payload) {
         .then(handleResponse)
         .then(resp => {
             dataStore.setSlides(resp)
+            return resp;
+        });
+}
+
+
+async function moveQuestion(payload) {
+    const requestOptions = {
+        method: 'POST',
+        headers: await authHeader(true),
+        body: JSON.stringify(payload)
+    };
+    return fetch(`/api/admin/moveRound`, requestOptions)
+        .then(handleResponse)
+        .then(resp => {
             return resp;
         });
 }

@@ -329,6 +329,8 @@ export async function createQuizPack(req: Request, res: Response, _next: NextFun
       let data: any =  {
         text: pack[i].text,
         number: pack[i].number,
+        position: pack[i].position,
+        enable: pack[i].enable,
         score: pack[i].score,
         time: parseInt(pack[i].time),
         image: pack[i].image,
@@ -531,6 +533,20 @@ export async function deleteSlide(req: Request, ress: Response, _next: NextFunct
   }
 }
 
+export async function moveRound(req: Request, ress: Response, _next: NextFunction) {
+  try {
+    let count: any = await getCount('quizPackRound', {pack_id: req.body.packId})
+    await prisma.quizPackRound.update({
+      where: { id: req.body.roundId }, data: { pack_id: req.body.packId, number: -1, position: (count+1), enable: false}
+    });
+    return ress.json({
+      success: true,
+    });
+  } catch (err) {
+    console.log('err',err)
+    return errorHandler(createError.InternalServerError(), req, ress)
+  }
+}
 
 
 
@@ -557,6 +573,7 @@ export const routes: RouteConfig = {
     { method: 'get', path: '/slide', handler: [afterSignupAuth, isAdmin, getSlides] },
     { method: 'post', path: '/slide', handler: [afterSignupAuth, isAdmin, addSlide] },
     { method: 'delete', path: '/slide', handler: [afterSignupAuth, isAdmin, deleteSlide] },
+    { method: 'post', path: '/moveRound', handler: [afterSignupAuth, isAdmin, moveRound] },
 
     
   ],

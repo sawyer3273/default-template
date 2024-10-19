@@ -25,12 +25,13 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'onChange'])
 
 const computedValue = computed({
   get: () => props.modelValue,
   set: (value) => {
     emit('update:modelValue', value)
+    emit('onChange')
   }
 })
 
