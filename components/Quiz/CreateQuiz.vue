@@ -18,6 +18,7 @@ import SaveSlide from '~/components/Quiz/create/SaveSlide'
 import AbcdEditor from '~/components/Quiz/create/AbcdEditor'
 import ComparisonEditor from '~/components/Quiz/create/ComparisonEditor'
 import OrderEditor from '~/components/Quiz/create/OrderEditor'
+import TagsEditor from '~/components/Quiz/create/TagsEditor'
 import ManyAnswersEditor from '~/components/Quiz/create/ManyAnswersEditor'
 const toast = useToast();
 
@@ -401,7 +402,7 @@ function onUploadAudio(data, i) {
                   <template v-if='data.libraryType.id == "manyAnswers"'>
                     <ManyAnswersEditor v-model='packRounds[i].manyAnswers' />
                   </template>
-                  <template v-if='!["manyAnswers"].includes(data.libraryType.id)'>
+                  <template v-if='["movie", "person"].includes(data.libraryType.id)'>
                     <AutoSelect :key='packRounds[i].answer_id+"auto"+i' 
                       v-model="packRounds[i].answer_id" 
                       :searchF='"librarySearch"' 
@@ -411,8 +412,7 @@ function onUploadAudio(data, i) {
                     />
                     <ImagesUpload  v-if='packRounds[i].answer_id' :key='packRounds[i].answer_id+"images"+i' class='mt-2' v-model='packRounds[i].image' :imagesToSelect='packRounds[i].answer_id.LibraryImages' :folder='data.libraryType.id' :libraryId='packRounds[i].answer_id.id'  />
                   </template>
-              
-
+                  <TagsEditor v-model='packRounds[i].tags' />
                 </div>
               </div>
             </CardBox>
