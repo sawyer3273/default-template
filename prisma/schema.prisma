@@ -108,6 +108,7 @@ model Library {
   QuizPackRounds              QuizPackRound[]
   QuizPackAnwsers             QuizPackAnswer[]
   LibraryImages               LibraryImage[]
+  QuizResult      QuizResult[]
 }
 
 model LibraryImage {
@@ -227,7 +228,6 @@ model Room {
   isFinished   Boolean @default(false)
 
   RoomUser        RoomUsers[]
-  QuizResult      QuizResult[]
   QuizPackAnswers  QuizPackAnswer[]
   pack      QuizPack? @relation(fields: [pack_id], references: [id])
 
@@ -270,7 +270,6 @@ model QuizPack {
   user    User @relation(fields: [user_id], references: [id])
 
   QuizPackRound QuizPackRound[]
-  QuizResult      QuizResult[]
   RoomUsers      RoomUsers[]
   Rooms      Room[]
   QuizPackAnwsers QuizPackAnswer[]
@@ -299,6 +298,7 @@ model QuizPackRound {
   isComparisonImage  Boolean?
   order  String?
   manyAnswers  String?
+  tags  String?
 
   textAnswer  String?
   answerImage  String?
@@ -330,16 +330,16 @@ model QuizPackAnswer {
 
 model QuizResult {
   id      Int     @id @default(autoincrement())
-  points   Float
-  log     String?
-  time    Int?
+  positive   Float
+  negative   Float
+  lastPositive   Float
+  lastNegative   Float
+  type     String
 
   user_id   Int
   user      User     @relation(fields: [user_id], references: [id])
-  room_id   Int
-  room      Room     @relation(fields: [room_id], references: [id])
-  pack_id   Int
-  pack      QuizPack @relation(fields: [pack_id], references: [id])
+  data_id   Int
+  data      Library @relation(fields: [data_id], references: [id])
   createdAt DateTime @default(now())
 }
 

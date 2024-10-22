@@ -112,7 +112,6 @@ async function cropSave() {
   mainStore.setLoader(false)
   if (image.success) {
     emit('update:modelValue', image.data.file)
-    console.log('image.data.file',image.data.file)
     emit('onUpload', image.data.file)
   } else {
     errorText.value = 'Failed to upload'
@@ -124,7 +123,7 @@ async function cropSave() {
 
 <template>
 <div :key='componentKey' :class='classProp'>
-  <img v-if='showImage' class='mb-1' :src="modelValue ? modelValue : (placeholder == 'main' ? '/img/card_placeholder.png' : '/img/card_placeholder_horizon.jpg')" :width='width'/>
+  <img v-if='showImage' class='mb-1' :src="modelValue ? (modelValue !== '%%%' ? modelValue : '') : (placeholder == 'main' ? '/img/card_placeholder.png' : '/img/card_placeholder_horizon.jpg')" :width='width'/>
   <BaseButton
     :disabled='!showbtn'
     @click='isModalActive = true'

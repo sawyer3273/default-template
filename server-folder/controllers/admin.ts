@@ -445,7 +445,7 @@ export async function uploadFile(req: Request, ress: Response, _next: NextFuncti
 export async function addImage(req: Request, ress: Response, _next: NextFunction) {
   try {
     await prisma.libraryImage.create({
-      data: {link: req.body.image, library_id: req.body.id},
+      data: {link: req.body.image, library_id: parseInt(req.body.id)},
     });
     return ress.json({
       success: true,
@@ -461,7 +461,7 @@ export async function addImage(req: Request, ress: Response, _next: NextFunction
 export async function deleteImage(req: Request, ress: Response, _next: NextFunction) {
   try {
    await prisma.libraryImage.deleteMany({
-      where: {library_id: req.body.id, link: req.body.image},
+      where: {library_id: parseInt(req.body.id), link: req.body.image},
     });
     await timewebService.removeFile(req.body.image, req.body.folder)
     return ress.json({

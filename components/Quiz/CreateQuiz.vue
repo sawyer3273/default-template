@@ -57,8 +57,9 @@ onBeforeMount(async () => {
           one.libraryType = libraryOptions.find(l => l.id ==  one.libraryType)
           if (one.answer) {
             one.answer_id = {id: one.answer_id, LibraryImages: one.answer.LibraryImages, name: one.answer.word ? one.answer.word : (one.answer.title ? one.answer.title : one.answer.name)}
+          } else {
+            one.answer_id = {}
           }
-          console.log('one',one)
           packRounds.value.push(one)
         })
       }
@@ -87,6 +88,7 @@ let emptyValue = {
   answer_id: "",
   answerImage: "",
   order: "",     
+  manyAnswers: "",
   pack_id: "",
   slide: "",
 }
@@ -365,7 +367,6 @@ function onUploadAudio(data, i) {
                 <!--  Longintude -->
                   <label class='mt-2' >Длительность</label>
                   <FormControl type="number" v-model='data.time' placeholder="Длительность" />
-
                 <!--  Answer -->
                   <label class='mt-4'>Ответ</label>
                   <div class='row'>
@@ -400,11 +401,16 @@ function onUploadAudio(data, i) {
                   <template v-if='data.libraryType.id == "manyAnswers"'>
                     <ManyAnswersEditor v-model='packRounds[i].manyAnswers' />
                   </template>
-                  <template v-if='packRounds[i].answer_id'>
-                    <AutoSelect :key='packRounds[i].answer_id+"auto"+i' v-model="packRounds[i].answer_id" :searchF='"librarySearch"' :library='data.libraryType.id' placeholder="Ответ"  class='mt-2'/>
-                    <ImagesUpload :key='packRounds[i].answer_id+"images"+i' class='mt-2' v-model='packRounds[i].image' :imagesToSelect='packRounds[i].answer_id.LibraryImages' :folder='data.libraryType.id' :libraryId='packRounds[i].answer_id.id'  />
+                  <template v-if='!["manyAnswers"].includes(data.libraryType.id)'>
+                    <AutoSelect :key='packRounds[i].answer_id+"auto"+i' 
+                      v-model="packRounds[i].answer_id" 
+                      :searchF='"librarySearch"' 
+                      :library='["movie", "person"].includes(data.libraryType.id) ? data.libraryType.id: "all"' 
+                      placeholder="Ответ"  
+                      class='mt-2'
+                    />
+                    <ImagesUpload  v-if='packRounds[i].answer_id' :key='packRounds[i].answer_id+"images"+i' class='mt-2' v-model='packRounds[i].image' :imagesToSelect='packRounds[i].answer_id.LibraryImages' :folder='data.libraryType.id' :libraryId='packRounds[i].answer_id.id'  />
                   </template>
-                  
               
 
                 </div>

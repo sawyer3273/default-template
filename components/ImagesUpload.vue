@@ -11,6 +11,10 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  classImages: {
+    type: String,
+    default: 'col-md-2'
+  },
   folder: {
     type: String,
     default: 'main'
@@ -55,7 +59,7 @@ function deleteImage(file) {
 <template>
   <div :class='class'>
     <div class='row mb-4'>
-      <div class='col-md-2 relative' v-for='image in images'> 
+      <div :class='classImages' class='relative' v-for='image in images'> 
         <DeleteAction  v-if='image.link != imageCrop' @deleteFuncion='deleteImage(image)'/>
         <div @click='selectImage(image.link)' :class='image.link == imageCrop ? "border-green-600" :"border-white"' class='cursor-pointer rounded-lg border-4'><img class='rounded-sm' :src='image.link' /></div>
       </div>

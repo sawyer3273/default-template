@@ -27,7 +27,7 @@ export async function find(req: Request, res: Response, _next: NextFunction) {
         {translation: { contains: key, mode: 'insensitive'}},
       ]
     }
-    if (req.query.type) {
+    if (req.query.type && req.query.type !== 'all') {
       cond.type = req.query.type
     }
     let actors = await findMany(req, 'library', cond, {limit: 50, include: { LibraryImages: true}})
