@@ -9,11 +9,13 @@ const props = defineProps({
     },
     slides: [Object],
     slideTime: Number,
+    isSlideBtn: Boolean,
     content: String
 })
 
 const emit = defineEmits(['update:modelValue'])
 
+const isSlideBtn = ref(props.isSlideBtn)
 const time = ref(props.slideTime)
 const isModal = ref(false)
 const form = ref({
@@ -75,7 +77,10 @@ watch(() => slideSelect.value, (val) => {
   emit('update:modelValue', f.content)
 })
 watch(time, (val) => {
-  emit('changeTime', val)
+  emit('changeTime', {slideTime: val, isSlideBtn: isSlideBtn.value})
+})
+watch(isSlideBtn, (val) => {
+  emit('changeTime', {slideTime: time.value, isSlideBtn: val})
 })
 
 
@@ -85,6 +90,11 @@ watch(time, (val) => {
     <div class='flex justify-between'>
         <FormControl class='mb-1' v-model="slideSelect" placeholder='Выбрать слайд' :options="slidesOption"  />
         <FormControl type="number" v-model='time' placeholder="Длительность" />
+        <FormCheckRadio
+            label='Баллы'
+            v-model="isSlideBtn"
+            :input-value="true"
+            />
         <CardBoxModal v-model="isModal" title="Выберите название" button="danger" has-cancel>
             <FormControl v-model="form.select" :options="options"  />
             <FormControl v-model="form.name" placeholder='Введите название слайда'/>

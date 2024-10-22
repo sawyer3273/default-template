@@ -293,6 +293,7 @@ model QuizPackRound {
   libraryType  String  @default("movie")
   slide     String?
   slideTime     Int?
+  isSlideBtn     Boolean @default(false)
   abcd  String?
   comparison  String?
   isComparisonImage  Boolean?

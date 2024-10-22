@@ -388,7 +388,7 @@ export const updateTable = async (room: any) => {
   let roomUsers: any = await prisma.roomUsers.findMany({where : {room_id: room.id}, orderBy: [{score: 'desc'}], include: {user: true}})
   for (let i = 0; i < roomUsers.length; i++) {
     let user = roomUsers[i]
-    let scores = await prisma.quizPackAnswer.findMany({where : {room_id: room.id, user_id: user.user_id, isCorrect: true}, orderBy: [{score: 'desc'}], include: {user: true}})
+    let scores = await prisma.quizPackAnswer.findMany({where : {room_id: room.id, user_id: user.user_id}, orderBy: [{score: 'desc'}], include: {user: true}})
     let result = 0
     scores.map(one => result = result + one.score)
     await prisma.roomUsers.update({where: {id: user.id}, data: {score: result, answerType: 0}})
@@ -397,7 +397,7 @@ export const updateTable = async (room: any) => {
   return roomUsers
 }
 
-export const answerQuiz = async (io: Server, answer: any, room: any, user_id: any, question: any, newScore: any, type: any) => {
+export const answerQuiz = async (io: Server, answer: any, room: any, user_id: any, question: any, newScore: any, type: any, betSize: any) => {
   try {
     let roomUser: any = await prisma.roomUsers.findFirst({where : {room_id: room.id, user_id: user_id}})
     if (roomUser) {
@@ -474,6 +474,9 @@ export const answerQuiz = async (io: Server, answer: any, room: any, user_id: an
         }
       }
       let score = isCorrect ? (newScore ? newScore : question.score) : 0
+      if (question.isSlideBtn) {
+        score = isCorrect ? betSize : 0 - betSize
+      }
       let total = roomUser.score + score
       let data: any = {
         room_id: room.id, 

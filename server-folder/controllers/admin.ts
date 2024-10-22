@@ -344,6 +344,7 @@ export async function createQuizPack(req: Request, res: Response, _next: NextFun
         isComparisonImage: pack[i].isComparisonImage,
         slide: pack[i].slide,
         slideTime: parseInt(pack[i].slideTime),
+        isSlideBtn: pack[i].isSlideBtn,
         type: pack[i].type.id,
         libraryType: pack[i].libraryType.id,
         pack_id: result.id

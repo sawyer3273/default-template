@@ -99,6 +99,7 @@ let packData = ref({
 function addSlide(i) {
   packRounds.value[i].slide = 'Введите текст слайда'
   packRounds.value[i].slideTime = 10
+  packRounds.value[i].isSlideBtn = false
 }
 
 function removeSlide(i) {
@@ -304,7 +305,10 @@ function onUploadAudio(data, i) {
               <BaseIcon class='cursor-pointer text-red-500 absolute top-1 right-5' :path="mdiDeleteCircleOutline"  @click="() => {toDeleteId = i; isModalDangerActive = true}" />
               <div class='row'>
                 <div v-if='data.slide' class='col-md-12 mt-1'>
-                  <SaveSlide v-model='data.slide' :slideTime='data.slideTime' :slides='dataStore.slides' :content='data.slide' @changeTime='(v) => data.slideTime = v'/>
+                  <SaveSlide v-model='data.slide' :slideTime='data.slideTime' :isSlideBtn='data.isSlideBtn' :slides='dataStore.slides' :content='data.slide' @changeTime='(v) => {
+                      data.slideTime = v.slideTime
+                      data.isSlideBtn = v.isSlideBtn
+                    }'/>
                   <Editor v-model='data.slide' />
                 </div>
                 <div class='mt-2'>

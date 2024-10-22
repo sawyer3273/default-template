@@ -15,9 +15,10 @@ const props = defineProps({
   timer: Number,
   answerInit: String,
   correctAnswer: Object,
+  betSize: Number
 })
 
-const emit = defineEmits(['onAnswer'])
+const emit = defineEmits(['onAnswer', 'setBetSize'])
 
 const answer = ref('')
 const submited = ref('')
@@ -75,6 +76,10 @@ function onVideoEnd() {
 }
 function onAudioEnd() {
   hideTimer.value = false
+}
+function setBetSize(bet) {
+  console.log('bet',bet)
+  emit('setBetSize', bet)
 }
 
 const legalUsers = computed(() => {
@@ -190,7 +195,7 @@ function changeAudioScore(value) {
       <div class='relative border-2 border-gray-400 rounded-lg min-h-60 game-height bg-gray-200'>
         <div class='h-full-minus-60 p-2 text-lg '>
             <div class='w-full flex justify-center relative'>
-              <div class='absolute left-0 bg-blue-500 px-2 h-8 items-center text-center flex justify-center text-white rounded-lg'>
+              <div v-if='!question.slide' class='absolute left-0 bg-blue-500 px-2 h-8 items-center text-center flex justify-center text-white rounded-lg'>
               Вопрос #{{question.number}}
               </div>
               <Timer v-if='timer && !!!question.slide' :hide='hideTimer' :value='timer' :round='question.number' :isStarted='question.number ? true : false' @onEnd='onTimerStop' @onTimeUrpdate='(time) => timerUpdate(time)' />
@@ -198,11 +203,19 @@ function changeAudioScore(value) {
             <template v-if='!Object.keys(correctAnswer).length'>
            
               <template v-if='question.slide'>
-              <div class='ql-snow h-full-minus-20 text-center flex justify-center items-center'>
-                <div class='ql-editor'>
-                  <div v-html='question.slide' > </div>
+                <div class='ql-snow h-full-minus-20 text-center flex flex-wrap justify-center items-center'>
+                  <div class='ql-editor'>
+                    <div v-html='question.slide' > </div>
+                  </div>
+                <div v-if='question.isSlideBtn' class='w-full justify-center'>
+                  <div class='text-xs text-gray-500'> Сделайте ставку. За неправильный ответ баллы отнимаются</div>
+                  <div class='flex w-full justify-center'>
+                    <div class='p-1 text-center btn-grad w-16 mr-1 rounded-lg mt-1 cursor-pointer border-2 border-blue-600' @click='setBetSize(0)' :class='betSize==0 ? "correct border-green-600": ""'>0</div>
+                    <div class='p-1 text-center btn-grad w-16 mr-1 rounded-lg mt-1 cursor-pointer border-2 border-blue-600' @click='setBetSize(1)' :class='betSize==1 ? "correct border-green-600": ""'>1</div>
+                    <div class='p-1 text-center btn-grad w-16 mr-1 rounded-lg mt-1 cursor-pointer border-2 border-blue-600' @click='setBetSize(2)' :class='betSize==2 ? "correct border-green-600": ""'>2</div>
+                  </div>
                 </div>
-              </div>
+                </div>
              
               </template>
               <template v-else>
@@ -244,7 +257,7 @@ function changeAudioScore(value) {
               </div>
             </template>
         </div>
-        <div class='absolute bottom-0 w-full p-2'>
+        <div class='absolute bottom-0 w-full p-2' v-if='!question.slide'>
           <div v-if='submited.word || answerInit'>Ваш ответ: {{submited.word || answerInit}}</div>
           <div v-if='question.libraryType == "abcd"' class='row'>
             <AbcdInput :variants='question.abcd' :correct='correctAnswer && correctAnswer.answer &&  correctAnswer.answer.word' @onChoose='(a) => abcdChoose(a)'/>

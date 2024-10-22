@@ -18,6 +18,7 @@ const route = useRoute()
 let room = ref({})
 let waitUsers = ref([])
 let quizUsers = ref([])
+let betSize = ref(1)
 let me = ref({})
 let pack = ref({})
 let loader = ref(true)
@@ -129,6 +130,10 @@ onMounted(async () => {
     
 
     socket.on('setQuestion', (questionNumber, question) => { 
+      let betSizeSaved = localStorage.getItem('betSize')
+      if (betSizeSaved) {
+        betSize.value = betSizeSaved
+      }
       room.value.question = questionNumber
       currentQuestion.value = question
       timer.value = question.time
@@ -141,6 +146,7 @@ onMounted(async () => {
     })
 
     socket.on('finishQuestion', (roomUsers) => { 
+      localStorage.removeItem('betSize')
       quizUsers.value = roomUsers
     })
 
@@ -187,7 +193,12 @@ function start() {
 }
 
 function onAnswer(data, score, type) {
-  socket.emit('answerQuiz', data, room.value, userStore.user.id, currentQuestion.value, score, type);
+  socket.emit('answerQuiz', data, room.value, userStore.user.id, currentQuestion.value, score, type, betSize.value);
+}
+
+function setBetSize(bet) {
+  betSize.value = bet
+  localStorage.setItem('betSizeSaved', bet)
 }
 </script>
 
@@ -236,7 +247,7 @@ function onAnswer(data, score, type) {
         </template> 
 
         <template v-else>
-          <QuizGame :quizUsers='quizUsers' :me='me' :question='currentQuestion' :room='room' @onAnswer='onAnswer' :timer='timer' :answerInit='answer' :correctAnswer='correctAnswer'/>
+          <QuizGame :quizUsers='quizUsers' :me='me' :betSize='betSize' @setBetSize='setBetSize' :question='currentQuestion' :room='room' @onAnswer='onAnswer' :timer='timer' :answerInit='answer' :correctAnswer='correctAnswer'/>
         </template> 
         <BaseButton color='info' class='mt-4' label='рестарт' @click='start'/>
       </SectionMain>
