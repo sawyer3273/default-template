@@ -2,6 +2,7 @@
 import { computed, ref, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { dataService } from '~/utils/services/data.service'
+import { sortTable } from '~/utils/common'
 import { containerMaxW } from '@/configs/config'
 import { useToast } from "vue-toastification";
 import { mdiCircleDouble } from '@mdi/js'
@@ -28,6 +29,7 @@ let currentQuestion = ref({})
 let timer = ref(30)
 let answer = ref('')
 let correctAnswer = ref({})
+let showChange = ref(false)
 
 function choosePack(item) {
   socket.emit('choosePack', item.id, room.value.id, room.value.token);
@@ -104,6 +106,9 @@ onMounted(async () => {
         waitUsers.value = data.filter(one => !one.isActive)
         quizUsers.value = data.filter(one => one.isActive)
         me.value = data.find(one => one.user_id == userStore.user.id)
+        if (room.value.isFinished ) {
+          quizUsers.value.sort(sortTable)
+        }
       }
     })
     socket.on('updatePack', (data, roomUsers) => { 
@@ -148,6 +153,10 @@ onMounted(async () => {
     socket.on('finishQuestion', (roomUsers) => { 
       localStorage.removeItem('betSize')
       quizUsers.value = roomUsers
+      showChange.value = true
+      setTimeout(() => {
+        showChange.value = false
+      }, 5000)
     })
 
     socket.on('showAnswer', (question) => { 
@@ -157,6 +166,7 @@ onMounted(async () => {
 
     socket.on('finishAll', (data) => { 
       room.value.isFinished = true
+      quizUsers.value.sort(sortTable)
     })
 
     socket.on('userAnswered', (user, type) => { 
@@ -247,7 +257,7 @@ function setBetSize(bet) {
         </template> 
 
         <template v-else>
-          <QuizGame :quizUsers='quizUsers' :me='me' :betSize='betSize' @setBetSize='setBetSize' :question='currentQuestion' :room='room' @onAnswer='onAnswer' :timer='timer' :answerInit='answer' :correctAnswer='correctAnswer'/>
+          <QuizGame :showChange='showChange' :quizUsers='quizUsers' :me='me' :betSize='betSize' @setBetSize='setBetSize' :question='currentQuestion' :room='room' @onAnswer='onAnswer' :timer='timer' :answerInit='answer' :correctAnswer='correctAnswer'/>
         </template> 
         <BaseButton color='info' class='mt-4' label='рестарт' @click='start'/>
       </SectionMain>

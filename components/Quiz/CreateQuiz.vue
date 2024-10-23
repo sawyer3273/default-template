@@ -303,7 +303,7 @@ function onUploadAudio(data, i) {
           <!-- EXTENDED -->
           <div v-else class='col-md-12' v-for='(data, i) in packRounds' :key='"auto"+i'>
             <CardBox  class='mb-4 shadow-sm relative'>
-              <div class='top-0 left-0 ml-6 mt-1 absolute font-bold'>#{{data.number}} {{data.position}}</div>
+              <div class='top-0 left-0 ml-6 mt-1 absolute font-bold'>#{{data.number}} </div>
               <BaseIcon class='cursor-pointer text-blue-500 absolute top-1 right-10' :path="mdiNoteEdit"  @click="() => openModalMove(data.id)" />
               <BaseIcon class='cursor-pointer text-red-500 absolute top-1 right-5' :path="mdiDeleteCircleOutline"  @click="() => {toDeleteId = i; isModalDangerActive = true}" />
               <div class='row'>

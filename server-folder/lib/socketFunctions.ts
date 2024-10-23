@@ -1,5 +1,6 @@
 import type { Server } from "socket.io";
 import prisma from "~/tools/prisma";
+import { sortTable } from "~/utils/common";
 
 export const addToRoom = async (payload: any = {}, io: any) => {
     try {
@@ -178,17 +179,7 @@ export const removeFromRoom = async (payload: any = {}, io: Server) => {
 
 export const getRoom = async (id: any, filter = false) => {
   try {
-    let result =  await prisma.roomUsers.findMany({
-      include: {user: {select: {
-        id: true, email: true, username: true, avatar: true
-      }}},
-      where:  {
-        room_id: id,
-      },
-      orderBy: [{
-        score: 'desc'
-      }]
-    })
+    let result: any = updateTable({id}, true)
     if (filter) {
       result = result.filter((obj1: any, i: any, arr: any) => 
         arr.findIndex((obj2: any) => (obj2.user_id === obj1.user_id)) === i
@@ -384,16 +375,26 @@ const setQuestionAnswer = async (io: Server, room: any, question: any) => {
 
 
 
-export const updateTable = async (room: any) => {
-  let roomUsers: any = await prisma.roomUsers.findMany({where : {room_id: room.id}, orderBy: [{score: 'desc'}], include: {user: true}})
-  for (let i = 0; i < roomUsers.length; i++) {
-    let user = roomUsers[i]
-    let scores = await prisma.quizPackAnswer.findMany({where : {room_id: room.id, user_id: user.user_id}, orderBy: [{score: 'desc'}], include: {user: true}})
-    let result = 0
-    scores.map(one => result = result + one.score)
-    await prisma.roomUsers.update({where: {id: user.id}, data: {score: result, answerType: 0}})
+export const updateTable = async (room: any, onlyGet = false) => {
+  let roomUsers: any = await prisma.roomUsers.findMany({where : {room_id: room.id}, orderBy: [{id: 'desc'}], include: {user: true}})
+  if (!onlyGet) {
+    for (let i = 0; i < roomUsers.length; i++) {
+      let user = roomUsers[i]
+      let scores = await prisma.quizPackAnswer.findMany({where : {room_id: room.id, user_id: user.user_id}, orderBy: [{score: 'desc'}], include: {user: true}})
+      let result = 0
+      scores.map(one => result = result + one.score)
+      await prisma.roomUsers.update({where: {id: user.id}, data: {score: result, answerType: 0}})
+    }
   }
-  roomUsers = await prisma.roomUsers.findMany({where : {room_id: room.id}, orderBy: [{score: 'desc'}], include: {user: true}})
+  let roomUsersNew:any = await prisma.roomUsers.findMany({where : {room_id: room.id}, include: {user: true}})
+  roomUsersNew.sort(sortTable)
+
+  roomUsersNew.map((one: any, i: number) => {
+    let old = roomUsers.find((o:any) => o.id == one.id)
+    old.change = one.score - old.score    
+    old.score = one.score 
+    old.position = i + 1
+  })
   return roomUsers
 }
 

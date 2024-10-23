@@ -34,7 +34,7 @@ function choose(i) {
 
 <template>
     <div v-for='(one, i) in data' :class='data.length <= 2 ? "col-md-12": ( data.length <= 4  ? "col-md-6" : (data.length <= 6 ? "col-md-4": "col-md-3"))' @click='choose(one)'>
-        <div class='p-1 text-center btn-grad rounded-lg mt-1 cursor-pointer' :class='choosen == one ? (correct == one ? "correct" : (correct ? "false" : "choosen")): ""'>{{one}}</div>
+        <div class='p-1 text-center btn-grad rounded-lg mt-1 cursor-pointer border-2 border-blue-600' :class='choosen == one ? (correct == one ? "correct border-green-600" : (correct ? "false border-red-300" : "choosen  border-gray-400")): ""'>{{one}}</div>
     </div>
 </template>
 <style scoped>

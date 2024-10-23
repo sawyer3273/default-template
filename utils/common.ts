@@ -43,3 +43,13 @@ export function shuffle(arr: any){
 export function getRandomNumber(min: number = 0, max: number = 100) {
     return Math.random() * (max - min) + min;
 }
+
+export function sortTable( a: any, b: any ) {
+	if ( a.score < b.score ){
+	  return 1;
+	}
+	if ( a.score > b.score ){
+	  return -1;
+	}
+	return 0;
+}

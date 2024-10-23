@@ -15,7 +15,8 @@ const props = defineProps({
   timer: Number,
   answerInit: String,
   correctAnswer: Object,
-  betSize: Number
+  betSize: Number,
+  showChange: Boolean
 })
 
 const emit = defineEmits(['onAnswer', 'setBetSize'])
@@ -141,7 +142,6 @@ function changeAudioScore(value) {
               <div class='rounded-full bg-blue-500 w-12 text-center right-0'>{{user.score}}</div>
             </div>
           </template>
-
           <div class=' bg-black overflow-hidden rounded-full m-1 text-white p-1 text-xl flex justify-between' v-for='(user, i) in vzUsers'>
             <div class='flex items-center w-4/5'>
               <div class='rounded-full bg-blue-500 min-w-7 min-h-7 text-center text-sm pt-1 mr-2'>в/з</div>
@@ -157,14 +157,13 @@ function changeAudioScore(value) {
         </div>
     </div>
   </template>
-
   <div v-else class='row'> 
     <div class='col-md-3'>
-      <div class='mb-2 min-h-12'>
-      
-        <div class='bg-black overflow-hidden rounded-full m-1 text-white p-1 text-xl flex justify-between' v-for='(user, i) in legalUsers'>
+      <div class='mb-2 min-h-12 relative'>
+        <div :class='"row"+ (user.position - 1) ' class='bg-black overflow-hidden rounded-full m-1 text-white p-1 text-xl flex justify-between absolute w-full' v-for='(user, i) in legalUsers'>
+        
           <div class='flex items-center w-4/5'>
-            <div class='rounded-full bg-blue-500 min-w-7 text-center mr-2'> {{i+1}}</div>
+            <div class='rounded-full bg-blue-500 min-w-7 text-center mr-2'> {{user.position}}</div>
             <UserAvatar class="min-w-7 w-7 h-7 mr-2" :username="user.user.username" :avatar="user.user.avatar" />
             <div class='w-inherit'>
               <div class='userName' :class='!user.isReady ? "text-gray-400": (me.id == user.id ? "text-green-600" : "")'>
@@ -172,7 +171,9 @@ function changeAudioScore(value) {
               </div>
             </div>
           </div>
-          <div class='rounded-full bg-blue-500 w-12 text-center right-0'>{{user.score}}</div>
+          <div class='rounded-full bg-blue-500 w-12 text-center right-0 relative'>
+            {{user.score}} <span class='absolute text-xs font-bold hideItem' :class='user.change > 0 ? "text-green-500" : "text-red-600", showChange && user.change !== 0 ? "showItem": ""' > {{user.change > 0 ? "+" + user.change : user.change}} </span>
+          </div>
         </div>
 
         <div class='bg-black overflow-hidden rounded-full m-1 text-white p-1 text-xl flex justify-between' v-for='(user, i) in vzUsers'>
@@ -259,16 +260,16 @@ function changeAudioScore(value) {
         </div>
         <div class='absolute bottom-0 w-full p-2' v-if='!question.slide'>
           <div v-if='submited.word || answerInit'>Ваш ответ: {{submited.word || answerInit}}</div>
-          <div v-if='question.libraryType == "abcd"' class='row'>
+          <div v-else-if='question.libraryType == "abcd"' class='row'>
             <AbcdInput :variants='question.abcd' :correct='correctAnswer && correctAnswer.answer &&  correctAnswer.answer.word' @onChoose='(a) => abcdChoose(a)'/>
           </div>
-          <div v-if='question.libraryType == "comparison"'>
+          <div v-else-if='question.libraryType == "comparison"'>
             <ComparisonInput :variants='question.comparison' :isImage='question.isComparisonImage' :correct='correctAnswer.id' @onChoose='(a) => comparisonChoose(a)'/>
           </div>
-          <div v-if='question.libraryType == "order"'>
+          <div v-else-if='question.libraryType == "order"'>
             <OrderInput :variants='question.order' :correct='correctAnswer.id' @onChoose='(a) => orderChoose(a)'/>
           </div>
-          <div v-if='question.libraryType == "manyAnswers"'>
+          <div v-else-if='question.libraryType == "manyAnswers"'>
             <ManyAnswersInput :variants='question.manyAnswers' :correct='correctAnswer.id' @onChoose='(a) => manyAnswersChoose(a)'/>
           </div>
           <div v-else class='flex items-center flex-wrap md:!flex-nowrap'>
@@ -333,4 +334,29 @@ function changeAudioScore(value) {
 .h-full-minus-20 {
   height: calc(100% - 20px)
 }
+
+
+
+.row0 {
+  top: 0;
+  transition:all .3s;
+}
+.row1 {
+  top: 40px;
+  transition:all .3s;
+}
+.row2 {
+  top: 80px;
+  transition:all .3s;
+}
+.row3 {
+  top: 120px;
+  transition:all .3s;
+}
+.row4 {
+  top: 160px;
+  transition:all .3s;
+}
+
+
 </style>

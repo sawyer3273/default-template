@@ -218,3 +218,13 @@ label {
 .false {
     background-image: linear-gradient(to right, #f63b3b 0%, #f2f12f  51%, #f63b3b  100%);
 }
+
+.hideItem {
+	scale: 0;
+	transition: all 0.3s ease-out;
+}
+
+.showItem {
+	scale: 1;
+	transition: all 0.3s ease-out;
+}
