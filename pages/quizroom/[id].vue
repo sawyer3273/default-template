@@ -7,7 +7,7 @@ import { containerMaxW } from '@/configs/config'
 import { useToast } from "vue-toastification";
 import { mdiCircleDouble } from '@mdi/js'
 import QuizGame from '@/components/Quiz/Game'
-import  { debounce} from 'lodash'
+import _ from 'lodash'
 
 definePageMeta({
   middleware: 'auth' 
@@ -58,7 +58,7 @@ watch(() => room.value.name, (val) => {
   handleDebounce(val)
 })
 onMounted(async () => {
-  handleDebounce = debounce(async function (val) {
+  handleDebounce = _.debounce(async function (val) {
     if (val !== null) socket.emit('changeRoomName',room.value, val);
   }, 500);
   let leftSlide = 0

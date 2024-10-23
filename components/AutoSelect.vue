@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-import  {uniqueId, debounce} from 'lodash'
+import  _ from 'lodash'
 import { dataService } from '~/utils/services/data.service'
 import { useDebounceFn } from "@vueuse/core"
 import { useComponentStore } from '@/stores/component'
@@ -41,7 +41,7 @@ onMounted(async () => {
   window.addEventListener('scroll', handleScroll);
   handleScroll();
   componentStore.setAutofillData([])
-  handleDebounce = debounce(async function (val) {
+  handleDebounce = _.debounce(async function (val) {
       if (val && val.length > 1 && !chooseDelay.value) {
         componentStore.setAutofillLoading(true)
         let autofill = await dataService[props.searchF]({key: val, type: props.library})
@@ -65,7 +65,7 @@ onUpdated(() => {
   }
 })
 
-let id = 'autoselect' + uniqueId()
+let id = 'autoselect' + _.uniqueId()
 let inputValue = ref(props.modelValue.name ? props.modelValue.name : (props.modelValue.title ? props.modelValue.title : props.modelValue.word))
 let chooseDelay = ref(false)
 let isFocused = ref(false)
