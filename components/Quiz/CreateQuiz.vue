@@ -11,7 +11,7 @@ import LineChart from '@/components/Charts/LineChart.vue'
 import { userService } from '~/utils/services/user.service'
 import { adminService } from '~/utils/services/admin.service'
 import { dataService } from '~/utils/services/data.service'
-import { _ } from 'lodash'
+import  _  from 'lodash'
 import { useToast } from "vue-toastification";
 import { libraryOptions, quizTypeOptions } from '~/constants'
 import SaveSlide from '~/components/Quiz/create/SaveSlide'
