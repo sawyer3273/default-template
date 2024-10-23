@@ -2,7 +2,7 @@
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import ImageUploader from "quill-image-uploader";
-import BlotFormatter from "quill-blot-formatter";
+import BlotFormatter from 'quill-blot-formatter/dist/BlotFormatter'
 
 const props = defineProps({
   modelValue: {
