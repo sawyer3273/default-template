@@ -8,7 +8,7 @@ import * as chartConfig from '@/components/Charts/chart.config.js'
 import LineChart from '@/components/Charts/LineChart.vue'
 import { dataService } from '~/utils/services/data.service'
 import { adminService } from '~/utils/services/admin.service'
-import { cloneDeep } from 'lodash'
+import _ from 'lodash'
 import { useToast } from "vue-toastification";
 const toast = useToast();
 
@@ -64,7 +64,7 @@ let emptyValue = {
   text: '',
   id: 0
 }
-let computedValue = ref([cloneDeep(emptyValue)])
+let computedValue = ref([_.cloneDeep(emptyValue)])
 let packData = ref({
   logo: '',
   text: '',

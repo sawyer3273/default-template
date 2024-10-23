@@ -8,7 +8,7 @@ import * as chartConfig from '@/components/Charts/chart.config.js'
 import LineChart from '@/components/Charts/LineChart.vue'
 import { dataService } from '~/utils/services/data.service'
 import { adminService } from '~/utils/services/admin.service'
-import { cloneDeep } from 'lodash'
+import _ from 'lodash'
 import { useToast } from "vue-toastification";
 const toast = useToast();
 
@@ -71,7 +71,7 @@ let emptyValue = {
   actor7: {id: 0, name: '', avatar: '',},
   actor8: {id: 0, name: '', avatar: '',},
 }
-let computedValue = ref([cloneDeep(emptyValue)])
+let computedValue = ref([_.cloneDeep(emptyValue)])
 let packData = ref({
   logo: '',
   text: '',
@@ -223,7 +223,7 @@ async function save() {
          <SectionTitleLineWithButton  title="">
          <div>
           <BaseButton
-              @click='computedValue.push(cloneDeep(emptyValue))'
+              @click='computedValue.push(_.cloneDeep(emptyValue))'
               :icon="mdiAccountPlusOutline"
               label="Добавить фильм"
               color="contrast"

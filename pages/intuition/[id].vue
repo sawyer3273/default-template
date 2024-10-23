@@ -3,7 +3,7 @@ import { computed, ref, onMounted } from 'vue'
 import { useMainStore } from '@/stores/main'
 import { userService } from '~/utils/services/user.service'
 import { dataService } from '~/utils/services/data.service'
-import { cloneDeep } from 'lodash'
+import _ from 'lodash'
 import { shuffle } from '~/utils/common'
 import 'vue3-carousel/dist/carousel.css'
 import { mdiDice3, mdiCounter, mdiAccount, mdiHelpCircle } from '@mdi/js'
@@ -88,7 +88,7 @@ async function getData() {
   let packData = await dataService.getPacksIntuition({id: route.params.id})
   if (packData.success && packData.data && packData.data.length) {
     pack.value = packData.data[0]
-    actors.value = cloneDeep(pack.value.IntuitionPackContent)
+    actors.value = _.cloneDeep(pack.value.IntuitionPackContent)
     if (packData.data[0].fakeActor) {
       pack.value.IntuitionPackContent.push({ "id": -1, "text":  packData.data[0].fakeActor })
     }

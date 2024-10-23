@@ -9,6 +9,7 @@
     "unpack": "rm -rf .output/  && tar -xvf archive.tar.gz && cp .env .output/server/.env",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
+    "migrate": "npx prisma migrate dev",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },

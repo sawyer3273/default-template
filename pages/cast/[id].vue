@@ -3,7 +3,7 @@ import { computed, ref, onMounted } from 'vue'
 import { useMainStore } from '@/stores/main'
 import { userService } from '~/utils/services/user.service'
 import { dataService } from '~/utils/services/data.service'
-import { cloneDeep } from 'lodash'
+import _ from 'lodash'
 import { containerMaxW } from '@/configs/config'
 import { shuffle } from '~/utils/common'
 import 'vue3-carousel/dist/carousel.css'
@@ -95,7 +95,7 @@ function nextRound() {
       localStorage.removeItem('show'+route.params.id)
       localStorage.removeItem('cast'+route.params.id)
     }, 1000)
-    finalPoints.value = cloneDeep(totalPoints.value)
+    finalPoints.value = _.cloneDeep(totalPoints.value)
     totalPoints.value = 0
     statsService.saveCast({
       value: finalPoints.value,
@@ -109,7 +109,7 @@ async function getData() {
   let packData = await dataService.getPacksCast({id: route.params.id})
   if (packData.success && packData.data && packData.data.length) {
     pack.value = packData.data[0]
-    movies.value = cloneDeep(pack.value.CastPackContent)
+    movies.value = _.cloneDeep(pack.value.CastPackContent)
   }
 }
 

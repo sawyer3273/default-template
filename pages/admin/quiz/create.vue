@@ -1,7 +1,6 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue'
 import { useMainStore } from '@/stores/main'
-import { cloneDeep } from 'lodash'
 import { libraryOptions, quizTypeOptions } from '~/constants'
 import CreateQuiz  from '@/components/Quiz/CreateQuiz'
 
