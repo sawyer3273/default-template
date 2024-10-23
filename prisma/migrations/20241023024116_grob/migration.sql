@@ -1,0 +1,11 @@
+-- AlterTable
+ALTER TABLE "QuizPack" ADD COLUMN     "grobValue" DOUBLE PRECISION NOT NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE "QuizPackAnswer" ADD COLUMN     "grobValue" DOUBLE PRECISION;
+
+-- AlterTable
+ALTER TABLE "QuizPackRound" ADD COLUMN     "grobValue" DOUBLE PRECISION NOT NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE "RoomUsers" ADD COLUMN     "grobValue" DOUBLE PRECISION NOT NULL DEFAULT 0;

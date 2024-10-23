@@ -17,6 +17,7 @@ const { socket } = useSocketIO()
 const route = useRoute()
 
 let room = ref({})
+let grobStats = ref({})
 let waitUsers = ref([])
 let quizUsers = ref([])
 let betSize = ref(1)
@@ -150,10 +151,12 @@ onMounted(async () => {
       currentQuestion.value.slide = ''
     })
 
-    socket.on('finishQuestion', (roomUsers) => { 
+    socket.on('finishQuestion', (roomUsers, stats) => { 
+      console.log('roomUsers, stats',roomUsers, stats)
       localStorage.removeItem('betSize')
       quizUsers.value = roomUsers
       showChange.value = true
+      grobStats.value = stats
       setTimeout(() => {
         showChange.value = false
       }, 5000)
@@ -257,7 +260,7 @@ function setBetSize(bet) {
         </template> 
 
         <template v-else>
-          <QuizGame :showChange='showChange' :quizUsers='quizUsers' :me='me' :betSize='betSize' @setBetSize='setBetSize' :question='currentQuestion' :room='room' @onAnswer='onAnswer' :timer='timer' :answerInit='answer' :correctAnswer='correctAnswer'/>
+          <QuizGame :grobStats='grobStats' :showChange='showChange' :quizUsers='quizUsers' :me='me' :betSize='betSize' @setBetSize='setBetSize' :question='currentQuestion' :room='room' @onAnswer='onAnswer' :timer='timer' :answerInit='answer' :correctAnswer='correctAnswer'/>
         </template> 
         <BaseButton color='info' class='mt-4' label='рестарт' @click='start'/>
       </SectionMain>

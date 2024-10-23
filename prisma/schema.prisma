@@ -246,6 +246,7 @@ model RoomUsers {
   answerType   Int     @default(0)
   isFinished Boolean  @default(false)
   score     Float    @default(0)
+  grobValue   Float  @default(0)
   data      String?
   isAlreadyPassed  Boolean  @default(false)
   alreadyScore     Float    @default(0)
@@ -265,6 +266,7 @@ model QuizPack {
   name   String
   logo   String?
   enable Boolean? @default(true)
+  grobValue   Float  @default(0)
 
   user_id Int
   user    User @relation(fields: [user_id], references: [id])
@@ -299,6 +301,7 @@ model QuizPackRound {
   order  String?
   manyAnswers  String?
   tags  String?
+  grobValue   Float  @default(0)
 
   textAnswer  String?
   answerImage  String?
@@ -314,6 +317,7 @@ model QuizPackAnswer {
   time        Int?
   number      Int
   score       Float
+  grobValue   Float?
   total       Int
   textAnswer  String?
   isFirst     Boolean   @default(false)

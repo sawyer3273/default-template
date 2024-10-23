@@ -16,7 +16,8 @@ const props = defineProps({
   answerInit: String,
   correctAnswer: Object,
   betSize: Number,
-  showChange: Boolean
+  showChange: Boolean,
+  grobStats: Object
 })
 
 const emit = defineEmits(['onAnswer', 'setBetSize'])
@@ -159,6 +160,21 @@ function changeAudioScore(value) {
   </template>
   <div v-else class='row'> 
     <div class='col-md-3'>
+      <div class='mb-1 h-3 relative text-xs'>
+        <div class='p-1 flex justify-between  w-full' >
+          <div class='flex  w-full'>
+            <div class='min-w-7 text-center ml-1'> # </div>
+            <div class="min-w-7 w-7 h-7 "></div>
+            <div class='w-inherit'>
+              
+            </div>
+            <div  class=' mr-4'> % </div>
+          </div>
+          <div class=' w-12 text-center right-0 relative'>
+           Total
+          </div>
+        </div>
+      </div>
       <div class='mb-2 min-h-12 relative'>
         <div :class='"row"+ (user.position - 1) ' class='bg-black overflow-hidden rounded-full m-1 text-white p-1 text-xl flex justify-between absolute w-full' v-for='(user, i) in legalUsers'>
         
@@ -167,15 +183,21 @@ function changeAudioScore(value) {
             <UserAvatar class="min-w-7 w-7 h-7 mr-2" :username="user.user.username" :avatar="user.user.avatar" />
             <div class='w-inherit'>
               <div class='userName' :class='!user.isReady ? "text-gray-400": (me.id == user.id ? "text-green-600" : "")'>
-                {{user.user.username}} <BaseIcon v-if='user.answerType' class='text-green-600' :path='user.answerType == 2 ? mdiChatAlertOutline : mdiChatOutline' /> 
+               {{user.user.username}} <BaseIcon v-if='user.answerType' class='text-green-600' :path='user.answerType == 2 ? mdiChatAlertOutline : mdiChatOutline' /> 
               </div>
             </div>
+            <div v-if='user.grobValue > 0' class='text-xs text-gray-600 relative'> {{Math.round(user.grobValue * 100) / 100}} </div>
           </div>
           <div class='rounded-full bg-blue-500 w-12 text-center right-0 relative'>
             {{user.score}} <span class='absolute text-xs font-bold hideItem' :class='user.change > 0 ? "text-green-500" : "text-red-600", showChange && user.change !== 0 ? "showItem": ""' > {{user.change > 0 ? "+" + user.change : user.change}} </span>
           </div>
         </div>
+           <div v-if='showChange' :class='"w-full text-center text-xs text-gray-500 mt-2 absolute row"+ (legalUsers.length ) '>
+            <div>Правильных ответов {{grobStats.correct}} из {{grobStats.total}} </div>
+            <div>Коефициент "гроба": {{grobStats.grobValue}}  </div>
+          </div>
 
+      
         <div class='bg-black overflow-hidden rounded-full m-1 text-white p-1 text-xl flex justify-between' v-for='(user, i) in vzUsers'>
           <div class='flex items-center w-4/5'>
             <div class='rounded-full bg-blue-500 min-w-7 min-h-7 text-center text-sm pt-1 mr-2'>в/з</div>

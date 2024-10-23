@@ -127,6 +127,7 @@ export const removeFromRoom = async (payload: any = {}, io: Server) => {
           })
         }
         let inRoom = await getRoom(roomUser.room_id)
+        console.log('inRoom',inRoom)
         inRoom = inRoom.filter((obj1: any, i: any, arr: any) => 
           arr.findIndex((obj2: any) => (obj2.user_id === obj1.user_id)) === i
         )
@@ -179,7 +180,8 @@ export const removeFromRoom = async (payload: any = {}, io: Server) => {
 
 export const getRoom = async (id: any, filter = false) => {
   try {
-    let result: any = updateTable({id}, true)
+    let tableData: any = await updateTable({id}, true)
+    let result: any = tableData.roomUsers
     if (filter) {
       result = result.filter((obj1: any, i: any, arr: any) => 
         arr.findIndex((obj2: any) => (obj2.user_id === obj1.user_id)) === i
@@ -325,8 +327,8 @@ const setQuestion = async (io: Server, roomData: any, questionNumber: any) => {
         io.to(room.token).emit('finishSlide');
       }, (question.slideTime ? question.slideTime : 1) * 1000)
       setTimeout(async () => {
-        let roomUsers = await updateTable(room)
-        io.to(room.token).emit('finishQuestion', roomUsers);
+        let tableData: any = await updateTable(room)
+        io.to(room.token).emit('finishQuestion', tableData.roomUsers, tableData.stats);
         setQuestionAnswer(io, room, question)
       }, (question.time + (question.slideTime ? question.slideTime : 1)) * 1000)
     } else {
@@ -375,15 +377,39 @@ const setQuestionAnswer = async (io: Server, room: any, question: any) => {
 
 
 
-export const updateTable = async (room: any, onlyGet = false) => {
+export const updateTable = async (roomData: any, onlyGet = false) => {
+  let room:any = await prisma.room.findFirst({where: {id: roomData.id}})
   let roomUsers: any = await prisma.roomUsers.findMany({where : {room_id: room.id}, orderBy: [{id: 'desc'}], include: {user: true}})
+  let grobValue = 0
+  let scoresRound = []
+  if (!onlyGet && roomUsers.length) {
+    scoresRound = await prisma.quizPackAnswer.findMany({where : {room_id: room.id, number: room.question, isCorrect: true}, select: {isCorrect: true}})
+    grobValue =  1 - scoresRound.length  / roomUsers.length 
+  }
+ 
   if (!onlyGet) {
     for (let i = 0; i < roomUsers.length; i++) {
       let user = roomUsers[i]
       let scores = await prisma.quizPackAnswer.findMany({where : {room_id: room.id, user_id: user.user_id}, orderBy: [{score: 'desc'}], include: {user: true}})
+      let currentScore = scores.find(one => one.number == room.question)
+      let grobUserValue = 0
+      let grobUserValueCount = 0
+      if (currentScore) {
+        if (currentScore.isCorrect) {
+          grobUserValue = grobValue
+          grobUserValueCount++
+        }
+        await prisma.quizPackAnswer.update({where: {id: currentScore.id }, data: {grobValue : currentScore.isCorrect ? grobValue : -1}})
+      }
       let result = 0
-      scores.map(one => result = result + one.score)
-      await prisma.roomUsers.update({where: {id: user.id}, data: {score: result, answerType: 0}})
+      scores.map(one => {
+        if (one.number != room.question && one.grobValue > -1) {
+          grobUserValue = grobUserValue + one.grobValue
+          grobUserValueCount++
+        }
+        result = result + one.score
+      })
+      await prisma.roomUsers.update({where: {id: user.id}, data: {score: result, answerType: 0, grobValue: grobUserValueCount ? (grobUserValue / grobUserValueCount) : -1 }})
     }
   }
   let roomUsersNew:any = await prisma.roomUsers.findMany({where : {room_id: room.id}, include: {user: true}})
@@ -394,8 +420,11 @@ export const updateTable = async (room: any, onlyGet = false) => {
     old.change = one.score - old.score    
     old.score = one.score 
     old.position = i + 1
+    old.grobValue = one.grobValue 
+    old.grobValueChange = one.grobValue - old.grobValue  
   })
-  return roomUsers
+  console.log('roomUsers',roomUsers)
+  return {roomUsers, stats: {grobValue, total:roomUsers.length, correct: scoresRound.length}} 
 }
 
 export const answerQuiz = async (io: Server, answer: any, room: any, user_id: any, question: any, newScore: any, type: any, betSize: any) => {
