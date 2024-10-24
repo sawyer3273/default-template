@@ -9,10 +9,10 @@ export default [
     label: 'Паки',
     to: '/quiz-packs',
   },
-  {
+  /*{
     label: 'Угадай по касту',
     to: '/cast',
-  },
+  },*/
   {
     label: 'КиноИнтуиция',
     to: '/intuition',

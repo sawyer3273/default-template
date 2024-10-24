@@ -6,31 +6,31 @@ const props = defineProps({
 })
 
 let textCount = computed(() => {
-  return props.rounds.filter(one => one.type == 'text' && !one.abcd && !one.order && !one.comparison).length
+  return props.rounds ? props.rounds.filter(one => one.type == 'text' && !one.abcd && !one.order && !one.comparison).length : 0
 })
 
 let photoCount = computed(() => {
-  return props.rounds.filter(one => one.type == 'photo' && !one.abcd && !one.order && !one.comparison).length
+  return props.rounds ? props.rounds.filter(one => one.type == 'photo' && !one.abcd && !one.order && !one.comparison).length : 0
 })
 
 let videoCount = computed(() => {
-  return props.rounds.filter(one => one.type == 'video' && !one.abcd && !one.order && !one.comparison).length
+  return props.rounds ? props.rounds.filter(one => one.type == 'video' && !one.abcd && !one.order && !one.comparison).length : 0
 })
 
 let audioCount = computed(() => {
-  return props.rounds.filter(one => one.type == 'audio' && !one.abcd && !one.order && !one.comparison).length
+  return props.rounds ? props.rounds.filter(one => one.type == 'audio' && !one.abcd && !one.order && !one.comparison).length : 0
 })
 
 let abcdCount = computed(() => {
-  return props.rounds.filter(one => one.abcd).length
+  return props.rounds ? props.rounds.filter(one => one.abcd).length : 0
 })
 
 let orderCount = computed(() => {
-  return props.rounds.filter(one => one.order).length
+  return props.rounds ? props.rounds.filter(one => one.order).length : 0
 })
 
 let comparisonCount = computed(() => {
-  return props.rounds.filter(one => one.comparison).length
+  return props.rounds ? props.rounds.filter(one => one.comparison).length : 0
 })
 
 let hint = computed(() => {

@@ -228,3 +228,19 @@ label {
 	scale: 1;
 	transition: all 0.3s ease-out;
 }
+
+.opacity-back {
+    background: rgb(0 0 0 / 66%);
+}
+
+.bg-nav {
+	background: url('/img/banner-mobile.jpeg');
+	background-size: cover;
+  }
+@media (min-width: 500px) {
+
+	.bg-nav {
+		background: url('/img/banner.jpeg');
+		background-size: cover;
+	}
+}
