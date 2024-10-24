@@ -202,6 +202,7 @@ function setReady(status) {
 }
 
 function start() {
+  console.log('start!@@@@@@@@@@@@2')
   socket.emit('statusQuiz', room.value);
 }
 

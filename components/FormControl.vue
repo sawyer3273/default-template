@@ -31,6 +31,14 @@ const props = defineProps({
     type: String,
     default: null
   },
+  classIcon: {
+    type: String,
+    default: ''
+  },
+  inputCass: {
+    type: String,
+    default: ''
+  },
   options: {
     type: Array,
     default: null
@@ -71,7 +79,8 @@ const inputElClass = computed(() => {
     'dark:placeholder-gray-400',
     computedType.value === 'textarea' ? 'h-24' : 'h-12',
     props.borderless ? 'border-0' : 'border',
-    props.transparent ? 'bg-transparent' : 'bg-white dark:bg-slate-800'
+    props.transparent ? 'bg-transparent' : 'bg-white dark:bg-slate-800',
+    props.inputCass ? props.inputCass : ''
   ]
 
   if (props.icon) {
@@ -170,6 +179,6 @@ if (props.ctrlKFocus) {
       :type="computedType"
       :class="inputElClass"
     />
-    <FormControlIcon v-if="icon" :icon="icon" :h="controlIconH" />
+    <FormControlIcon v-if="icon" :icon="icon" :class='classIcon' :h="controlIconH" />
   </div>
 </template>

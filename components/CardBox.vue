@@ -14,6 +14,10 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  isNoClass: {
+    type: Boolean,
+    default: false
+  },
   hasComponentLayout: Boolean,
   hasTable: Boolean,
   smallPadding: Boolean,
@@ -33,7 +37,8 @@ const componentClass = computed(() => {
     props.rounded,
     props.flex,
     props.class,
-    props.isModal ? 'dark:bg-slate-900' : 'dark:bg-slate-900/70'
+    props.isModal ? 'dark:bg-slate-900' : 'dark:bg-slate-900/70',
+    props.isNoClass ? '' : 'bg-white flex'
   ]
 
   if (props.isHoverable) {
@@ -52,7 +57,6 @@ const submit = (event) => {
   <component
     :is="isForm ? 'form' : 'div'"
     :class="componentClass"
-    class="bg-white flex"
     @submit="submit"
   >
     <slot v-if="hasComponentLayout" />

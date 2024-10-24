@@ -7,7 +7,6 @@ const props = defineProps({
   bg: {
     type: String,
     required: true,
-    validator: (value) => ['purplePink', 'pinkRed'].includes(value)
   }
 })
 
@@ -21,6 +20,7 @@ const colorClass = computed(() => {
       return gradientBgPurplePink
     case 'pinkRed':
       return gradientBgPinkRed
+    default: return props.bg
   }
 
   return ''
